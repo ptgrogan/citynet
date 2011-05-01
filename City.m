@@ -18,6 +18,8 @@ classdef City < handle
         %
         % obj = City(name)
         %   name:       name of the city
+        %
+        % obj = City()
         
         function obj = City(varargin)
             if nargin==1

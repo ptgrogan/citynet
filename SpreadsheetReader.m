@@ -142,10 +142,9 @@ classdef SpreadsheetReader
         end
         
         %% ReadLayers Function
-        % ReadLayers opens a spreadsheet file and reads in the layer
-        % type attributes for a particular node type.
+        % ReadLayers opens a spreadsheet file and reads in the layers.
         %
-        % cells = ReadLayers(filepath)
+        % layers = ReadLayers(filepath)
         %   filepath:   the path to the spreadsheet template
         function layers = ReadLayers(filepath)
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.layersWorksheet);
