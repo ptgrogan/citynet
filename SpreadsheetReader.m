@@ -36,24 +36,53 @@ classdef SpreadsheetReader
         % SpreadsheetReader.Read('test.xls').
         %
         % obj = SpreadsheetReader()
-        
         function obj = SpreadsheetReader()
         end
     end
     methods(Static)
-        %% Read Function
-        % Reads an input spreadsheet into the Matlab data structures.
+        %% ReadTemplate Function
+        % ReadTemplate opens a spreadsheet file and reads in the
+        % information to the synthesis template object.
         %
-        % obj = SpreadsheetReader(filepath)
-        %   filepath:   the path to the spreadsheet to read
-        
-        function city = Read(filepath)
+        % ReadTemplate(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function ReadTemplate(filepath)
             synthTemp = SynthesisTemplate.instance();
-            %% read in the city inputs
-            [num txt] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
-            city = City(txt{SpreadsheetReader.cityName,2});
-            %% read in the cell type inputs
+            synthTemp.city = SpreadsheetReader.ReadCity(filepath);
+            synthTemp.cellTypes = SpreadsheetReader.ReadCellTypes(filepath);
+            
+            synthTemp.nextCellTypeId = max(synthTemp.nextCellTypeId, ...
+                max([synthTemp.cellTypes.id])+1);
+            for i=1:length(synthTemp.cellTypes)
+                synthTemp.nextCellTypeAttributeId = max(synthTemp.nextCellTypeAttributeId, ...
+                    max([synthTemp.cellTypes(i).attributes.id])+1);
+            end
+            synthTemp.nextCellId = max(synthTemp.nextCellId, ...
+                max([synthTemp.city.cells.id])+1);
+        end
+    end
+    methods(Static,Access=private)
+        %% ReadCity Function
+        % ReadCity opens a spreadsheet file and reads in the city object
+        % definition, including dependent objects, e.g. cells.
+        %
+        % city = ReadCity(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function city = ReadCity(filepath)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
+            city = City(raw{SpreadsheetReader.cityName,2});
+            city.cells = SpreadsheetReader.ReadCells(filepath);
+        end
+        
+        %% ReadCellTypes Function
+        % ReadCellTypes opens a spreadsheet file and reads in the cell
+        % type definitions, including dependent objects, e.g. attributes.
+        %
+        % cellTypes = ReadCellTypes(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function cellTypes = ReadCellTypes(filepath)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.cellTypesWorksheet);
+            cellTypes = CellType.empty();
             for i=2:size(raw,1)
                 cellType = CellType( ...
                     raw{i,SpreadsheetReader.cellTypesId}, ...
@@ -62,32 +91,48 @@ classdef SpreadsheetReader
                     [hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(1:2)) ...
                     hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(5:6))]/255);
-                [num2 txt2 raw2] = xlsread(filepath,SpreadsheetReader.cellTypeAttributesWorksheet);
-                for j=2:size(raw2,1)
-                    if cellType.id==raw2{j,SpreadsheetReader.cellTypeAttributesTypeId}
-                        cellType.attributes(end+1) = CellTypeAttribute( ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesId}, ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesName}, ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesDescription}, ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesUnits}, ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesBounds}, ...
-                            raw2{j,SpreadsheetReader.cellTypeAttributesValue});
-                    end
+                cellType.attributes = SpreadsheetReader.ReadCellTypeAttributes(filepath,cellType);
+                cellTypes(end+1) = cellType;
+            end
+        end
+        
+        %% ReadCellTypes Function
+        % ReadCellTypeAttributes opens a spreadsheet file and reads in the 
+        % cell type attributes for a particular cell type.
+        %
+        % cellTypeAttributes = ReadCellTypeAttributes(filepath,cellType)
+        %   filepath:   the path to the spreadsheet template
+        %   cellType:   the cell type for which to read attributes
+        function cellTypeAttributes = ReadCellTypeAttributes(filepath,cellType)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.cellTypeAttributesWorksheet);
+            cellTypeAttributes = CellTypeAttribute.empty();
+            for i=2:size(raw,1)
+                if cellType.id==raw{i,SpreadsheetReader.cellTypeAttributesTypeId}
+                    cellTypeAttributes(end+1) = CellTypeAttribute( ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesId}, ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesName}, ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesDescription}, ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesUnits}, ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesBounds}, ...
+                        raw{i,SpreadsheetReader.cellTypeAttributesValue});
                 end
-                synthTemp.cellTypes(end+1) = cellType;
             end
-            % update the next available cell type id in the synthesis template
-            synthTemp.nextCellTypeId = max(synthTemp.nextCellTypeId, max([synthTemp.cellTypes.id])+1);
-            %% read in the edge type inputs
-            %% read in the cell inputs
-            num = xlsread(filepath,SpreadsheetReader.cellsWorksheet);
-            for i=1:size(num,1)
-                city.cells(end+1) = Cell(num(i,SpreadsheetReader.cellsId),...
-                    [num(i,SpreadsheetReader.cellsLocationX) num(SpreadsheetReader.cellsLocationY)], ...
-                    [num(i,SpreadsheetReader.cellsDimensionX) num(i,SpreadsheetReader.cellsDimensionY)]);
+        end
+                
+        %% ReadCells Function
+        % ReadCells opens a spreadsheet file and reads in the cell
+        % type attributes for a particular cell type.
+        %
+        % cells = ReadCells(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function cells = ReadCells(filepath)
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.cellsWorksheet);
+            cells = Cell.empty();
+            for i=2:size(raw,1)
+                cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
+                    [raw{i,SpreadsheetReader.cellsLocationX} raw{i,SpreadsheetReader.cellsLocationY}], ...
+                    [raw{i,SpreadsheetReader.cellsDimensionX} raw{i,SpreadsheetReader.cellsDimensionY}]);
             end
-            % update the next available cell id in the synthesis template
-            synthTemp.nextCellId = max(synthTemp.nextCellId, max([city.cells.id])+1);
         end
     end
 end
