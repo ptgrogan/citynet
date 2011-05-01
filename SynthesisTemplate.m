@@ -15,6 +15,7 @@ classdef SynthesisTemplate < Singleton
         nextNodeTypeAttributeId; % next available identifier for node type attributes
         nextCellId;         % next available identifier for cells
         nextLayerId;        % next available identifier for layers
+        nextSystemId;       % next available identifier for systems
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
@@ -32,6 +33,7 @@ classdef SynthesisTemplate < Singleton
             obj.nextNodeTypeAttributeId = 1;
             obj.nextCellId = 1;
             obj.nextLayerId = 1;
+            obj.nextSystemId = 1;
         end
     end
     methods(Static)
@@ -70,10 +72,17 @@ classdef SynthesisTemplate < Singleton
         end
         
         %% GetNextLayerId Function
-        % Gets and increments the next cell identifier.
+        % Gets and increments the next layer identifier.
         function out = GetNextLayerId(obj)
             out = obj.nextLayerId;
             obj.nextLayerId = obj.nextLayerId + 1;
+        end
+                
+        %% GetNextSystemId Function
+        % Gets and increments the next system identifier.
+        function out = GetNextSystemId(obj)
+            out = obj.nextSystemId;
+            obj.nextSystemId = obj.nextSystemId + 1;
         end
     end
 end

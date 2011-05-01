@@ -32,6 +32,10 @@ classdef SpreadsheetReader
         layersId = 1;               % column of the layers id input
         layersName = 2;             % column of the layers name input
         layersDescription = 3;      % column of the layers description input
+        systemsWorksheet = 'systems'; % name of the systems worksheet
+        systemsId = 1;               % column of the systems id input
+        systemsName = 2;             % column of the systems name input
+        systemsDescription = 3;      % column of the systems description input
     end
     methods(Access=private)
         %% SpreadsheetReader Constructor
@@ -65,6 +69,8 @@ classdef SpreadsheetReader
                 max([synthTemp.city.cells.id])+1);
             synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
                 max([synthTemp.city.layers.id])+1);
+            synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
+                max([synthTemp.city.systems.id])+1);
         end
     end
     methods(Static,Access=private)
@@ -79,6 +85,7 @@ classdef SpreadsheetReader
             city = City(raw{SpreadsheetReader.cityName,2});
             city.cells = SpreadsheetReader.ReadCells(filepath);
             city.layers = SpreadsheetReader.ReadLayers(filepath);
+            city.systems = SpreadsheetReader.ReadSystems(filepath);
         end
         
         %% ReadNodeTypes Function
@@ -153,6 +160,21 @@ classdef SpreadsheetReader
                 layers(end+1) = Layer(raw{i,SpreadsheetReader.layersId},...
                     raw{i,SpreadsheetReader.layersName}, ...
                     raw{i,SpreadsheetReader.layersDescription});
+            end
+        end
+                
+        %% ReadSystems Function
+        % ReadSystems opens a spreadsheet file and reads in the systems.
+        %
+        % systems = ReadSystems(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function systems = ReadSystems(filepath)
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet);
+            systems = System.empty();
+            for i=2:size(raw,1)
+                systems(end+1) = System(raw{i,SpreadsheetReader.systemsId},...
+                    raw{i,SpreadsheetReader.systemsName}, ...
+                    raw{i,SpreadsheetReader.systemsDescription});
             end
         end
     end
