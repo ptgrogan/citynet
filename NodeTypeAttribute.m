@@ -54,7 +54,7 @@ classdef NodeTypeAttribute
                 obj.value = varargin{5};
             else
                 obj.id = SynthesisTemplate.instance().GetNextNodeTypeAttributeId();
-                obj.name = 'New Node Type Attribute';
+                obj.name = ['Node Type Attribute ' num2str(obj.id)];
                 obj.description = '';
                 obj.units = '-';
                 obj.bounds = '[0,0]';

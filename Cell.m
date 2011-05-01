@@ -25,6 +25,8 @@ classdef Cell < handle
         % obj = Cell(location, dimensions)
         %   location:   (x,y) location of the upper left-hand corner
         %   dimensions: (width,height) of the cell
+        %
+        % obj = Cell()
         
         function obj = Cell(varargin)
             if nargin==3
@@ -32,6 +34,7 @@ classdef Cell < handle
                 obj.location = varargin{2};
                 obj.dimensions = varargin{3};
             elseif nargin==2
+                obj.id = SynthesisTemplate.instance().GetNextCellId();
                 obj.location = varargin{1};
                 obj.dimensions = varargin{2};
             else

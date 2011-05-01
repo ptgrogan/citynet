@@ -10,6 +10,7 @@ classdef City < handle
     properties
         name;       % name of city, string
         cells;      % mutable object array of Cell objects
+        layers;     % mutable object array of Layer objects
     end
     methods
         %% City Constructor
@@ -25,6 +26,7 @@ classdef City < handle
                 obj.name = 'New City';
             end
             obj.cells = Cell.empty();
+            obj.layers = Layer.empty();
         end
     end
 end

@@ -46,7 +46,7 @@ classdef NodeType < handle
                 obj.rgbColor = varargin{3};
             else
                 obj.id = SynthesisTemplate.instance().GetNextNodeTypeId();
-                obj.name = 'New Node Type';
+                obj.name = ['Node Type ' num2str(obj.id)];
                 obj.description = '';
                 obj.rgbColor = [0 0 0];
             end

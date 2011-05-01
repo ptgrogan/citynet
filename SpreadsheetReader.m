@@ -28,6 +28,10 @@ classdef SpreadsheetReader
         cellsLocationY = 3;         % column of the y-location input
         cellsDimensionX = 4;        % column of the x-dimension input
         cellsDimensionY = 5;        % column of the y-dimension input
+        layersWorksheet = 'layers'; % name of the layers worksheet
+        layersId = 1;               % column of the layers id input
+        layersName = 2;             % column of the layers name input
+        layersDescription = 3;      % column of the layers description input
     end
     methods(Access=private)
         %% SpreadsheetReader Constructor
@@ -59,6 +63,8 @@ classdef SpreadsheetReader
             end
             synthTemp.nextCellId = max(synthTemp.nextCellId, ...
                 max([synthTemp.city.cells.id])+1);
+            synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
+                max([synthTemp.city.layers.id])+1);
         end
     end
     methods(Static,Access=private)
@@ -72,6 +78,7 @@ classdef SpreadsheetReader
             [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
             city = City(raw{SpreadsheetReader.cityName,2});
             city.cells = SpreadsheetReader.ReadCells(filepath);
+            city.layers = SpreadsheetReader.ReadLayers(filepath);
         end
         
         %% ReadNodeTypes Function
@@ -120,8 +127,7 @@ classdef SpreadsheetReader
         end
                 
         %% ReadCells Function
-        % ReadCells opens a spreadsheet file and reads in the cell
-        % type attributes for a particular node type.
+        % ReadCells opens a spreadsheet file and reads in the cells.
         %
         % cells = ReadCells(filepath)
         %   filepath:   the path to the spreadsheet template
@@ -132,6 +138,22 @@ classdef SpreadsheetReader
                 cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
                     [raw{i,SpreadsheetReader.cellsLocationX} raw{i,SpreadsheetReader.cellsLocationY}], ...
                     [raw{i,SpreadsheetReader.cellsDimensionX} raw{i,SpreadsheetReader.cellsDimensionY}]);
+            end
+        end
+        
+        %% ReadLayers Function
+        % ReadLayers opens a spreadsheet file and reads in the layer
+        % type attributes for a particular node type.
+        %
+        % cells = ReadLayers(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function layers = ReadLayers(filepath)
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.layersWorksheet);
+            layers = Layer.empty();
+            for i=2:size(raw,1)
+                layers(end+1) = Layer(raw{i,SpreadsheetReader.layersId},...
+                    raw{i,SpreadsheetReader.layersName}, ...
+                    raw{i,SpreadsheetReader.layersDescription});
             end
         end
     end
