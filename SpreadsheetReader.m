@@ -34,15 +34,22 @@ classdef SpreadsheetReader
         % obj = SpreadsheetReader(filepath)
         %   filepath:   the path to the spreadsheet to read
         
-        function out = Read(filepath)
+        function city = Read(filepath)
+            %% read in the city inputs
             [num txt] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
-            out = City(txt{SpreadsheetReader.cityName,2});
+            city = City(txt{SpreadsheetReader.cityName,2});
+            %% read in the cell type inputs
+            %% read in the edge type inputs
+            %% read in the cell inputs
             num = xlsread(filepath,SpreadsheetReader.cellsWorksheet);
             for i=1:length(num)
-                out.cells(end+1) = Cell(num(i,SpreadsheetReader.cellsId),...
+                city.cells(end+1) = Cell(num(i,SpreadsheetReader.cellsId),...
                     [num(i,SpreadsheetReader.cellsLocationX) num(SpreadsheetReader.cellsLocationY)], ...
                     [num(i,SpreadsheetReader.cellsDimensionX) num(i,SpreadsheetReader.cellsDimensionY)]);
             end
+            % update the next available cell id in the synthesis template
+            synthTemp = SynthesisTemplate.instance();
+            synthTemp.nextCellId = max(synthTemp.nextCellId, max([city.cells.id])+1);
         end
     end
 end

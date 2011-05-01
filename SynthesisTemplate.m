@@ -10,9 +10,7 @@
 classdef SynthesisTemplate < Singleton
     properties
         city;               % mutable City object to contain state
-    end
-    properties(Access=private)
-        nextCellId = 1;     % unique ids for cells
+        nextCellId = 1;     % next available identifier for cells
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
