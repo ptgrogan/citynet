@@ -19,6 +19,8 @@ classdef SynthesisTemplate < Singleton
         nextCellId;         % next available identifier for cells
         nextLayerId;        % next available identifier for layers
         nextSystemId;       % next available identifier for systems
+        nextNodeId;         % next available identifier for nodes
+        nextEdgeId;         % next available identifier for edges
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
@@ -40,6 +42,8 @@ classdef SynthesisTemplate < Singleton
             obj.nextCellId = 1;
             obj.nextLayerId = 1;
             obj.nextSystemId = 1;
+            obj.nextNodeId = 1;
+            obj.nextEdgeId = 1;
         end
     end
     methods(Static)
@@ -103,6 +107,20 @@ classdef SynthesisTemplate < Singleton
         function out = GetNextSystemId(obj)
             out = obj.nextSystemId;
             obj.nextSystemId = obj.nextSystemId + 1;
+        end
+                
+        %% GetNextNodeId Function
+        % Gets and increments the next node identifier.
+        function out = GetNextNodeId(obj)
+            out = obj.nextNodeId;
+            obj.nextNodeId = obj.nextNodeId + 1;
+        end
+                
+        %% GetNextEdgeId Function
+        % Gets and increments the next edge identifier.
+        function out = GetNextEdgeId(obj)
+            out = obj.nextEdgeId;
+            obj.nextEdgeId = obj.nextEdgeId + 1;
         end
     end
 end

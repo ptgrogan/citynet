@@ -46,9 +46,22 @@ classdef SpreadsheetReader
         layersName = 2;             % column of the layers name input
         layersDescription = 3;      % column of the layers description input
         systemsWorksheet = 'systems'; % name of the systems worksheet
-        systemsId = 1;               % column of the systems id input
-        systemsName = 2;             % column of the systems name input
-        systemsDescription = 3;      % column of the systems description input
+        systemsId = 1;              % column of the systems id input
+        systemsName = 2;            % column of the systems name input
+        systemsDescription = 3;     % column of the systems description input
+        nodesWorksheet = 'nodes';   % name of the nodes worksheet
+        nodesId = 1;                % column of the nodes id input
+        nodesSystemId = 2;          % column of the nodes system id input
+        nodesTypeId = 3;            % column of the nodes type id input
+        nodesCellId = 4;            % column of the nodes cell id input
+        nodesLayerId = 5;           % column of the nodes layer id input
+        edgesWorksheet = 'edges';   % name of the edges worksheet
+        edgesId = 1;                % column of the edges id input
+        edgesSystemId = 2;          % column of the edges system id input
+        edgesTypeId = 3;            % column of the edges type id input
+        edgesOriginId = 4;          % column of the edges origin id input
+        edgesDestinationId = 5;     % column of the edges destination id input
+        edgesDirected = 6;          % column of the edges directed input
     end
     methods(Access=private)
         %% SpreadsheetReader Constructor
@@ -239,9 +252,53 @@ classdef SpreadsheetReader
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet);
             systems = System.empty();
             for i=2:size(raw,1)
-                systems(end+1) = System(raw{i,SpreadsheetReader.systemsId},...
+                system = System(raw{i,SpreadsheetReader.systemsId},...
                     raw{i,SpreadsheetReader.systemsName}, ...
                     raw{i,SpreadsheetReader.systemsDescription});
+                system.nodes = SpreadsheetReader.ReadNodes(filepath,system);
+                system.edges = SpreadsheetReader.ReadEdges(filepath,system);
+                systems(end+1) = system;
+            end
+        end
+        
+        %% ReadNodes Function
+        % ReadNodes opens a spreadsheet file and reads in the nodes for a 
+        % particular system.
+        %
+        % nodes = ReadNodes(filepath,system)
+        %   filepath:   the path to the spreadsheet template
+        %   system:   the system for which to read nodes
+        function nodes = ReadNodes(filepath,system)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodesWorksheet);
+            nodes = Node.empty();
+            for i=2:size(raw,1)
+                if system.id==raw{i,SpreadsheetReader.nodesSystemId}
+                    nodes(end+1) = Node(raw{i,SpreadsheetReader.nodesId}, ...
+                        raw{i,SpreadsheetReader.nodesCellId}, ...
+                        raw{i,SpreadsheetReader.nodesLayerId}, ...
+                        raw{i,SpreadsheetReader.nodesTypeId});
+                end
+            end
+        end
+        
+        %% ReadEdges Function
+        % ReadEdges opens a spreadsheet file and reads in the edges for a 
+        % particular system.
+        %
+        % edges = ReadEdges(filepath,system)
+        %   filepath:   the path to the spreadsheet template
+        %   system:   the system for which to read edges
+        function edges = ReadEdges(filepath,system)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgesWorksheet);
+            edges = Edge.empty();
+            for i=2:size(raw,1)
+                if system.id==raw{i,SpreadsheetReader.edgesSystemId}
+                    edges(end+1) = Edge(raw{i,SpreadsheetReader.edgesId}, ...
+                        raw{i,SpreadsheetReader.edgesOriginId}, ...
+                        raw{i,SpreadsheetReader.edgesDestinationId}, ...
+                        raw{i,SpreadsheetReader.edgesTypeId}, ...
+                        raw{i,SpreadsheetReader.edgesDirected});
+                end
             end
         end
     end
