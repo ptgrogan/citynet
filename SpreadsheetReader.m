@@ -9,19 +9,19 @@ classdef SpreadsheetReader
     properties(Constant)
         cityWorksheet = 'city';     % name of the city worksheet
         cityName = 1;               % row of the city name input
-        cellTypesWorksheet = 'cell_types'; % name of the cell types worksheet
-        cellTypesId = 1;            % column of the cell type id input
-        cellTypesName = 2;          % column of the cell type name input
-        cellTypesDescription = 3;   % column of the cell type description input
-        cellTypesColor = 4;         % column of the cell type color input
-        cellTypeAttributesWorksheet = 'cell_type_attributes'; % name of the cell type attributes worksheet
-        cellTypeAttributesId = 1;    % column of the cell type attribute id input
-        cellTypeAttributesTypeId = 2; % column of the cell type attribute type id input
-        cellTypeAttributesName = 3;  % column of the cell type attribute name input
-        cellTypeAttributesDescription = 4; % column of the cell type attribute description input
-        cellTypeAttributesUnits = 5; % column of the cell type attribute units input
-        cellTypeAttributesBounds = 6; % column of the cell type attribute bounds input
-        cellTypeAttributesValue = 7; % column of the cell type attribute value input
+        nodeTypesWorksheet = 'node_types'; % name of the node types worksheet
+        nodeTypesId = 1;            % column of the node type id input
+        nodeTypesName = 2;          % column of the node type name input
+        nodeTypesDescription = 3;   % column of the node type description input
+        nodeTypesColor = 4;         % column of the node type color input
+        nodeTypeAttributesWorksheet = 'node_type_attributes'; % name of the node type attributes worksheet
+        nodeTypeAttributesId = 1;    % column of the node type attribute id input
+        nodeTypeAttributesTypeId = 2; % column of the node type attribute type id input
+        nodeTypeAttributesName = 3;  % column of the node type attribute name input
+        nodeTypeAttributesDescription = 4; % column of the node type attribute description input
+        nodeTypeAttributesUnits = 5; % column of the node type attribute units input
+        nodeTypeAttributesBounds = 6; % column of the node type attribute bounds input
+        nodeTypeAttributesValue = 7; % column of the node type attribute value input
         cellsWorksheet = 'cells';   % name of the cells worksheet
         cellsId = 1;                % column of the cell id input
         cellsLocationX = 2;         % column of the x-location input
@@ -49,13 +49,13 @@ classdef SpreadsheetReader
         function ReadTemplate(filepath)
             synthTemp = SynthesisTemplate.instance();
             synthTemp.city = SpreadsheetReader.ReadCity(filepath);
-            synthTemp.cellTypes = SpreadsheetReader.ReadCellTypes(filepath);
+            synthTemp.nodeTypes = SpreadsheetReader.ReadNodeTypes(filepath);
             
-            synthTemp.nextCellTypeId = max(synthTemp.nextCellTypeId, ...
-                max([synthTemp.cellTypes.id])+1);
-            for i=1:length(synthTemp.cellTypes)
-                synthTemp.nextCellTypeAttributeId = max(synthTemp.nextCellTypeAttributeId, ...
-                    max([synthTemp.cellTypes(i).attributes.id])+1);
+            synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
+                max([synthTemp.nodeTypes.id])+1);
+            for i=1:length(synthTemp.nodeTypes)
+                synthTemp.nextNodeTypeAttributeId = max(synthTemp.nextNodeTypeAttributeId, ...
+                    max([synthTemp.nodeTypes(i).attributes.id])+1);
             end
             synthTemp.nextCellId = max(synthTemp.nextCellId, ...
                 max([synthTemp.city.cells.id])+1);
@@ -74,54 +74,54 @@ classdef SpreadsheetReader
             city.cells = SpreadsheetReader.ReadCells(filepath);
         end
         
-        %% ReadCellTypes Function
-        % ReadCellTypes opens a spreadsheet file and reads in the cell
+        %% ReadNodeTypes Function
+        % ReadNodeTypes opens a spreadsheet file and reads in the cell
         % type definitions, including dependent objects, e.g. attributes.
         %
-        % cellTypes = ReadCellTypes(filepath)
+        % nodeTypes = ReadNodeTypes(filepath)
         %   filepath:   the path to the spreadsheet template
-        function cellTypes = ReadCellTypes(filepath)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.cellTypesWorksheet);
-            cellTypes = CellType.empty();
+        function nodeTypes = ReadNodeTypes(filepath)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet);
+            nodeTypes = NodeType.empty();
             for i=2:size(raw,1)
-                cellType = CellType( ...
-                    raw{i,SpreadsheetReader.cellTypesId}, ...
-                    raw{i,SpreadsheetReader.cellTypesName}, ...
-                    raw{i,SpreadsheetReader.cellTypesDescription}, ...
-                    [hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(1:2)) ...
-                    hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(3:4)) ...
-                    hex2dec(raw{i,SpreadsheetReader.cellTypesColor}(5:6))]/255);
-                cellType.attributes = SpreadsheetReader.ReadCellTypeAttributes(filepath,cellType);
-                cellTypes(end+1) = cellType;
+                nodeType = NodeType( ...
+                    raw{i,SpreadsheetReader.nodeTypesId}, ...
+                    raw{i,SpreadsheetReader.nodeTypesName}, ...
+                    raw{i,SpreadsheetReader.nodeTypesDescription}, ...
+                    [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(1:2)) ...
+                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
+                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6))]/255);
+                nodeType.attributes = SpreadsheetReader.ReadNodeTypeAttributes(filepath,nodeType);
+                nodeTypes(end+1) = nodeType;
             end
         end
         
-        %% ReadCellTypes Function
-        % ReadCellTypeAttributes opens a spreadsheet file and reads in the 
-        % cell type attributes for a particular cell type.
+        %% ReadNodeTypeAttributes Function
+        % ReadNodeTypeAttributes opens a spreadsheet file and reads in the 
+        % node type attributes for a particular node type.
         %
-        % cellTypeAttributes = ReadCellTypeAttributes(filepath,cellType)
+        % nodeTypeAttributes = ReadNodeTypeAttributes(filepath,nodeType)
         %   filepath:   the path to the spreadsheet template
-        %   cellType:   the cell type for which to read attributes
-        function cellTypeAttributes = ReadCellTypeAttributes(filepath,cellType)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.cellTypeAttributesWorksheet);
-            cellTypeAttributes = CellTypeAttribute.empty();
+        %   nodeType:   the node type for which to read attributes
+        function nodeTypeAttributes = ReadNodeTypeAttributes(filepath,nodeType)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypeAttributesWorksheet);
+            nodeTypeAttributes = NodeTypeAttribute.empty();
             for i=2:size(raw,1)
-                if cellType.id==raw{i,SpreadsheetReader.cellTypeAttributesTypeId}
-                    cellTypeAttributes(end+1) = CellTypeAttribute( ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesId}, ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesName}, ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesDescription}, ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesUnits}, ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesBounds}, ...
-                        raw{i,SpreadsheetReader.cellTypeAttributesValue});
+                if nodeType.id==raw{i,SpreadsheetReader.nodeTypeAttributesTypeId}
+                    nodeTypeAttributes(end+1) = NodeTypeAttribute( ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesId}, ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesName}, ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesDescription}, ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesUnits}, ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesBounds}, ...
+                        raw{i,SpreadsheetReader.nodeTypeAttributesValue});
                 end
             end
         end
                 
         %% ReadCells Function
         % ReadCells opens a spreadsheet file and reads in the cell
-        % type attributes for a particular cell type.
+        % type attributes for a particular node type.
         %
         % cells = ReadCells(filepath)
         %   filepath:   the path to the spreadsheet template

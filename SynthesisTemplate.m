@@ -2,7 +2,7 @@
 % The SynthesisTemplate is the class of the primary object used to maintain
 % state in the synthesis template application. Its attributes include a
 % System object which maintains state for cells and edges, and sets of both
-% CellType objects and EdgeType objects.
+% NodeType objects and EdgeType objects.
 %
 % 31-March 2011
 % Paul Grogan, ptgrogan@mit.edu
@@ -10,9 +10,9 @@
 classdef SynthesisTemplate < Singleton
     properties
         city;               % mutable City object to contain state
-        cellTypes;          % mutable object array of CellType objects
-        nextCellTypeId;     % next available identifier for cell types
-        nextCellTypeAttributeId; % next available identifier for cell type attributes
+        nodeTypes;          % mutable object array of NodeType objects
+        nextNodeTypeId;     % next available identifier for node types
+        nextNodeTypeAttributeId; % next available identifier for node type attributes
         nextCellId;         % next available identifier for cells
     end
     methods(Access=private)
@@ -26,9 +26,9 @@ classdef SynthesisTemplate < Singleton
         
         function obj = SynthesisTemplate()
             obj.city = City();
-            obj.cellTypes = CellType.empty();
-            obj.nextCellTypeId = 1;
-            obj.nextCellTypeAttributeId = 1;
+            obj.nodeTypes = NodeType.empty();
+            obj.nextNodeTypeId = 1;
+            obj.nextNodeTypeAttributeId = 1;
             obj.nextCellId = 1;
         end
     end
@@ -46,20 +46,20 @@ classdef SynthesisTemplate < Singleton
         end
     end
     methods
-        %% GetNextCellTypeId Function
-        % Gets and increments the next cell type identifier.
+        %% GetNextNodeTypeId Function
+        % Gets and increments the next node type identifier.
         
-        function out = GetNextCellTypeId(obj)
-            out = obj.nextCellTypeId;
-            obj.nextCellTypeId = obj.nextCellTypeId + 1;
+        function out = GetNextNodeTypeId(obj)
+            out = obj.nextNodeTypeId;
+            obj.nextNodeTypeId = obj.nextNodeTypeId + 1;
         end
         
-        %% GetNextCellTypeAttributeId Function
-        % Gets and increments the next cell type identifier.
+        %% GetNextNodeTypeAttributeId Function
+        % Gets and increments the next node type identifier.
         
-        function out = GetNextCellTypeAttributeId(obj)
-            out = obj.nextCellTypeAttributeId;
-            obj.nextCellTypeAttributeId = obj.nextCellTypeAttributeId + 1;
+        function out = GetNextNodeTypeAttributeId(obj)
+            out = obj.nextNodeTypeAttributeId;
+            obj.nextNodeTypeAttributeId = obj.nextNodeTypeAttributeId + 1;
         end
         
         %% GetNextCellId Function
