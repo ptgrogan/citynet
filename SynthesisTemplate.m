@@ -42,7 +42,7 @@ classdef SynthesisTemplate < Singleton
     end
     methods
         %% GetNextCellId Function
-        % Gets and increments the next cell ID.
+        % Gets and increments the next cell identifier.
         
         function out = GetNextCellId(obj)
             out = obj.nextCellId;
