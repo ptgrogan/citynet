@@ -22,6 +22,19 @@ classdef SpreadsheetReader
         nodeTypeAttributesUnits = 5; % column of the node type attribute units input
         nodeTypeAttributesBounds = 6; % column of the node type attribute bounds input
         nodeTypeAttributesValue = 7; % column of the node type attribute value input
+        edgeTypesWorksheet = 'edge_types'; % name of the edge types worksheet
+        edgeTypesId = 1;            % column of the edge type id input
+        edgeTypesName = 2;          % column of the edge type name input
+        edgeTypesDescription = 3;   % column of the edge type description input
+        edgeTypesColor = 4;         % column of the edge type color input
+        edgeTypeAttributesWorksheet = 'edge_type_attributes'; % name of the edge type attributes worksheet
+        edgeTypeAttributesId = 1;    % column of the edge type attribute id input
+        edgeTypeAttributesTypeId = 2; % column of the edge type attribute type id input
+        edgeTypeAttributesName = 3;  % column of the edge type attribute name input
+        edgeTypeAttributesDescription = 4; % column of the edge type attribute description input
+        edgeTypeAttributesUnits = 5; % column of the edge type attribute units input
+        edgeTypeAttributesBounds = 6; % column of the edge type attribute bounds input
+        edgeTypeAttributesValue = 7; % column of the edge type attribute value input
         cellsWorksheet = 'cells';   % name of the cells worksheet
         cellsId = 1;                % column of the cell id input
         cellsLocationX = 2;         % column of the x-location input
@@ -56,14 +69,21 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         function ReadTemplate(filepath)
             synthTemp = SynthesisTemplate.instance();
-            synthTemp.city = SpreadsheetReader.ReadCity(filepath);
             synthTemp.nodeTypes = SpreadsheetReader.ReadNodeTypes(filepath);
+            synthTemp.edgeTypes = SpreadsheetReader.ReadEdgeTypes(filepath);
+            synthTemp.city = SpreadsheetReader.ReadCity(filepath);
             
             synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
                 max([synthTemp.nodeTypes.id])+1);
             for i=1:length(synthTemp.nodeTypes)
                 synthTemp.nextNodeTypeAttributeId = max(synthTemp.nextNodeTypeAttributeId, ...
                     max([synthTemp.nodeTypes(i).attributes.id])+1);
+            end
+            synthTemp.nextEdgeTypeId = max(synthTemp.nextEdgeTypeId, ...
+                max([synthTemp.edgeTypes.id])+1);
+            for i=1:length(synthTemp.edgeTypes)
+                synthTemp.nextEdgeTypeAttributeId = max(synthTemp.nextEdgeTypeAttributeId, ...
+                    max([synthTemp.edgeTypes(i).attributes.id])+1);
             end
             synthTemp.nextCellId = max(synthTemp.nextCellId, ...
                 max([synthTemp.city.cells.id])+1);
@@ -89,7 +109,7 @@ classdef SpreadsheetReader
         end
         
         %% ReadNodeTypes Function
-        % ReadNodeTypes opens a spreadsheet file and reads in the cell
+        % ReadNodeTypes opens a spreadsheet file and reads in the node
         % type definitions, including dependent objects, e.g. attributes.
         %
         % nodeTypes = ReadNodeTypes(filepath)
@@ -98,13 +118,14 @@ classdef SpreadsheetReader
             [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet);
             nodeTypes = NodeType.empty();
             for i=2:size(raw,1)
+                % color is formated as 0x######
                 nodeType = NodeType( ...
                     raw{i,SpreadsheetReader.nodeTypesId}, ...
                     raw{i,SpreadsheetReader.nodeTypesName}, ...
                     raw{i,SpreadsheetReader.nodeTypesDescription}, ...
-                    [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(1:2)) ...
-                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
-                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6))]/255);
+                    [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
+                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6)) ...
+                    hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(7:8))]/255);
                 nodeType.attributes = SpreadsheetReader.ReadNodeTypeAttributes(filepath,nodeType);
                 nodeTypes(end+1) = nodeType;
             end
@@ -129,6 +150,52 @@ classdef SpreadsheetReader
                         raw{i,SpreadsheetReader.nodeTypeAttributesUnits}, ...
                         raw{i,SpreadsheetReader.nodeTypeAttributesBounds}, ...
                         raw{i,SpreadsheetReader.nodeTypeAttributesValue});
+                end
+            end
+        end
+        
+        %% ReadEdgeTypes Function
+        % ReadEdgeTypes opens a spreadsheet file and reads in the edge
+        % type definitions, including dependent objects, e.g. attributes.
+        %
+        % edgeTypes = ReadEdgeTypes(filepath)
+        %   filepath:   the path to the spreadsheet template
+        function edgeTypes = ReadEdgeTypes(filepath)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypesWorksheet);
+            edgeTypes = EdgeType.empty();
+            for i=2:size(raw,1)
+                % color is formated as 0x######
+                edgeType = EdgeType( ...
+                    raw{i,SpreadsheetReader.edgeTypesId}, ...
+                    raw{i,SpreadsheetReader.edgeTypesName}, ...
+                    raw{i,SpreadsheetReader.edgeTypesDescription}, ...
+                    [hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(3:4)) ...
+                    hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(5:6)) ...
+                    hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(7:8))]/255);
+                edgeType.attributes = SpreadsheetReader.ReadEdgeTypeAttributes(filepath,edgeType);
+                edgeTypes(end+1) = edgeType;
+            end
+        end
+        
+        %% ReadEdgeTypeAttributes Function
+        % ReadEdgeTypeAttributes opens a spreadsheet file and reads in the 
+        % edge type attributes for a particular edge type.
+        %
+        % edgeTypeAttributes = ReadEdgeTypeAttributes(filepath,edgeType)
+        %   filepath:   the path to the spreadsheet template
+        %   edgeType:   the edge type for which to read attributes
+        function edgeTypeAttributes = ReadEdgeTypeAttributes(filepath,edgeType)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypeAttributesWorksheet);
+            edgeTypeAttributes = EdgeTypeAttribute.empty();
+            for i=2:size(raw,1)
+                if edgeType.id==raw{i,SpreadsheetReader.edgeTypeAttributesTypeId}
+                    edgeTypeAttributes(end+1) = EdgeTypeAttribute( ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesId}, ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesName}, ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesDescription}, ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesUnits}, ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesBounds}, ...
+                        raw{i,SpreadsheetReader.edgeTypeAttributesValue});
                 end
             end
         end

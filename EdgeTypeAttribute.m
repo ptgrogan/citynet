@@ -1,43 +1,43 @@
-%% NodeTypeAttribute Class Definition
-% An instance of the NodeTypeAttribute class is used to describe an aspect 
-% of a particular NodeType. Each NodeTypeAttribute is given a name and 
+%% EdgeTypeAttribute Class Definition
+% An instance of the EdgeTypeAttribute class is used to describe an aspect 
+% of a particular EdgeType. Each EdgeTypeAttribute is given a name and 
 % numeric value.
 %
 % 31-March 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
-classdef NodeTypeAttribute
+classdef EdgeTypeAttribute
     properties
-        id;             % unique identifier of node type attribute, integer
-        name;           % name of node type attribute, string
-        description;    % description of node type attribute, string
+        id;             % unique identifier of edge type attribute, integer
+        name;           % name of edge type attribute, string
+        description;    % description of edge type attribute, string
         units;          % units of attribute value, string
         bounds;         % allowable bounds on attribute value, string
         value;          % numerical value of cell attribute, double
     end
     methods
-        %% NodeTypeAttribute Constructor
-        % Create a new instance of a NodeTypeAttribute object and assign 
+        %% EdgeTypeAttribute Constructor
+        % Create a new instance of a EdgeTypeAttribute object and assign 
         % its name and value attributes
         %        
-        % obj = NodeTypeAttribute(id, name, description, units, bounds, value)
-        %   id:             identifier of the node type attribute (integer)
-        %   name:           name of the node type attribute (string)
-        %   description:    description of the node type attribute (string)
+        % obj = EdgeTypeAttribute(id, name, description, units, bounds, value)
+        %   id:             identifier of the edge type attribute (integer)
+        %   name:           name of the edge type attribute (string)
+        %   description:    description of the edge type attribute (string)
         %   units:          units of attribute value (string)
         %   bounds:         allowable bounds on attribute value (string)
         %   value:          attribute value (-)
         %
-        % obj = NodeTypeAttribute(name, description, units, bounds, value)
-        %   name:           name of the node type attribute (string)
-        %   description:    description of the node type attribute (string)
+        % obj = EdgeTypeAttribute(name, description, units, bounds, value)
+        %   name:           name of the edge type attribute (string)
+        %   description:    description of the edge type attribute (string)
         %   units:          units of attribute value (string)
         %   bounds:         allowable bounds on attribute value (string)
         %   value:          attribute value (-)
         % 
-        % obj = NodeTypeAttribute()
+        % obj = EdgeTypeAttribute()
         
-        function obj=NodeTypeAttribute(varargin)
+        function obj=EdgeTypeAttribute(varargin)
             if nargin==6
                 obj.id = varargin{1};
                 obj.name = varargin{2};
@@ -46,15 +46,15 @@ classdef NodeTypeAttribute
                 obj.bounds = varargin{5};
                 obj.value = varargin{6};
             elseif nargin==5
-                obj.id = SynthesisTemplate.instance().GetNextNodeTypeAttributeId();
+                obj.id = SynthesisTemplate.instance().GetNextEdgeTypeAttributeId();
                 obj.name = varargin{1};
                 obj.description = varargin{2};
                 obj.units = varargin{3};
                 obj.bounds = varargin{4};
                 obj.value = varargin{5};
             else
-                obj.id = SynthesisTemplate.instance().GetNextNodeTypeAttributeId();
-                obj.name = ['Node Type Attribute ' num2str(obj.id)];
+                obj.id = SynthesisTemplate.instance().GetNextEdgeTypeAttributeId();
+                obj.name = ['Edge Type Attribute ' num2str(obj.id)];
                 obj.description = '';
                 obj.units = '-';
                 obj.bounds = '[0,0]';

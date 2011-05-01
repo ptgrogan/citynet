@@ -13,6 +13,9 @@ classdef SynthesisTemplate < Singleton
         nodeTypes;          % mutable object array of NodeType objects
         nextNodeTypeId;     % next available identifier for node types
         nextNodeTypeAttributeId; % next available identifier for node type attributes
+        edgeTypes;          % mutable object array of EdgeType objects
+        nextEdgeTypeId;     % next available identifier for edge types
+        nextEdgeTypeAttributeId; % next available identifier for edge type attributes
         nextCellId;         % next available identifier for cells
         nextLayerId;        % next available identifier for layers
         nextSystemId;       % next available identifier for systems
@@ -31,6 +34,9 @@ classdef SynthesisTemplate < Singleton
             obj.nodeTypes = NodeType.empty();
             obj.nextNodeTypeId = 1;
             obj.nextNodeTypeAttributeId = 1;
+            obj.edgeTypes = EdgeType.empty();
+            obj.nextEdgeTypeId = 1;
+            obj.nextEdgeTypeAttributeId = 1;
             obj.nextCellId = 1;
             obj.nextLayerId = 1;
             obj.nextSystemId = 1;
@@ -62,6 +68,20 @@ classdef SynthesisTemplate < Singleton
         function out = GetNextNodeTypeAttributeId(obj)
             out = obj.nextNodeTypeAttributeId;
             obj.nextNodeTypeAttributeId = obj.nextNodeTypeAttributeId + 1;
+        end
+        
+        %% GetNextEdgeTypeId Function
+        % Gets and increments the next edge type identifier.
+        function out = GetNextEdgeTypeId(obj)
+            out = obj.nextEdgeTypeId;
+            obj.nextEdgeTypeId = obj.nextEdgeTypeId + 1;
+        end
+        
+        %% GetNextEdgeTypeAttributeId Function
+        % Gets and increments the next edge type identifier.
+        function out = GetNextEdgeTypeAttributeId(obj)
+            out = obj.nextEdgeTypeAttributeId;
+            obj.nextEdgeTypeAttributeId = obj.nextEdgeTypeAttributeId + 1;
         end
         
         %% GetNextCellId Function
