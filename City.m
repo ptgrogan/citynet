@@ -8,8 +8,8 @@
 %%
 classdef City < handle
     properties
-        name;                   % name of city, string
-        cells = Cell.empty();   % mutable object array of Cell objects
+        name;       % name of city, string
+        cells;      % mutable object array of Cell objects
     end
     methods
         %% City Constructor
@@ -24,6 +24,7 @@ classdef City < handle
             else
                 obj.name = 'New City';
             end
+            obj.cells = Cell.empty();
         end
     end
 end

@@ -10,7 +10,10 @@
 classdef SynthesisTemplate < Singleton
     properties
         city;               % mutable City object to contain state
-        nextCellId = 1;     % next available identifier for cells
+        cellTypes;          % mutable object array of CellType objects
+        nextCellTypeId;     % next available identifier for cell types
+        nextCellTypeAttributeId; % next available identifier for cell type attributes
+        nextCellId;         % next available identifier for cells
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
@@ -23,6 +26,10 @@ classdef SynthesisTemplate < Singleton
         
         function obj = SynthesisTemplate()
             obj.city = City();
+            obj.cellTypes = CellType.empty();
+            obj.nextCellTypeId = 1;
+            obj.nextCellTypeAttributeId = 1;
+            obj.nextCellId = 1;
         end
     end
     methods(Static)
@@ -39,6 +46,22 @@ classdef SynthesisTemplate < Singleton
         end
     end
     methods
+        %% GetNextCellTypeId Function
+        % Gets and increments the next cell type identifier.
+        
+        function out = GetNextCellTypeId(obj)
+            out = obj.nextCellTypeId;
+            obj.nextCellTypeId = obj.nextCellTypeId + 1;
+        end
+        
+        %% GetNextCellTypeAttributeId Function
+        % Gets and increments the next cell type identifier.
+        
+        function out = GetNextCellTypeAttributeId(obj)
+            out = obj.nextCellTypeAttributeId;
+            obj.nextCellTypeAttributeId = obj.nextCellTypeAttributeId + 1;
+        end
+        
         %% GetNextCellId Function
         % Gets and increments the next cell identifier.
         
