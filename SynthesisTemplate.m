@@ -11,6 +11,9 @@ classdef SynthesisTemplate < Singleton
     properties
         city;               % mutable City object to contain state
     end
+    properties(Access=private)
+        nextCellId = 1;     % unique ids for cells
+    end
     methods(Access=private)
         %% SynthesisTemplate Constructor
         % Creates a new instance of a SynthesisTemplate object with a new 
@@ -35,6 +38,15 @@ classdef SynthesisTemplate < Singleton
             else
                 obj = uniqueInstance;
             end
+        end
+    end
+    methods
+        %% GetNextCellId Function
+        % Gets and increments the next cell ID.
+        
+        function out = GetNextCellId(obj)
+            out = obj.nextCellId;
+            obj.nextCellId = obj.nextCellId + 1;
         end
     end
 end

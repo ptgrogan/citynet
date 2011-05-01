@@ -9,10 +9,11 @@
 classdef City < handle
     properties
         name;               % name of city, string
+        cells;              % mutable object array of Cell objects
     end
     methods
         %% City Constructor
-        % Instantiates a new City object.
+        % Instantiates a new City object with specified name.
         %
         % obj = City(name)
         %   name:       name of the city
