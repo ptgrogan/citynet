@@ -7,14 +7,14 @@
 %%
 classdef SpreadsheetReader
     properties(Constant)
-        cityWorksheet = 'city';
-        cityName = 1;
-        cellsWorksheet = 'cells';
-        cellsId = 1;
-        cellsLocationX = 2;
-        cellsLocationY = 3;
-        cellsDimensionX = 4;
-        cellsDimensionY = 5;
+        cityWorksheet = 'city';     % name of the city worksheet
+        cityName = 1;               % row of the city name input
+        cellsWorksheet = 'cells';   % name of the cells worksheet
+        cellsId = 1;                % column of the cell id input
+        cellsLocationX = 2;         % column of the x-location input
+        cellsLocationY = 3;         % column of the y-location input
+        cellsDimensionX = 4;        % column of the x-dimension input
+        cellsDimensionY = 5;        % column of the y-dimension input
     end
     methods(Access=private)
         %% SpreadsheetReader Constructor
@@ -28,6 +28,12 @@ classdef SpreadsheetReader
         end
     end
     methods(Static)
+        %% Read Function
+        % Reads an input spreadsheet into the Matlab data structures.
+        %
+        % obj = SpreadsheetReader(filepath)
+        %   filepath:   the path to the spreadsheet to read
+        
         function out = Read(filepath)
             [num txt] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
             out = City(txt{SpreadsheetReader.cityName,2});
