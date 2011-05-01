@@ -1,0 +1,1 @@
+city = SpreadsheetReader.Read('masdar.xls');
