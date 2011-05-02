@@ -107,8 +107,10 @@ classdef SpreadsheetReader
                 max([synthTemp.city.cells.id])+1);
             synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
                 max([synthTemp.city.layers.id])+1);
-            synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
-                max([synthTemp.city.systems.id])+1);
+%             TODO: hard-code systems into city to resolve polymorphism
+%             synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
+%                 max([synthTemp.city.systems.id])+1);
+            synthTemp.nextSystemId = length(synthTemp.city.systems)+1;
             close(SpreadsheetReader.h);
         end
     end
@@ -140,16 +142,15 @@ classdef SpreadsheetReader
             [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet);
             for i=2:size(raw,1)
                 % color is formated as 0x######
-                nodeType = NodeType( ...
+                synthTemp.nodeTypes(end+1) = NodeType( ...
                     raw{i,SpreadsheetReader.nodeTypesId}, ...
                     raw{i,SpreadsheetReader.nodeTypesName}, ...
                     raw{i,SpreadsheetReader.nodeTypesDescription}, ...
                     [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(7:8))]/255);
-                waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(nodeType.name) ' Node Type']);
-                SpreadsheetReader.ReadNodeTypeAttributes(filepath,nodeType);
-                synthTemp.nodeTypes(end+1) = nodeType;
+                waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(synthTemp.nodeTypes(end).name) ' Node Type']);
+                SpreadsheetReader.ReadNodeTypeAttributes(filepath,synthTemp.nodeTypes(end));
             end
         end
         
@@ -187,16 +188,15 @@ classdef SpreadsheetReader
             [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypesWorksheet);
             for i=2:size(raw,1)
                 % color is formated as 0x######
-                edgeType = EdgeType( ...
+                synthTemp.edgeTypes(end+1) = EdgeType( ...
                     raw{i,SpreadsheetReader.edgeTypesId}, ...
                     raw{i,SpreadsheetReader.edgeTypesName}, ...
                     raw{i,SpreadsheetReader.edgeTypesDescription}, ...
                     [hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(7:8))]/255);
-                waitbar(.1+.15*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(edgeType.name) ' Edge Type']);
-                SpreadsheetReader.ReadEdgeTypeAttributes(filepath,edgeType);
-                synthTemp.edgeTypes(end+1) = edgeType;
+                waitbar(.1+.15*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(synthTemp.edgeTypes(end).name) ' Edge Type']);
+                SpreadsheetReader.ReadEdgeTypeAttributes(filepath,synthTemp.edgeTypes(end));
             end
         end
         
@@ -264,13 +264,18 @@ classdef SpreadsheetReader
         function ReadSystems(filepath,city)
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet);
             for i=2:size(raw,1)
-                system = System(raw{i,SpreadsheetReader.systemsId},...
-                    raw{i,SpreadsheetReader.systemsName}, ...
-                    raw{i,SpreadsheetReader.systemsDescription});
-                waitbar(0.7+0.2*i/size(raw,1),SpreadsheetReader.h,['Reading ' system.name ' System']);
-                SpreadsheetReader.ReadNodes(filepath,system);
-                SpreadsheetReader.ReadEdges(filepath,system);
-                city.systems(end+1) = system;
+                if strcmp(raw{i,SpreadsheetReader.systemsName},'Transportation')
+                    city.systems{end+1} = TransportationSystem(raw{i,SpreadsheetReader.systemsId},...
+                        raw{i,SpreadsheetReader.systemsName}, ...
+                        raw{i,SpreadsheetReader.systemsDescription});
+                else
+                    city.systems{end+1} = System(raw{i,SpreadsheetReader.systemsId},...
+                        raw{i,SpreadsheetReader.systemsName}, ...
+                        raw{i,SpreadsheetReader.systemsDescription});
+                end
+                waitbar(0.7+0.2*i/size(raw,1),SpreadsheetReader.h,['Reading ' city.systems{end}.name ' System']);
+                SpreadsheetReader.ReadNodes(filepath,city.systems{end});
+                SpreadsheetReader.ReadEdges(filepath,city.systems{end});
             end
         end
         

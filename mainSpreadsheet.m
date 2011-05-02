@@ -18,3 +18,9 @@ SpreadsheetReader.ReadTemplate('masdar.xls');
 synthTemp.RenderCity;
 synthTemp.RenderLayer(2);
 synthTemp.RenderSystem(1);
+
+%% shortest path calculation
+path = synthTemp.city.systems{1}.GetShortestPath(1,80);
+synthTemp.RenderSystemPath(1,path);
+distance = synthTemp.city.systems{1}.GetPathDistance(path);
+duration = synthTemp.city.systems{1}.GetPathDuration(path);

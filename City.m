@@ -11,7 +11,9 @@ classdef City < handle
         name;       % name of city, string
         cells;      % mutable object array of Cell objects
         layers;     % mutable object array of Layer objects
-        systems;    % mutable object array of System objects
+        systems;    % mutable cell array of System objects
+        % note: systems must be a cell array to enable polymorphism, i.e.
+        % subclasses of System to be stored within the same data structure
     end
     methods
         %% City Constructor
@@ -30,7 +32,7 @@ classdef City < handle
             end
             obj.cells = Cell.empty();
             obj.layers = Layer.empty();
-            obj.systems = System.empty();
+            obj.systems = {};
         end
     end
 end

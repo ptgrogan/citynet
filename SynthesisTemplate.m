@@ -74,8 +74,8 @@ classdef SynthesisTemplate < Singleton
             % display the nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
             for s=1:length(obj.city.systems)
-                for n=1:length(obj.city.systems(s).nodes)
-                    node = obj.city.systems(s).nodes(n);
+                for n=1:length(obj.city.systems{s}.nodes)
+                    node = obj.city.systems{s}.nodes(n);
                     if node.layer.id==layerId
                         filled(node.cell.id)=1;
                         x = node.cell.location(1);
@@ -102,8 +102,8 @@ classdef SynthesisTemplate < Singleton
             % display the edges
             edgeTypeColorMap = obj.GetEdgeTypeColorMap;
             for s=1:length(obj.city.systems)
-                for e=1:length(obj.city.systems(s).edges)
-                    edge = obj.city.systems(s).edges(e);
+                for e=1:length(obj.city.systems{s}.edges)
+                    edge = obj.city.systems{s}.edges(e);
                     if edge.origin.layer.id==layerId && edge.destination.layer.id==layerId
                         x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
                         x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
@@ -127,7 +127,9 @@ classdef SynthesisTemplate < Singleton
         %% RenderSystem Function
         % Renders a single system using a 3-D plot in a new figure.
         function RenderSystem(obj,systemId)
-            system = obj.city.systems([obj.city.systems.id]==systemId);
+%             TODO: hard-code systems into city to resolve polymorphism
+%             system = obj.city.systems([obj.city.systems.id]==systemId);
+            system = obj.city.systems{systemId};
             figure
             zlabel('Layer')
             xlabel('x (km)')
@@ -208,7 +210,7 @@ classdef SynthesisTemplate < Singleton
             % display nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
             for s=1:length(obj.city.systems)
-                system = obj.city.systems(s);
+                system = obj.city.systems{s};
                 for n=1:length(system.nodes)
                     node = system.nodes(n);
                     filled(node.cell.id,node.layer.id)=1;
@@ -244,7 +246,7 @@ classdef SynthesisTemplate < Singleton
             % display edges
             edgeTypeColorMap = obj.GetEdgeTypeColorMap;
             for s=1:length(obj.city.systems)
-                system = obj.city.systems(s);
+                system = obj.city.systems{s};
                 for e=1:length(system.edges)
                     edge = system.edges(e);
                     x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
@@ -271,7 +273,9 @@ classdef SynthesisTemplate < Singleton
         % Renders a path (list of edge IDs) within a system in the 
         % existing figure using a thick black line.
         function RenderSystemPath(obj,systemId,path)
-            system = obj.city.systems([obj.city.systems.id]==systemId);
+%             TODO: hard-code systems into city to resolve polymorphism
+%             system = obj.city.systems([obj.city.systems.id]==systemId);
+            system = obj.city.systems{systemId};
             hold on
             for i=1:length(path)
                 edge = system.edges([system.edges.id]==path(i));
