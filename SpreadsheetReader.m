@@ -63,6 +63,7 @@ classdef SpreadsheetReader
         edgesOriginId = 4;          % column of the edges origin id input
         edgesDestinationId = 5;     % column of the edges destination id input
         edgesDirected = 6;          % column of the edges directed input
+        h = waitbar(0);             % handle of waitbar
     end
     methods(Access=private)
         %% SpreadsheetReader Constructor
@@ -82,11 +83,14 @@ classdef SpreadsheetReader
         % ReadTemplate(filepath)
         %   filepath:   the path to the spreadsheet template
         function ReadTemplate(filepath)
+            waitbar(0,SpreadsheetReader.h,'Initializing Synthesis Template');
             synthTemp = SynthesisTemplate.instance();
+                                    
             SpreadsheetReader.ReadNodeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadEdgeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadCity(filepath,synthTemp);
             
+            waitbar(1,SpreadsheetReader.h,'Updating Synthesis Template');
             synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
                 max([synthTemp.nodeTypes.id])+1);
             for i=1:length(synthTemp.nodeTypes)
@@ -105,6 +109,7 @@ classdef SpreadsheetReader
                 max([synthTemp.city.layers.id])+1);
             synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
                 max([synthTemp.city.systems.id])+1);
+            close(SpreadsheetReader.h);
         end
     end
     methods(Static,Access=private)
@@ -142,6 +147,7 @@ classdef SpreadsheetReader
                     [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(7:8))]/255);
+                waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(nodeType.name) ' Node Type']);
                 SpreadsheetReader.ReadNodeTypeAttributes(filepath,nodeType);
                 synthTemp.nodeTypes(end+1) = nodeType;
             end
@@ -188,6 +194,7 @@ classdef SpreadsheetReader
                     [hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(7:8))]/255);
+                waitbar(.1+.15*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(edgeType.name) ' Edge Type']);
                 SpreadsheetReader.ReadEdgeTypeAttributes(filepath,edgeType);
                 synthTemp.edgeTypes(end+1) = edgeType;
             end
@@ -227,6 +234,7 @@ classdef SpreadsheetReader
                 city.cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
                     [raw{i,SpreadsheetReader.cellsLocationX} raw{i,SpreadsheetReader.cellsLocationY}], ...
                     [raw{i,SpreadsheetReader.cellsDimensionX} raw{i,SpreadsheetReader.cellsDimensionY}]);
+                waitbar(.25+.15*i/size(raw,1),SpreadsheetReader.h,['Reading Cell ' num2str(city.cells(end).id)]);
             end
         end
         
@@ -243,6 +251,7 @@ classdef SpreadsheetReader
                     raw{i,SpreadsheetReader.layersName}, ...
                     raw{i,SpreadsheetReader.layersDescription}, ...
                     raw{i,SpreadsheetReader.layersDisplayHeight});
+                waitbar(.3+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(city.layers(end).name) ' Layer']);
             end
         end
                 
@@ -258,6 +267,7 @@ classdef SpreadsheetReader
                 system = System(raw{i,SpreadsheetReader.systemsId},...
                     raw{i,SpreadsheetReader.systemsName}, ...
                     raw{i,SpreadsheetReader.systemsDescription});
+                waitbar(0.7+0.2*i/size(raw,1),SpreadsheetReader.h,['Reading ' system.name ' System']);
                 SpreadsheetReader.ReadNodes(filepath,system);
                 SpreadsheetReader.ReadEdges(filepath,system);
                 city.systems(end+1) = system;
