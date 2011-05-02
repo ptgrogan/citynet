@@ -4,7 +4,7 @@
 % System object which maintains state for cells and edges, and sets of both
 % NodeType objects and EdgeType objects.
 %
-% 31-March 2011
+% 1-May 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
 classdef SynthesisTemplate < Singleton
@@ -60,6 +60,75 @@ classdef SynthesisTemplate < Singleton
         end
     end
     methods
+        %% RenderLayer Function
+        % Displays a specific layer of the city using a 2-D plot in a new
+        % figure.
+        function RenderLayer(obj,layerId)
+            figure
+            axis ij square
+            title([obj.city.name ', ' obj.city.layers([obj.city.layers.id]==layerId).name ' Layer'])
+            xlabel('x (km)')
+            ylabel('y (km)')
+            hold on
+            filled = zeros(length(obj.city.cells),1);
+            % display the cells
+            nodeTypeColorMap = obj.GetNodeTypeColorMap;
+            for s=1:length(obj.city.systems)
+                for n=1:length(obj.city.systems(s).nodes)
+                    node = obj.city.systems(s).nodes(n);
+                    if node.layerId==layerId
+                        filled(node.cellId)=1;
+                        cell = obj.city.cells([obj.city.cells.id]==node.cellId);
+                        x = cell.location(1);
+                        w = cell.dimensions(1);
+                        y = cell.location(2);
+                        h = cell.dimensions(2);
+                        patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
+                            nodeTypeColorMap(node.typeId,:));
+                    end
+                end
+            end
+            % fill in blank squares
+            for i=1:length(filled)
+                if filled(i)==0
+                    cell = obj.city.cells([obj.city.cells.id]==i);
+                    x = cell.location(1);
+                    w = cell.dimensions(1);
+                    y = cell.location(2);
+                    h = cell.dimensions(2);
+                    patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
+                        [1 1 1],'FaceAlpha',.5);
+                end
+            end
+            % display the edges
+            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
+            for s=1:length(obj.city.systems)
+                for e=1:length(obj.city.systems(s).edges)
+                    edge = obj.city.systems(s).edges(e);
+                    originNode = obj.city.systems(s).nodes([obj.city.systems(s).nodes.id]==edge.originNodeId);
+                    destinationNode = obj.city.systems(s).nodes([obj.city.systems(s).nodes.id]==edge.destinationNodeId);                    
+                    if originNode.layerId==layerId && destinationNode.layerId==layerId
+                        originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
+                        destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
+                        x1 = originCell.location(1)+originCell.dimensions(1)/2;
+                        x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
+                        y1 = originCell.location(2)+originCell.dimensions(2)/2;
+                        y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
+                        line([x1;x2], [y1;y2],'Color',edgeTypeColorMap(edge.typeId,:));
+                        line(x1,y1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                        line(x2,y2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                        if ~edge.directed
+                            % if the edge is undirected, draw origin and
+                            % destination symbols on both ends
+                            line(x1,y1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                            line(x2,y2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                        end
+                    end
+                end
+            end
+            hold off
+        end
+        
         %% GetNextNodeTypeId Function
         % Gets and increments the next node type identifier.
         function out = GetNextNodeTypeId(obj)
@@ -121,6 +190,21 @@ classdef SynthesisTemplate < Singleton
         function out = GetNextEdgeId(obj)
             out = obj.nextEdgeId;
             obj.nextEdgeId = obj.nextEdgeId + 1;
+        end
+    end
+    methods(Access=private)
+        %% GetNodeTypeColorMap Function
+        % Returns a color map containing the specified display colors of 
+        % each node type.
+        function nodeTypeColorMap = GetNodeTypeColorMap(obj)
+            nodeTypeColorMap = reshape([obj.nodeTypes.rgbColor],[length(obj.nodeTypes) 3]);
+        end
+        
+        %% GetEdgeTypeColorMap Function
+        % Returns a color map containing the specified display colors of 
+        % each edge type.
+        function edgeTypeColorMap = GetEdgeTypeColorMap(obj)
+            edgeTypeColorMap = reshape([obj.edgeTypes.rgbColor],[length(obj.edgeTypes) 3]);
         end
     end
 end
