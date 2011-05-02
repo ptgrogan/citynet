@@ -45,6 +45,7 @@ classdef SpreadsheetReader
         layersId = 1;               % column of the layers id input
         layersName = 2;             % column of the layers name input
         layersDescription = 3;      % column of the layers description input
+        layersDisplayHeight = 4;    % column of the layers display height input
         systemsWorksheet = 'systems'; % name of the systems worksheet
         systemsId = 1;              % column of the systems id input
         systemsName = 2;            % column of the systems name input
@@ -240,7 +241,8 @@ classdef SpreadsheetReader
             for i=2:size(raw,1)
                 city.layers(end+1) = Layer(raw{i,SpreadsheetReader.layersId},...
                     raw{i,SpreadsheetReader.layersName}, ...
-                    raw{i,SpreadsheetReader.layersDescription});
+                    raw{i,SpreadsheetReader.layersDescription}, ...
+                    raw{i,SpreadsheetReader.layersDisplayHeight});
             end
         end
                 
