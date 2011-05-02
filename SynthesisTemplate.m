@@ -267,6 +267,25 @@ classdef SynthesisTemplate < Singleton
             hold off
         end
         
+        %% RenderSystemPath Function
+        % Renders a path (list of edge IDs) within a system in the 
+        % existing figure using a thick black line.
+        function RenderSystemPath(obj,systemId,path)
+            system = obj.city.systems([obj.city.systems.id]==systemId);
+            hold on
+            for i=1:length(path)
+                edge = system.edges([system.edges.id]==path(i));
+                x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                z1 = edge.origin.layer.displayHeight;
+                z2 = edge.destination.layer.displayHeight;
+                line([x1;x2], [y1;y2], [z1;z2], 'Color',[0 0 0],'LineWidth',2);
+            end
+            hold off
+        end
+        
         %% GetNextNodeTypeId Function
         % Gets and increments the next node type identifier.
         function out = GetNextNodeTypeId(obj)
