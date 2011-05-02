@@ -42,7 +42,6 @@ classdef TransportationSystem < System
         %% GetPathDuration Function
         % Gets the duration (minutes) of a path (set of edges). Uses 
         % Euclidean distances for edge lengths.
-        
         function out = GetPathDuration(obj,path)
             out = 0;
             for i=1:length(path)

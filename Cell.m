@@ -9,8 +9,8 @@
 classdef Cell < handle
     properties
         id;                 % unique indentifier, integer
-        location;           % (x,y) location of upper left-hand corner, double
-        dimensions;         % (width,height) of cell, double
+        location;           % (x,y) location of upper left-hand corner, km
+        dimensions;         % (width,height) of cell, km
     end
     methods
         %% Cell Constructor
@@ -19,12 +19,12 @@ classdef Cell < handle
         %
         % obj = Cell(id, location, dimensions)
         %   id:         unique identifier
-        %   location:   (x,y) location of the upper left-hand corner
-        %   dimensions: (width,height) of the cell
+        %   location:   (x,y) location of the upper left-hand corner (km)
+        %   dimensions: (width,height) of the cell (km)
         %
         % obj = Cell(location, dimensions)
-        %   location:   (x,y) location of the upper left-hand corner
-        %   dimensions: (width,height) of the cell
+        %   location:   (x,y) location of the upper left-hand corner (km)
+        %   dimensions: (width,height) of the cell (km)
         %
         % obj = Cell()
         
