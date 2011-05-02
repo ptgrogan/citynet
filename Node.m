@@ -9,44 +9,44 @@
 classdef Node < handle
     properties
         id;             % unique identifier of node
-        cellId;         % unique identifier of cell
-        layerId;        % unique identifier of layer
-        typeId;         % unique identifier of node type
+        cell;           % cell handle
+        layer;          % layer handle
+        type;           % node type handle
     end
     methods
         %% Node Constructor
         % Instantiates a new Node object with specified cell, layer, and 
         % node type.
         %
-        % obj = Node(id, cellId, layerId, typeId)
+        % obj = Node(id, cell, layer, type)
         %   id:             unique identifier of node
-        %   cellId:         unique identifier of cell
-        %   layerId:        unique identifier of layer
-        %   typeId:         unique idenfitier of node type
+        %   cell:           cell handle
+        %   layer:          layer handle
+        %   type:           node type handle
         %
-        % obj = Node(cellId, layerId, typeId)
-        %   cellId:         unique identifier of cell
-        %   layerId:        unique identifier of layer
-        %   typeId:         unique idenfitier of node type
+        % obj = Node(cell, layer, type)
+        %   cell:           cell handle
+        %   layer:          layer handle
+        %   type:           node type handle
         %
         % obj = Node()
         
         function obj=Node(varargin)
             if nargin==4
                 obj.id = varargin{1};
-                obj.cellId = varargin{2};
-                obj.layerId = varargin{3};
-                obj.typeId = varargin{4};
+                obj.cell = varargin{2};
+                obj.layer = varargin{3};
+                obj.type = varargin{4};
             elseif nargin==3
                 obj.id = SynthesisTemplate.instance().GetNextNodeId();
-                obj.cellId = varargin{1};
-                obj.layerId = varargin{2};
-                obj.typeId = varargin{3};
+                obj.cell = varargin{1};
+                obj.layer = varargin{2};
+                obj.type = varargin{3};
             else
                 obj.id = SynthesisTemplate.instance().GetNextNodeId();
-                obj.cellId = 0;
-                obj.layerId = 0;
-                obj.typeId = 0;
+                obj.cell = 0;
+                obj.layer = 0;
+                obj.type = 0;
             end
         end
     end

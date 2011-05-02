@@ -9,9 +9,9 @@
 classdef Edge < handle
     properties
         id;                 % unique identifier of edge
-        originNodeId;       % unique identifier of origin node
-        destinationNodeId;  % unique identifier of destination node
-        typeId;             % unique identifier of edge type
+        origin;             % origin node handle
+        destination;        % destination node handle
+        type;               % edge type handle
         directed;           % flag for whether edge is directed or not
     end
     methods
@@ -19,38 +19,38 @@ classdef Edge < handle
         % Instantiates a new Edge object with specified origin,
         % destination, type, and directed-ness.
         %
-        % obj = Edge(id, originNodeId, destinationNodeId, typeId, directed)
+        % obj = Edge(id, origin, destination, type, directed)
         %   id:                 unique identifier of edge
-        %   originNodeId:       unique identifier of origin node
-        %   destinationNodeId:  unique identifier of destination node
-        %   typeId:             unique idenfitier of edge type
+        %   origin:             origin node handle
+        %   destination:        destination node handle
+        %   type:             	edge type handle
         %   directed:           flag (0 or 1) if edge is directed
         %
-        % obj = Edge(originNodeId, destinationNodeId, edgeTypeId, directed)
-        %   originNodeId:       unique identifier of origin node
-        %   destinationNodeId:  unique identifier of destination node
-        %   typeId:             unique idenfitier of edge type
+        % obj = Edge(origin, destination, edgeType, directed)
+        %   origin:             origin node handle
+        %   destination:        destination node handle
+        %   type:             	edge type handle
         %   directed:           flag (0 or 1) if edge is directed
         %
         % obj = Edge()
         function obj=Edge(varargin)
             if nargin==5
                 obj.id = varargin{1};
-                obj.originNodeId = varargin{2};
-                obj.destinationNodeId = varargin{3};
-                obj.typeId = varargin{4};
+                obj.origin = varargin{2};
+                obj.destination = varargin{3};
+                obj.type = varargin{4};
                 obj.directed = varargin{5};
             elseif nargin==4
                 obj.id = SynthesisTemplate.instance().GetNextEdgeId();
-                obj.originNodeId = varargin{1};
-                obj.destinationNodeId = varargin{2};
-                obj.typeId = varargin{3};
+                obj.origin = varargin{1};
+                obj.destination = varargin{2};
+                obj.type = varargin{3};
                 obj.directed = varargin{4};
             else
                 obj.id = SynthesisTemplate.instance().GetNextEdgeId();
-                obj.originNodeId = 0;
-                obj.destinationNodeId = 0;
-                obj.typeId = 0;
+                obj.origin = 0;
+                obj.destination = 0;
+                obj.type = 0;
                 obj.directed = 0;
             end
         end

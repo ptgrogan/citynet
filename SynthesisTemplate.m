@@ -76,15 +76,14 @@ classdef SynthesisTemplate < Singleton
             for s=1:length(obj.city.systems)
                 for n=1:length(obj.city.systems(s).nodes)
                     node = obj.city.systems(s).nodes(n);
-                    if node.layerId==layerId
-                        filled(node.cellId)=1;
-                        cell = obj.city.cells([obj.city.cells.id]==node.cellId);
-                        x = cell.location(1);
-                        w = cell.dimensions(1);
-                        y = cell.location(2);
-                        h = cell.dimensions(2);
+                    if node.layer.id==layerId
+                        filled(node.cell.id)=1;
+                        x = node.cell.location(1);
+                        w = node.cell.dimensions(1);
+                        y = node.cell.location(2);
+                        h = node.cell.dimensions(2);
                         patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
-                            nodeTypeColorMap(node.typeId,:));
+                            nodeTypeColorMap(node.type.id,:));
                     end
                 end
             end
@@ -105,23 +104,19 @@ classdef SynthesisTemplate < Singleton
             for s=1:length(obj.city.systems)
                 for e=1:length(obj.city.systems(s).edges)
                     edge = obj.city.systems(s).edges(e);
-                    originNode = obj.city.systems(s).nodes([obj.city.systems(s).nodes.id]==edge.originNodeId);
-                    destinationNode = obj.city.systems(s).nodes([obj.city.systems(s).nodes.id]==edge.destinationNodeId);                    
-                    if originNode.layerId==layerId && destinationNode.layerId==layerId
-                        originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
-                        destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
-                        x1 = originCell.location(1)+originCell.dimensions(1)/2;
-                        x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
-                        y1 = originCell.location(2)+originCell.dimensions(2)/2;
-                        y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
-                        line([x1;x2], [y1;y2],'Color',edgeTypeColorMap(edge.typeId,:));
-                        line(x1,y1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
-                        line(x2,y2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                    if edge.origin.layer.id==layerId && edge.destination.layer.id==layerId
+                        x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                        x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                        y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                        y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                        line([x1;x2], [y1;y2],'Color',edgeTypeColorMap(edge.type.id,:));
+                        line(x1,y1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
+                        line(x2,y2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
                         if ~edge.directed
                             % if the edge is undirected, draw origin and
                             % destination symbols on both ends
-                            line(x1,y1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
-                            line(x2,y2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                            line(x1,y1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
+                            line(x2,y2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
                         end
                     end
                 end
@@ -137,7 +132,7 @@ classdef SynthesisTemplate < Singleton
             zlabel('Layer')
             xlabel('x (km)')
             ylabel('y (km)')
-            title([obj.city.name ', ' obj.city.systems([obj.city.systems.id]==systemId).name ' System'])
+            title([obj.city.name ', ' system.name ' System'])
             axis ij equal
             hold on
             view(3)
@@ -146,15 +141,14 @@ classdef SynthesisTemplate < Singleton
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
             for n=1:length(system.nodes)
                 node = system.nodes(n);
-                filled(node.cellId,node.layerId)=1;
-                cell = obj.city.cells([obj.city.cells.id]==node.cellId);
-                x = cell.location(1);
-                w = cell.dimensions(1);
-                y = cell.location(2);
-                h = cell.dimensions(2);
-                z = obj.city.layers([obj.city.layers.id]==node.layerId).displayHeight;
+                filled(node.cell.id,node.layer.id)=1;
+                x = node.cell.location(1);
+                w = node.cell.dimensions(1);
+                y = node.cell.location(2);
+                h = node.cell.dimensions(2);
+                z = node.layer.displayHeight;
                 patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                    nodeTypeColorMap(node.typeId,:),'FaceAlpha',.75);
+                    nodeTypeColorMap(node.type.id,:),'FaceAlpha',.75);
             end
             % fill in blank squares
             for i=1:size(filled,1)
@@ -180,25 +174,20 @@ classdef SynthesisTemplate < Singleton
             edgeTypeColorMap = obj.GetEdgeTypeColorMap;
             for e=1:length(system.edges)
                 edge = system.edges(e);
-                originNode = system.nodes([system.nodes.id]==edge.originNodeId);
-                destinationNode = system.nodes([system.nodes.id]==edge.destinationNodeId);
-                originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
-                destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
-                x1 = originCell.location(1)+originCell.dimensions(1)/2;
-                x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
-                y1 = originCell.location(2)+originCell.dimensions(2)/2;
-                y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
-                z1 = obj.city.layers([obj.city.layers.id]==originNode.layerId).displayHeight;
-                z2 = obj.city.layers([obj.city.layers.id]==destinationNode.layerId).displayHeight;
-                line([x1;x2], [y1;y2], [z1;z2], ...
-                    'Color',edgeTypeColorMap(edge.typeId,:));
-                line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
-                line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                z1 = edge.origin.layer.displayHeight;
+                z2 = edge.destination.layer.displayHeight;
+                line([x1;x2],[y1;y2],[z1;z2],'Color',edgeTypeColorMap(edge.type.id,:));
+                line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
+                line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
                 if ~edge.directed
                     % if the edge is undirected, draw origin and
                     % destination symbols on both ends
-                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
-                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
+                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
                 end
             end
             hold off
@@ -222,15 +211,14 @@ classdef SynthesisTemplate < Singleton
                 system = obj.city.systems(s);
                 for n=1:length(system.nodes)
                     node = system.nodes(n);
-                    filled(node.cellId,node.layerId)=1;
-                    cell = obj.city.cells([obj.city.cells.id]==node.cellId);
-                    x = cell.location(1);
-                    w = cell.dimensions(1);
-                    y = cell.location(2);
-                    h = cell.dimensions(2);
-                    z = obj.city.layers([obj.city.layers.id]==node.layerId).displayHeight;
+                    filled(node.cell.id,node.layer.id)=1;
+                    x = node.cell.location(1);
+                    w = node.cell.dimensions(1);
+                    y = node.cell.location(2);
+                    h = node.cell.dimensions(2);
+                    z = node.layer.displayHeight;
                     patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                        nodeTypeColorMap(node.typeId,:),'FaceAlpha',.75);
+                        nodeTypeColorMap(node.type.id,:),'FaceAlpha',.75);
                 end
             end
             % fill in blank squares
@@ -259,25 +247,20 @@ classdef SynthesisTemplate < Singleton
                 system = obj.city.systems(s);
                 for e=1:length(system.edges)
                     edge = system.edges(e);
-                    originNode = system.nodes([system.nodes.id]==edge.originNodeId);
-                    destinationNode = system.nodes([system.nodes.id]==edge.destinationNodeId);
-                    originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
-                    destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
-                    x1 = originCell.location(1)+originCell.dimensions(1)/2;
-                    x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
-                    y1 = originCell.location(2)+originCell.dimensions(2)/2;
-                    y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
-                    z1 = obj.city.layers([obj.city.layers.id]==originNode.layerId).displayHeight;
-                    z2 = obj.city.layers([obj.city.layers.id]==destinationNode.layerId).displayHeight;
-                    line([x1;x2], [y1;y2], [z1;z2], ...
-                        'Color',edgeTypeColorMap(edge.typeId,:));
-                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
-                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                    x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                    x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                    y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                    y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                    z1 = edge.origin.layer.displayHeight;
+                    z2 = edge.destination.layer.displayHeight;
+                    line([x1;x2],[y1;y2],[z1;z2],'Color',edgeTypeColorMap(edge.type.id,:));
+                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
+                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
                     if ~edge.directed
                         % if the edge is undirected, draw origin and
                         % destination symbols on both ends
-                        line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
-                        line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                        line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
+                        line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
                     end
                 end
             end
