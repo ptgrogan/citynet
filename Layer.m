@@ -9,7 +9,8 @@ classdef Layer < handle
     properties
         id;                 % unique indentifier, integer
         name;               % layer name, string
-        description;        % layer description, string;
+        description;        % layer description, string
+        displayHeight;      % layer display height, double
     end
     methods
         %% Layer Constructor
@@ -41,6 +42,7 @@ classdef Layer < handle
                 obj.name = ['Layer ' num2str(obj.id)];
                 obj.description = '';
             end
+            obj.displayHeight = obj.id;
         end
     end
 end

@@ -71,7 +71,7 @@ classdef SynthesisTemplate < Singleton
             ylabel('y (km)')
             hold on
             filled = zeros(length(obj.city.cells),1);
-            % display the cells
+            % display the nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
             for s=1:length(obj.city.systems)
                 for n=1:length(obj.city.systems(s).nodes)
@@ -123,6 +123,161 @@ classdef SynthesisTemplate < Singleton
                             line(x1,y1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
                             line(x2,y2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
                         end
+                    end
+                end
+            end
+            hold off
+        end
+        
+        %% RenderSystem Function
+        % Renders a single system using a 3-D plot in a new figure.
+        function RenderSystem(obj,systemId)
+            system = obj.city.systems([obj.city.systems.id]==systemId);
+            figure
+            zlabel('Layer')
+            xlabel('x (km)')
+            ylabel('y (km)')
+            title([obj.city.name ', ' obj.city.systems([obj.city.systems.id]==systemId).name ' System'])
+            axis ij equal
+            hold on
+            view(3)
+            filled = zeros(length(obj.city.cells),length(obj.city.layers));
+            % display nodes
+            nodeTypeColorMap = obj.GetNodeTypeColorMap;
+            for n=1:length(system.nodes)
+                node = system.nodes(n);
+                filled(node.cellId,node.layerId)=1;
+                cell = obj.city.cells([obj.city.cells.id]==node.cellId);
+                x = cell.location(1);
+                w = cell.dimensions(1);
+                y = cell.location(2);
+                h = cell.dimensions(2);
+                z = obj.city.layers([obj.city.layers.id]==node.layerId).displayHeight;
+                patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
+                    nodeTypeColorMap(node.typeId,:),'FaceAlpha',.75);
+            end
+            % fill in blank squares
+            for i=1:size(filled,1)
+                for j=1:size(filled,2)
+                    if sum(filled(:,j))>0 && filled(i,j)==0
+                        cell = obj.city.cells([obj.city.cells.id]==i);
+                        x = cell.location(1);
+                        w = cell.dimensions(1);
+                        y = cell.location(2);
+                        h = cell.dimensions(2);
+                        z = obj.city.layers(j).displayHeight;
+                        patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
+                            [1 1 1],'FaceAlpha',.5);
+                    end
+                end
+            end
+            filteredLayerHeights = [obj.city.layers(sum(filled,1)>0).displayHeight];
+            filteredLayers = {obj.city.layers(sum(filled,1)>0).name};
+            [vals order] = sort(filteredLayerHeights);
+            set(gca,'ZTick',filteredLayerHeights(order))
+            set(gca,'ZTickLabel',filteredLayers(order))
+            % display edges
+            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
+            for e=1:length(system.edges)
+                edge = system.edges(e);
+                originNode = system.nodes([system.nodes.id]==edge.originNodeId);
+                destinationNode = system.nodes([system.nodes.id]==edge.destinationNodeId);
+                originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
+                destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
+                x1 = originCell.location(1)+originCell.dimensions(1)/2;
+                x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
+                y1 = originCell.location(2)+originCell.dimensions(2)/2;
+                y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
+                z1 = obj.city.layers([obj.city.layers.id]==originNode.layerId).displayHeight;
+                z2 = obj.city.layers([obj.city.layers.id]==destinationNode.layerId).displayHeight;
+                line([x1;x2], [y1;y2], [z1;z2], ...
+                    'Color',edgeTypeColorMap(edge.typeId,:));
+                line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                if ~edge.directed
+                    % if the edge is undirected, draw origin and
+                    % destination symbols on both ends
+                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                end
+            end
+            hold off
+        end
+        
+        %% RenderCity Function
+        % Renders the complete city using a 3-D plot in a new figure.
+        function RenderCity(obj)
+            figure
+            zlabel('Layer')
+            xlabel('x (km)')
+            ylabel('y (km)')
+            title(obj.city.name)
+            axis ij equal
+            hold on
+            view(3)
+            filled = zeros(length(obj.city.cells),length(obj.city.layers));
+            % display nodes
+            nodeTypeColorMap = obj.GetNodeTypeColorMap;
+            for s=1:length(obj.city.systems)
+                system = obj.city.systems(s);
+                for n=1:length(system.nodes)
+                    node = system.nodes(n);
+                    filled(node.cellId,node.layerId)=1;
+                    cell = obj.city.cells([obj.city.cells.id]==node.cellId);
+                    x = cell.location(1);
+                    w = cell.dimensions(1);
+                    y = cell.location(2);
+                    h = cell.dimensions(2);
+                    z = obj.city.layers([obj.city.layers.id]==node.layerId).displayHeight;
+                    patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
+                        nodeTypeColorMap(node.typeId,:),'FaceAlpha',.75);
+                end
+            end
+            % fill in blank squares
+            for i=1:size(filled,1)
+                for j=1:size(filled,2)
+                    if sum(filled(:,j))>0 && filled(i,j)==0
+                        cell = obj.city.cells([obj.city.cells.id]==i);
+                        x = cell.location(1);
+                        w = cell.dimensions(1);
+                        y = cell.location(2);
+                        h = cell.dimensions(2);
+                        z = obj.city.layers(j).displayHeight;
+                        patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
+                            [1 1 1],'FaceAlpha',.5);
+                    end
+                end
+            end
+            filteredLayerHeights = [obj.city.layers(sum(filled,1)>0).displayHeight];
+            filteredLayers = {obj.city.layers(sum(filled,1)>0).name};
+            [vals order] = sort(filteredLayerHeights);
+            set(gca,'ZTick',filteredLayerHeights(order))
+            set(gca,'ZTickLabel',filteredLayers(order))
+            % display edges
+            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
+            for s=1:length(obj.city.systems)
+                system = obj.city.systems(s);
+                for e=1:length(system.edges)
+                    edge = system.edges(e);
+                    originNode = system.nodes([system.nodes.id]==edge.originNodeId);
+                    destinationNode = system.nodes([system.nodes.id]==edge.destinationNodeId);
+                    originCell = obj.city.cells([obj.city.cells.id]==originNode.cellId);
+                    destinationCell = obj.city.cells([obj.city.cells.id]==destinationNode.cellId);
+                    x1 = originCell.location(1)+originCell.dimensions(1)/2;
+                    x2 = destinationCell.location(1)+destinationCell.dimensions(1)/2;
+                    y1 = originCell.location(2)+originCell.dimensions(2)/2;
+                    y2 = destinationCell.location(2)+destinationCell.dimensions(2)/2;
+                    z1 = obj.city.layers([obj.city.layers.id]==originNode.layerId).displayHeight;
+                    z2 = obj.city.layers([obj.city.layers.id]==destinationNode.layerId).displayHeight;
+                    line([x1;x2], [y1;y2], [z1;z2], ...
+                        'Color',edgeTypeColorMap(edge.typeId,:));
+                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
+                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                    if ~edge.directed
+                        % if the edge is undirected, draw origin and
+                        % destination symbols on both ends
+                        line(x1,y1,z1,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','.');
+                        line(x2,y2,z2,'Color',edgeTypeColorMap(edge.typeId,:),'Marker','o');
                     end
                 end
             end
