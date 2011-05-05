@@ -48,9 +48,9 @@ classdef Edge < handle
                 obj.directed = varargin{4};
             else
                 obj.id = SynthesisTemplate.instance().GetNextEdgeId();
-                obj.origin = 0;
-                obj.destination = 0;
-                obj.type = 0;
+                obj.origin = [];
+                obj.destination = [];
+                obj.type = [];
                 obj.directed = 0;
             end
         end

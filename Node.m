@@ -44,9 +44,9 @@ classdef Node < handle
                 obj.type = varargin{3};
             else
                 obj.id = SynthesisTemplate.instance().GetNextNodeId();
-                obj.cell = 0;
-                obj.layer = 0;
-                obj.type = 0;
+                obj.cell = [];
+                obj.layer = [];
+                obj.type = [];
             end
         end
     end
