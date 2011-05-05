@@ -43,5 +43,17 @@ classdef Cell < handle
                 obj.dimensions = [0,0];
             end
         end
+        
+        %% GetVertices Function
+        % Gets the x- and y-vertices of the cell in counter-clockwise
+        % order.
+        %
+        % [Vx Vy] = GetVertices()
+        %   Vx:     the x-coordinates of vertices
+        %   Vy:     the y-coordinates of vertices
+        function [Vx Vy] = GetVertices(obj)
+            Vx = [obj.location(1) obj.location(1) obj.location(1)+obj.dimensions(1) obj.location(1)+obj.dimensions(1)];
+            Vy = [obj.location(2) obj.location(2)+obj.dimensions(2) obj.location(2)+obj.dimensions(2) obj.location(2)];
+        end
     end
 end
