@@ -111,6 +111,12 @@ classdef SpreadsheetReader
 %             synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
 %                 max([synthTemp.city.systems.id])+1);
             synthTemp.nextSystemId = length(synthTemp.city.systems)+1;
+            for i=1:length(synthTemp.city.systems)
+                synthTemp.nextNodeId = max(synthTemp.nextNodeId, ...
+                    max([synthTemp.city.systems{i}.nodes.id])+1);
+                synthTemp.nextEdgeId = max(synthTemp.nextEdgeId, ...
+                    max([synthTemp.city.systems{i}.edges.id])+1);
+            end
             close(SpreadsheetReader.h);
         end
     end
