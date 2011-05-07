@@ -10,6 +10,8 @@
 classdef SynthesisTemplate < Singleton
     properties
         city;               % mutable City object to contain state
+        minIntersectionArea;% lower bound of intersection area required
+                            % to specify a node
         nodeTypes;          % mutable object array of NodeType objects
         nextNodeTypeId;     % next available identifier for node types
         nextNodeTypeAttributeId; % next available identifier for node type attributes
@@ -21,6 +23,8 @@ classdef SynthesisTemplate < Singleton
         nextSystemId;       % next available identifier for systems
         nextNodeId;         % next available identifier for nodes
         nextEdgeId;         % next available identifier for edges
+        nextNodeRegionId;   % next available identifier for node regions
+        nextEdgeRegionId;   % next available identifier for edge regions
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
@@ -33,6 +37,7 @@ classdef SynthesisTemplate < Singleton
         
         function obj = SynthesisTemplate()
             obj.city = City();
+            obj.minIntersectionArea = 0.1;
             obj.nodeTypes = NodeType.empty();
             obj.nextNodeTypeId = 1;
             obj.nextNodeTypeAttributeId = 1;
@@ -44,6 +49,8 @@ classdef SynthesisTemplate < Singleton
             obj.nextSystemId = 1;
             obj.nextNodeId = 1;
             obj.nextEdgeId = 1;
+            obj.nextNodeRegionId = 1;
+            obj.nextEdgeRegionId = 1;
         end
     end
     methods(Static)

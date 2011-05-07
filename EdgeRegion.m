@@ -1,4 +1,4 @@
-classdef EdgeRegion < handle
+classdef EdgeRegion < AbstractRegion
     properties(Constant)
         POLYLINE_PERIMETER = 1;     % connects adjacent nodes in perimeter (polyline)
         ORTHOGONAL_NEIGHBORS = 2;   % connects orthogonal neighbors in region
@@ -10,8 +10,6 @@ classdef EdgeRegion < handle
         systemId;           % system id for edge assignment
         edgeTypeId;         % edge type id
         layerIds;           % list of layer ids
-        verticesX;          % list of vertices, x-coordinates
-        verticesY;          % list of vertices, y-coordinates
         type;               % type of connectivity desired in region
         directed;           % flag (0 or 1) if edge is directed
     end
@@ -49,18 +47,18 @@ classdef EdgeRegion < handle
         function GenerateEdges(obj)
             synthTemp = SynthesisTemplate.instance();
             system = synthTemp.city.systems{obj.systemId};
-            % first, find corresponding cell id for each vertex
-            nodeIds = zeros(length(obj.layerIds),1);
-            for i=1:length(obj.layerIds)
-                for n=1:length(system.nodes)
-                    [cVx cVy] = system.nodes(n).cell.GetVertices();
-                    if system.nodes(n).layer.id==obj.layerIds(i) && ...
-                            inpolygon(obj.verticesX(i),obj.verticesY(i),cVx,cVy)
-                        nodeIds(i) = system.nodes(n).id;
+            if obj.type==EdgeRegion.POLYLINE_PERIMETER
+                % find corresponding node id for each vertex
+                nodeIds = zeros(length(obj.layerIds),1);
+                for i=1:length(obj.layerIds)
+                    for n=1:length(system.nodes)
+                        [cVx cVy] = system.nodes(n).cell.GetVertices();
+                        if system.nodes(n).layer.id==obj.layerIds(i) && ...
+                                inpolygon(obj.verticesX(i),obj.verticesY(i),cVx,cVy)
+                            nodeIds(i) = system.nodes(n).id;
+                        end
                     end
                 end
-            end
-            if obj.type==EdgeRegion.POLYLINE_PERIMETER
                 for i=1:length(nodeIds)-1
                     origin = system.nodes([system.nodes.id]==nodeIds(i));
                     destination = system.nodes([system.nodes.id]==nodeIds(i+1));
@@ -83,10 +81,28 @@ classdef EdgeRegion < handle
                     'Option ALL_NEIGHBORS not yet implemented.');
                 throw(ME);
             elseif obj.type==EdgeRegion.FULLY_CONNECTED
-                % TODO
-                ME = MException('Not Implemented', ...
-                    'Option FULLY_CONNECTED not yet implemented.');
-                throw(ME);
+                nodeIds = [];
+                % find corresponding cell id for each vertex in region
+                for n=1:length(system.nodes)
+                    node = system.nodes(n);
+                    if node.layer.id==obj.layerIds(1) && ...
+                            obj.ContainsCell(node.cell)
+                        nodeIds(end+1) = node.id;
+                    end
+                end
+                for i=1:length(nodeIds)
+                    for j=i+1:length(nodeIds)
+                        origin = system.nodes([system.nodes.id]==nodeIds(i));
+                        destination = system.nodes([system.nodes.id]==nodeIds(j));
+                        if ~isempty(origin) && ~isempty(destination)
+                            system.edges(end+1) = Edge(...
+                                system.nodes([system.nodes.id]==nodeIds(i)), ...
+                                system.nodes([system.nodes.id]==nodeIds(j)), ...
+                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
+                                obj.directed);
+                        end
+                    end
+                end
             end
         end
     end
