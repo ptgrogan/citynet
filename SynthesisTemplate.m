@@ -358,14 +358,14 @@ classdef SynthesisTemplate < Singleton
         % Returns a color map containing the specified display colors of 
         % each node type.
         function nodeTypeColorMap = GetNodeTypeColorMap(obj)
-            nodeTypeColorMap = reshape([obj.nodeTypes.rgbColor],[length(obj.nodeTypes) 3]);
+            nodeTypeColorMap = reshape([obj.nodeTypes.rgbColor],[3 length(obj.nodeTypes)])';
         end
         
         %% GetEdgeTypeColorMap Function
         % Returns a color map containing the specified display colors of 
         % each edge type.
         function edgeTypeColorMap = GetEdgeTypeColorMap(obj)
-            edgeTypeColorMap = reshape([obj.edgeTypes.rgbColor],[length(obj.edgeTypes) 3]);
+            edgeTypeColorMap = reshape([obj.edgeTypes.rgbColor],[3 length(obj.edgeTypes)])';
         end
     end
 end
