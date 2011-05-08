@@ -23,9 +23,7 @@ classdef SynthesisTemplate < Singleton
         nextSystemId;       % next available identifier for systems
         nextNodeId;         % next available identifier for nodes
         nextEdgeId;         % next available identifier for edges
-        nodeRegions;        % mutable object array of NodeRegion objects
         nextNodeRegionId;   % next available identifier for node regions
-        edgeRegions;        % mutable object array of EdgeRegion objects
         nextEdgeRegionId;   % next available identifier for edge regions
     end
     methods(Access=private)
@@ -51,9 +49,7 @@ classdef SynthesisTemplate < Singleton
             obj.nextSystemId = 1;
             obj.nextNodeId = 1;
             obj.nextEdgeId = 1;
-            obj.nodeRegions = NodeRegion.empty();
             obj.nextNodeRegionId = 1;
-            obj.edgeRegions = EdgeRegion.empty();
             obj.nextEdgeRegionId = 1;
         end
     end

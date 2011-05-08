@@ -14,19 +14,11 @@ clc
 synthTemp = SynthesisTemplate.instance();
 SpreadsheetReader.ReadTemplate('masdar.xls');
 
-% synthTemp.nodeTypes(end+1) = NodeType('Test','A test node type',[0 1 0]);
-% synthTemp.edgeTypes(end+1) = EdgeType('Test','A test edge type',[0 .5 0]);
-% synthTemp.city.layers(end+1) = Layer('Test','A test layer',4);
-% test = NodeRegion(1,1,6,4,[0.25 0.30 1.35 1.27],[0.50 1.15 1.00 0.80]);
-% test.GenerateNodes();
-% test = EdgeRegion(1,1,4,[4 4 4 4],[0.25 0.30 1.35 1.27],[0.50 1.15 1.00 0.80],EdgeRegion.FULLY_CONNECTED,0);
-% test.GenerateEdges();
-
-for i=1:length(synthTemp.nodeRegions)
-    synthTemp.nodeRegions(i).GenerateNodes();
+for i=1:length(synthTemp.city.nodeRegions)
+    synthTemp.city.nodeRegions(i).GenerateNodes();
 end
-for i=1:length(synthTemp.edgeRegions)
-    synthTemp.edgeRegions(i).GenerateEdges();
+for i=1:length(synthTemp.city.edgeRegions)
+    synthTemp.city.edgeRegions(i).GenerateEdges();
 end
 
 %% render system

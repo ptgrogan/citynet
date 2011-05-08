@@ -33,8 +33,12 @@ classdef TransportationSystem < System
         function path = GetShortestPath(obj,originId,destinationId)
             lengths = zeros(length(obj.edges),1);
             for i=1:length(obj.edges)
-                speed = obj.edges(i).type.attributes(strcmp([obj.edges(i).type.attributes.name],'Speed')).value;
-                lengths(i) = sqrt(sum((obj.edges(i).origin.cell.location-obj.edges(i).destination.cell.location).^2))/speed;
+                if ~isempty(obj.edges(i).type.attributes)
+                    speed = obj.edges(i).type.attributes(strcmp([obj.edges(i).type.attributes.name],'Speed')).value;
+                    lengths(i) = sqrt(sum((obj.edges(i).origin.cell.location-obj.edges(i).destination.cell.location).^2))/speed;
+                else
+                    lengths(i) = inf;
+                end
             end
             path = obj.GetShortestPathWithEdgeLengths(originId,destinationId,lengths);
         end
