@@ -63,6 +63,22 @@ classdef SpreadsheetReader
         edgesOriginId = 4;          % column of the edges origin id input
         edgesDestinationId = 5;     % column of the edges destination id input
         edgesDirected = 6;          % column of the edges directed input
+        nodeRegionsWorksheet = 'node_regions';  % name of the node regions worksheet
+        nodeRegionsId = 1;          % column of the node regions id input
+        nodeRegionsSystemId = 2;    % column of the node regions system id input
+        nodeRegionsNodeTypeId = 3;  % column of the node regions node type id input
+        nodeRegionsLayerId = 4;     % column of the node regions layer id input
+        nodeRegionsVerticesX = 5;   % column of the node regions x-vertices input
+        nodeRegionsVerticesY = 6;   % column of the node regions y-vertices input
+        edgeRegionsWorksheet = 'edge_regions';  % name of the edge regions worksheet
+        edgeRegionsId = 1;          % column of the edge regions id input
+        edgeRegionsSystemId = 2;    % column of the edge regions system id input
+        edgeRegionsNodeTypeId = 3;  % column of the edge regions node type id input
+        edgeRegionsLayerIds = 4;    % column of the edge regions layer ids input
+        edgeRegionsVerticesX = 5;   % column of the edge regions x-vertices input
+        edgeRegionsVerticesY = 6;   % column of the edge regions y-vertices input
+        edgeRegionsType = 7;        % column of the edge regions connection type input
+        edgeRegionsDirected = 8;    % column of the edge regions directed input
         h = waitbar(0);             % handle of waitbar
     end
     methods(Access=private)
@@ -89,6 +105,9 @@ classdef SpreadsheetReader
             SpreadsheetReader.ReadNodeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadEdgeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadCity(filepath,synthTemp);
+            SpreadsheetReader.ReadNodeRegions(filepath,synthTemp);
+            SpreadsheetReader.ReadEdgeRegions(filepath,synthTemp);
+            
             
             waitbar(1,SpreadsheetReader.h,'Updating Synthesis Template');
             synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
@@ -117,6 +136,10 @@ classdef SpreadsheetReader
                 synthTemp.nextEdgeId = max(synthTemp.nextEdgeId, ...
                     max([synthTemp.city.systems{i}.edges.id])+1);
             end
+            synthTemp.nextNodeRegionId = max(synthTemp.nextNodeRegionId, ...
+                max([synthTemp.nodeRegions.id])+1);
+            synthTemp.nextEdgeRegionId = max(synthTemp.nextEdgeRegionId, ...
+                max([synthTemp.edgeRegions.id])+1);
             close(SpreadsheetReader.h);
         end
     end
@@ -147,6 +170,7 @@ classdef SpreadsheetReader
         function ReadNodeTypes(filepath,synthTemp)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet);
             for i=2:size(raw,1)
+                waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.nodeTypesName} ' Node Type']);
                 % color is formated as 0x######
                 synthTemp.nodeTypes(end+1) = NodeType( ...
                     raw{i,SpreadsheetReader.nodeTypesId}, ...
@@ -155,7 +179,6 @@ classdef SpreadsheetReader
                     [hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.nodeTypesColor}(7:8))]/255);
-                waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(synthTemp.nodeTypes(end).name) ' Node Type']);
                 SpreadsheetReader.ReadNodeTypeAttributes(filepath,synthTemp.nodeTypes(end));
             end
         end
@@ -193,6 +216,7 @@ classdef SpreadsheetReader
         function ReadEdgeTypes(filepath,synthTemp)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypesWorksheet);
             for i=2:size(raw,1)
+                waitbar(.1+.15*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.edgeTypesName} ' Edge Type']);
                 % color is formated as 0x######
                 synthTemp.edgeTypes(end+1) = EdgeType( ...
                     raw{i,SpreadsheetReader.edgeTypesId}, ...
@@ -201,7 +225,6 @@ classdef SpreadsheetReader
                     [hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(3:4)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(5:6)) ...
                     hex2dec(raw{i,SpreadsheetReader.edgeTypesColor}(7:8))]/255);
-                waitbar(.1+.15*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(synthTemp.edgeTypes(end).name) ' Edge Type']);
                 SpreadsheetReader.ReadEdgeTypeAttributes(filepath,synthTemp.edgeTypes(end));
             end
         end
@@ -237,10 +260,10 @@ classdef SpreadsheetReader
         function ReadCells(filepath,city)
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.cellsWorksheet);
             for i=2:size(raw,1)
+                waitbar(.25+.15*i/size(raw,1),SpreadsheetReader.h,['Reading Cell ' num2str(raw{i,SpreadsheetReader.cellsId})]);
                 city.cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
                     [raw{i,SpreadsheetReader.cellsLocationX} raw{i,SpreadsheetReader.cellsLocationY}], ...
                     [raw{i,SpreadsheetReader.cellsDimensionX} raw{i,SpreadsheetReader.cellsDimensionY}]);
-                waitbar(.25+.15*i/size(raw,1),SpreadsheetReader.h,['Reading Cell ' num2str(city.cells(end).id)]);
             end
         end
         
@@ -253,11 +276,11 @@ classdef SpreadsheetReader
         function ReadLayers(filepath,city)
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.layersWorksheet);
             for i=2:size(raw,1)
+                waitbar(.3+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.layersName} ' Layer']);
                 city.layers(end+1) = Layer(raw{i,SpreadsheetReader.layersId},...
                     raw{i,SpreadsheetReader.layersName}, ...
                     raw{i,SpreadsheetReader.layersDescription}, ...
                     raw{i,SpreadsheetReader.layersDisplayHeight});
-                waitbar(.3+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' num2str(city.layers(end).name) ' Layer']);
             end
         end
                 
@@ -270,6 +293,7 @@ classdef SpreadsheetReader
         function ReadSystems(filepath,city)
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet);
             for i=2:size(raw,1)
+                waitbar(0.7+0.2*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.systemsName} ' System']);
                 if strcmp(raw{i,SpreadsheetReader.systemsName},'Transportation')
                     city.systems{end+1} = TransportationSystem(raw{i,SpreadsheetReader.systemsId},...
                         raw{i,SpreadsheetReader.systemsName}, ...
@@ -279,7 +303,6 @@ classdef SpreadsheetReader
                         raw{i,SpreadsheetReader.systemsName}, ...
                         raw{i,SpreadsheetReader.systemsDescription});
                 end
-                waitbar(0.7+0.2*i/size(raw,1),SpreadsheetReader.h,['Reading ' city.systems{end}.name ' System']);
                 SpreadsheetReader.ReadNodes(filepath,city.systems{end});
                 SpreadsheetReader.ReadEdges(filepath,city.systems{end});
             end
@@ -323,6 +346,58 @@ classdef SpreadsheetReader
                         synthTemp.edgeTypes([synthTemp.edgeTypes.id]==raw{i,SpreadsheetReader.edgesTypeId}), ...
                         raw{i,SpreadsheetReader.edgesDirected});
                 end
+            end
+        end
+        
+        %% ReadNodeRegions Function
+        % ReadNodeRegions opens a spreadsheet file and reads in the node
+        % regions.
+        %
+        % ReadNodeRegions(filepath,synthTemp)
+        %   filepath:   the path to the spreadsheet template
+        %   synthTemp:  synthesis template handle
+        function ReadNodeRegions(filepath,synthTemp)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet);
+            for i=2:size(raw,1)
+                % TODO: update waitbar
+                synthTemp.nodeRegions(end+1) = NodeRegion( ...
+                    raw{i,SpreadsheetReader.nodeRegionsId}, ...
+                    raw{i,SpreadsheetReader.nodeRegionsSystemId}, ...
+                    raw{i,SpreadsheetReader.nodeRegionsNodeTypeId}, ...
+                    raw{i,SpreadsheetReader.nodeRegionsLayerId}, ...
+                    eval(raw{i,SpreadsheetReader.nodeRegionsVerticesX}), ...
+                    eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}));
+            end
+        end
+        
+        %% ReadEdgeRegions Function
+        % ReadEdgeRegions opens a spreadsheet file and reads in the edge
+        % regions.
+        %
+        % ReadEdgeRegions(filepath,synthTemp)
+        %   filepath:   the path to the spreadsheet template
+        %   synthTemp:  synthesis template handle
+        function ReadEdgeRegions(filepath,synthTemp)
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet);
+            for i=2:size(raw,1)
+                connectionType = EdgeRegion.POLYLINE_PERIMETER;
+                if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'orthogonal')
+                    connectionType = EdgeRegion.ORTHOGONAL_NEIGHBOR;
+                elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors')
+                    connectionType = EdgeRegion.ALL_NEIGHBORS;
+                elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'connected')
+                    connectionType = EdgeRegion.FULLY_CONNECTED;
+                end
+                % TODO: update waitbar
+                synthTemp.edgeRegions(end+1) = EdgeRegion( ...
+                    raw{i,SpreadsheetReader.edgeRegionsId}, ...
+                    raw{i,SpreadsheetReader.edgeRegionsSystemId}, ...
+                    raw{i,SpreadsheetReader.edgeRegionsNodeTypeId}, ...
+                    eval(raw{i,SpreadsheetReader.edgeRegionsLayerIds}), ...
+                    eval(raw{i,SpreadsheetReader.edgeRegionsVerticesX}), ...
+                    eval(raw{i,SpreadsheetReader.edgeRegionsVerticesY}), ...
+                    connectionType, ...
+                    raw{i,SpreadsheetReader.edgeRegionsDirected});
             end
         end
     end

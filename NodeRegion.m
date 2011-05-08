@@ -21,7 +21,7 @@ classdef NodeRegion < AbstractRegion
         %           verticesY)
         %   id:         unique identifier for node region
         %   systemId:   system id for assignment
-        %   edgeTypeId: edge type id for assignment
+        %   nodeTypeId: node type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
@@ -29,7 +29,7 @@ classdef NodeRegion < AbstractRegion
         % obj = NodeRegion(systemId, nodeTypeId, layerIds, verticesX,
         %           verticesY)
         %   systemId:   system id for assignment
-        %   edgeTypeId: edge type id for assignment
+        %   nodeTypeId: node type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
