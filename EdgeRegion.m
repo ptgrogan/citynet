@@ -1,3 +1,19 @@
+%% EdgeRegion Class Definition
+% An EdgeRegion specifies a spatial area over which edges should be
+% generated. There are several types of regions, inlcuding:
+% POLYLINE_PERIMETER (link edges between adjacent vertices),
+% ORTHOGONAL_NEIGHBORS (link edges between all orthogonal nodes inside
+% region, assuming square grid spacing), ALL_NEIGHBORS (link edges between
+% all nodes, orthogonal and diagonal, inside region, assuming square grid
+% spacing), FULLY_CONNECTED (link edges between all nodes contained within
+% region.
+% 
+% The EdgeRegion class was created to be able to specify edges without
+% relying on cellular definitions.
+%
+% 7-May 2011
+% Paul Grogan, ptgrogan@mit.edu
+%%
 classdef EdgeRegion < AbstractRegion
     properties(Constant)
         POLYLINE_PERIMETER = 1;     % connects adjacent nodes in perimeter (polyline)
@@ -14,6 +30,31 @@ classdef EdgeRegion < AbstractRegion
         directed;           % flag (0 or 1) if edge is directed
     end
     methods
+        %% EdgeRegion Constructor
+        % Instantiates a new EdgeRegion with specified parameters.
+        %
+        % obj = EdgeRegion(id, systemId, edgeTypeId, layerIds, verticesX,
+        %           verticesY, type, directed)
+        %   id:         unique identifier for edge region
+        %   systemId:   system id for assignment
+        %   edgeTypeId: edge type id for assignment
+        %   layerIds:   array of layer ids for assignment
+        %   verticesX:  array of x-coordinate vertices (counter-clockwise)
+        %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %   type:       constant parameter to define type of generation
+        %   directed:   0 if undirected, 1 if directed edges
+        %
+        % obj = EdgeRegion(systemId, edgeTypeId, layerIds, verticesX,
+        %           verticesY, type, directed)
+        %   systemId:   system id for assignment
+        %   edgeTypeId: edge type id for assignment
+        %   layerIds:   array of layer ids for assignment
+        %   verticesX:  array of x-coordinate vertices (counter-clockwise)
+        %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %   type:       constant parameter to define type of generation
+        %   directed:   0 if undirected, 1 if directed edges
+        %
+        % obj = EdgeRegion()
         function obj = EdgeRegion(varargin)
             if nargin == 8
                 obj.id = varargin{1};
@@ -44,6 +85,10 @@ classdef EdgeRegion < AbstractRegion
                 obj.directed = 0;
             end
         end
+        
+        %% GenerateEdges Function
+        % Generates the edges within the edge region and automatically adds
+        % to system definition.
         function GenerateEdges(obj)
             synthTemp = SynthesisTemplate.instance();
             system = synthTemp.city.systems{obj.systemId};

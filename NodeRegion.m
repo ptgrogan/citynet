@@ -1,3 +1,11 @@
+%% NodeRegion Class Definition
+% A NodeRegion specifies a spatial area over which nodes should be
+% generated. The NodeRegion class was created to be able to specify nodes without
+% relying on cellular definitions.
+%
+% 7-May 2011
+% Paul Grogan, ptgrogan@mit.edu
+%%
 classdef NodeRegion < AbstractRegion
     properties
         id;                     % unique identifier for node region
@@ -6,6 +14,27 @@ classdef NodeRegion < AbstractRegion
         layerId;                % layer id for assignment
     end
     methods
+        %% NodeRegion Constructor
+        % Instantiates a new NodeRegion with specified parameters.
+        %
+        % obj = NodeRegion(id, systemId, nodeTypeId, layerIds, verticesX,
+        %           verticesY)
+        %   id:         unique identifier for node region
+        %   systemId:   system id for assignment
+        %   edgeTypeId: edge type id for assignment
+        %   layerIds:   array of layer ids for assignment
+        %   verticesX:  array of x-coordinate vertices (counter-clockwise)
+        %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %
+        % obj = NodeRegion(systemId, nodeTypeId, layerIds, verticesX,
+        %           verticesY)
+        %   systemId:   system id for assignment
+        %   edgeTypeId: edge type id for assignment
+        %   layerIds:   array of layer ids for assignment
+        %   verticesX:  array of x-coordinate vertices (counter-clockwise)
+        %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %
+        % obj = NodeRegion()
         function obj = NodeRegion(varargin)
             if nargin == 6
                 obj.id = varargin{1};
@@ -30,6 +59,10 @@ classdef NodeRegion < AbstractRegion
                 obj.verticesY = 0;
             end
         end
+        
+        %% GenerateNodes Function
+        % Generates the nodes within the node region and automatically adds
+        % to system definition.
         function GenerateNodes(obj)
             synthTemp = SynthesisTemplate.instance();
             for i=1:length(synthTemp.city.cells)
