@@ -285,7 +285,7 @@ classdef SpreadsheetReader
                 waitbar(.3+.1*i/size(raw,1),SpreadsheetReader.h,['Reading Edge Region ' num2str(raw{i,SpreadsheetReader.edgeRegionsId})]);
                 connectionType = EdgeRegion.POLYLINE_PERIMETER;
                 if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'orthogonal')
-                    connectionType = EdgeRegion.ORTHOGONAL_NEIGHBOR;
+                    connectionType = EdgeRegion.ORTHOGONAL_NEIGHBORS;
                 elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors')
                     connectionType = EdgeRegion.ALL_NEIGHBORS;
                 elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'connected')
