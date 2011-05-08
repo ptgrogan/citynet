@@ -116,15 +116,61 @@ classdef EdgeRegion < AbstractRegion
                     end
                 end
             elseif obj.type==EdgeRegion.ORTHOGONAL_NEIGHBORS
-                % TODO
-                ME = MException('Not Implemented', ...
-                    'Option ORTHOGONAL_NEIGHBORS not yet implemented.');
-                throw(ME);
+                nodeIds = [];
+                % find corresponding cell id for each vertex in region
+                for n=1:length(system.nodes)
+                    node = system.nodes(n);
+                    if node.layer.id==obj.layerIds(1) && ...
+                            obj.ContainsCell(node.cell)
+                        nodeIds(end+1) = node.id;
+                    end
+                end
+                for i=1:length(nodeIds)
+                    for j=i+1:length(nodeIds)
+                        origin = system.nodes([system.nodes.id]==nodeIds(i));
+                        destination = system.nodes([system.nodes.id]==nodeIds(j));
+                        [vxo vyo] = origin.cell.GetVertices();
+                        [vxd vyd] = destination.cell.GetVertices();
+                        % determine if cells share a border (two vertices
+                        % in common)
+                        if ~isempty(origin) && ~isempty(destination) && ...
+                            size(intersect([vxo;vyo]',[vxd;vyd]','rows'),1)==2
+                            system.edges(end+1) = Edge(...
+                                system.nodes([system.nodes.id]==nodeIds(i)), ...
+                                system.nodes([system.nodes.id]==nodeIds(j)), ...
+                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
+                                obj.directed);
+                        end
+                    end
+                end
             elseif obj.type==EdgeRegion.ALL_NEIGHBORS
-                % TODO
-                ME = MException('Not Implemented', ...
-                    'Option ALL_NEIGHBORS not yet implemented.');
-                throw(ME);
+                nodeIds = [];
+                % find corresponding cell id for each vertex in region
+                for n=1:length(system.nodes)
+                    node = system.nodes(n);
+                    if node.layer.id==obj.layerIds(1) && ...
+                            obj.ContainsCell(node.cell)
+                        nodeIds(end+1) = node.id;
+                    end
+                end
+                for i=1:length(nodeIds)
+                    for j=i+1:length(nodeIds)
+                        origin = system.nodes([system.nodes.id]==nodeIds(i));
+                        destination = system.nodes([system.nodes.id]==nodeIds(j));
+                        [vxo vyo] = origin.cell.GetVertices();
+                        [vxd vyd] = destination.cell.GetVertices();
+                        % determine if cells share a border (one vertex or
+                        % more in common)
+                        if ~isempty(origin) && ~isempty(destination) && ...
+                            size(intersect([vxo;vyo]',[vxd;vyd]','rows'),1)>=1
+                            system.edges(end+1) = Edge(...
+                                system.nodes([system.nodes.id]==nodeIds(i)), ...
+                                system.nodes([system.nodes.id]==nodeIds(j)), ...
+                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
+                                obj.directed);
+                        end
+                    end
+                end
             elseif obj.type==EdgeRegion.FULLY_CONNECTED
                 nodeIds = [];
                 % find corresponding cell id for each vertex in region
