@@ -26,8 +26,6 @@ end
 
 %% render system
 synthTemp.RenderCity;
-synthTemp.RenderLayer(2);
-synthTemp.RenderSystem(1);
 
 %% shortest path calculation
 path = synthTemp.city.systems{1}.GetShortestPath(1,80);
