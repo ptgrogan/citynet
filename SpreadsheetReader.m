@@ -115,37 +115,57 @@ classdef SpreadsheetReader
             SpreadsheetReader.ReadEdgeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadCity(filepath,synthTemp);
             
-            
             waitbar(1,SpreadsheetReader.h,'Updating Synthesis Template');
-            synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
-                max([synthTemp.nodeTypes.id])+1);
+            if ~isempty(synthTemp.nodeTypes)
+                synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
+                    max([synthTemp.nodeTypes.id])+1);
+            end
             for i=1:length(synthTemp.nodeTypes)
-                synthTemp.nextNodeTypeAttributeId = max(synthTemp.nextNodeTypeAttributeId, ...
-                    max([synthTemp.nodeTypes(i).attributes.id])+1);
+                if ~isempty(synthTemp.nodeTypes(i).attributes)
+                    synthTemp.nextNodeTypeAttributeId = max(synthTemp.nextNodeTypeAttributeId, ...
+                        max([synthTemp.nodeTypes(i).attributes.id])+1);
+                end
             end
-            synthTemp.nextEdgeTypeId = max(synthTemp.nextEdgeTypeId, ...
-                max([synthTemp.edgeTypes.id])+1);
+            if ~isempty(synthTemp.edgeTypes)
+                synthTemp.nextEdgeTypeId = max(synthTemp.nextEdgeTypeId, ...
+                    max([synthTemp.edgeTypes.id])+1);
+            end
             for i=1:length(synthTemp.edgeTypes)
-                synthTemp.nextEdgeTypeAttributeId = max(synthTemp.nextEdgeTypeAttributeId, ...
-                    max([synthTemp.edgeTypes(i).attributes.id])+1);
+                if ~isempty(synthTemp.edgeTypes(i).attributes)
+                    synthTemp.nextEdgeTypeAttributeId = max(synthTemp.nextEdgeTypeAttributeId, ...
+                        max([synthTemp.edgeTypes(i).attributes.id])+1);
+                end
             end
-            synthTemp.nextCellId = max(synthTemp.nextCellId, ...
-                max([synthTemp.city.cells.id])+1);
-            synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
-                max([synthTemp.city.layers.id])+1);
+            if ~isempty(synthTemp.city.cells)
+                synthTemp.nextCellId = max(synthTemp.nextCellId, ...
+                    max([synthTemp.city.cells.id])+1);
+            end
+            if ~isempty(synthTemp.city.layers)
+                synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
+                    max([synthTemp.city.layers.id])+1);
+            end
 %             TODO: hard-code systems into city to resolve polymorphism
 %             synthTemp.nextSystemId = max(synthTemp.nextSystemId, ...
 %                 max([synthTemp.city.systems.id])+1);
             synthTemp.nextSystemId = length(synthTemp.city.systems)+1;
             for i=1:length(synthTemp.city.systems)
-                synthTemp.nextNodeId = max(synthTemp.nextNodeId, ...
-                    max([synthTemp.city.systems{i}.nodes.id])+1);
-                synthTemp.nextEdgeId = max(synthTemp.nextEdgeId, ...
-                    max([synthTemp.city.systems{i}.edges.id])+1);
-                synthTemp.nextNodeRegionId = max(synthTemp.nextNodeRegionId, ...
-                    max([synthTemp.city.systems{i}.nodeRegions.id])+1);
-                synthTemp.nextEdgeRegionId = max(synthTemp.nextEdgeRegionId, ...
-                    max([synthTemp.city.systems{i}.edgeRegions.id])+1);
+                system = synthTemp.city.systems{i};
+                if ~isempty(system.nodes)
+                    synthTemp.nextNodeId = max(synthTemp.nextNodeId, ...
+                        max([system.nodes.id])+1);
+                end
+                if ~isempty(system.edges)
+                    synthTemp.nextEdgeId = max(synthTemp.nextEdgeId, ...
+                        max([system.edges.id])+1);
+                end
+                if ~isempty(system.nodeRegions)
+                    synthTemp.nextNodeRegionId = max(synthTemp.nextNodeRegionId, ...
+                        max([system.nodeRegions.id])+1);
+                end
+                if ~isempty(system.edgeRegions)
+                    synthTemp.nextEdgeRegionId = max(synthTemp.nextEdgeRegionId, ...
+                        max([system.edgeRegions.id])+1);
+                end
             end
             close(SpreadsheetReader.h);
         end
