@@ -9,6 +9,12 @@
 classdef City < handle
     properties
         name;       % name of city, string
+        latitude;   % latitude of city local coordinate frame origin (degrees)
+        longitude;  % longitude of city local coordinate frame origin (degrees)
+        rotation;   % rotation of city local coordinate frame from cardinal (degrees counterclockwise)
+        imagePath;          % path to city image
+        imageLocation;      % location of city image upper left corner
+        imageDimensions;    % dimensions of city image
         cells;      % mutable object array of Cell objects
         layers;     % mutable object array of Layer objects
         systems;    % mutable cell array of System objects
@@ -32,6 +38,13 @@ classdef City < handle
             else
                 obj.name = 'New City';
             end
+            obj.latitude = 0;
+            obj.longitude = 0;
+            obj.rotation = 0;
+            obj.imagePath = '';
+            obj.imageLocation = [0 0];
+            obj.imageDimensions = [0 0];
+            
             obj.cells = Cell.empty();
             obj.layers = Layer.empty();
             obj.systems = {};

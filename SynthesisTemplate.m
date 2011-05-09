@@ -77,6 +77,15 @@ classdef SynthesisTemplate < Singleton
             xlabel('x (km)')
             ylabel('y (km)')
             hold on
+            nodeAlpha = 0.75;
+            cellAlpha = 0.50;
+            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+                imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
+                obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
+                imread(obj.city.imagePath))
+                nodeAlpha = 0.50;
+                cellAlpha = 0.25;
+            end
             filled = zeros(length(obj.city.cells),1);
             % display the nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
@@ -90,7 +99,7 @@ classdef SynthesisTemplate < Singleton
                         y = node.cell.location(2);
                         h = node.cell.dimensions(2);
                         patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
-                            nodeTypeColorMap(node.type.id,:));
+                            nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
                     end
                 end
             end
@@ -103,7 +112,7 @@ classdef SynthesisTemplate < Singleton
                     y = cell.location(2);
                     h = cell.dimensions(2);
                     patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
-                        [1 1 1],'FaceAlpha',.5);
+                        [1 1 1],'FaceAlpha',cellAlpha);
                 end
             end
             % display the edges
@@ -145,6 +154,18 @@ classdef SynthesisTemplate < Singleton
             axis ij equal
             hold on
             view(3)
+            nodeAlpha = 0.75;
+            cellAlpha = 0.50;
+            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+                I = imread(obj.city.imagePath);
+                surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
+                    linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
+                    zeros(size(I(:,:,1))), ...
+                    reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
+                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
+                nodeAlpha = 0.50;
+                cellAlpha = 0.25;
+            end
             filled = zeros(length(obj.city.cells),length(obj.city.layers));
             % display nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
@@ -157,7 +178,7 @@ classdef SynthesisTemplate < Singleton
                 h = node.cell.dimensions(2);
                 z = node.layer.displayHeight;
                 patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                    nodeTypeColorMap(node.type.id,:),'FaceAlpha',.75);
+                    nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
             end
             % fill in blank squares
             for i=1:size(filled,1)
@@ -170,7 +191,7 @@ classdef SynthesisTemplate < Singleton
                         h = cell.dimensions(2);
                         z = obj.city.layers(j).displayHeight;
                         patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
-                            [1 1 1],'FaceAlpha',.5);
+                            [1 1 1],'FaceAlpha',cellAlpha);
                     end
                 end
             end
@@ -213,6 +234,18 @@ classdef SynthesisTemplate < Singleton
             axis ij equal
             hold on
             view(3)
+            nodeAlpha = 0.75;
+            cellAlpha = 0.50;
+            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+                I = imread(obj.city.imagePath);
+                surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
+                    linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
+                    zeros(size(I(:,:,1))), ...
+                    reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
+                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
+                nodeAlpha = 0.50;
+                cellAlpha = 0.25;
+            end
             filled = zeros(length(obj.city.cells),length(obj.city.layers));
             % display nodes
             nodeTypeColorMap = obj.GetNodeTypeColorMap;
@@ -227,7 +260,7 @@ classdef SynthesisTemplate < Singleton
                     h = node.cell.dimensions(2);
                     z = node.layer.displayHeight;
                     patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                        nodeTypeColorMap(node.type.id,:),'FaceAlpha',.75);
+                        nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
                 end
             end
             % fill in blank squares
@@ -241,7 +274,7 @@ classdef SynthesisTemplate < Singleton
                         h = cell.dimensions(2);
                         z = obj.city.layers(j).displayHeight;
                         patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
-                            [1 1 1],'FaceAlpha',.5);
+                            [1 1 1],'FaceAlpha',cellAlpha);
                     end
                 end
             end
