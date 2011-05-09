@@ -12,6 +12,8 @@ classdef System < handle
         description;        % layer description, string
         nodes;              % mutable object array of Node objects
         edges;              % mutable object array of Edge objects
+        nodeRegions;        % mutable object array of NodeRegion objects
+        edgeRegions;        % mutable object array of EdgeRegion objects
     end
     methods
         %% System Constructor
@@ -44,6 +46,8 @@ classdef System < handle
             end
             obj.nodes = Node.empty();
             obj.edges = Edge.empty();
+            obj.nodeRegions = NodeRegion.empty();
+            obj.edgeRegions = EdgeRegion.empty();
         end
         
         %% GetShortestPath Function

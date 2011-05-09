@@ -423,6 +423,20 @@ classdef SynthesisTemplate < Singleton
             out = obj.nextEdgeId;
             obj.nextEdgeId = obj.nextEdgeId + 1;
         end
+                
+        %% GetNextNodeRegionId Function
+        % Gets and increments the next node region identifier.
+        function out = GetNextNodeRegionId(obj)
+            out = obj.nextNodeRegionId;
+            obj.nextNodeRegionId = obj.nextNodeRegionId + 1;
+        end
+                
+        %% GetNextEdgeRegionId Function
+        % Gets and increments the next edge region identifier.
+        function out = GetNextEdgeRegionId(obj)
+            out = obj.nextEdgeRegionId;
+            obj.nextEdgeRegionId = obj.nextEdgeRegionId + 1;
+        end
     end
     methods(Access=private)
         %% GetNodeTypeColorMap Function

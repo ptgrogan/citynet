@@ -23,7 +23,6 @@ classdef EdgeRegion < AbstractRegion
     end
     properties
         id;                 % unique identifier for edge region
-        systemId;           % system id for edge assignment
         edgeTypeId;         % edge type id
         layerIds;           % list of layer ids
         type;               % type of connectivity desired in region
@@ -33,10 +32,9 @@ classdef EdgeRegion < AbstractRegion
         %% EdgeRegion Constructor
         % Instantiates a new EdgeRegion with specified parameters.
         %
-        % obj = EdgeRegion(id, systemId, edgeTypeId, layerIds, verticesX,
-        %           verticesY, type, directed)
+        % obj = EdgeRegion(id, edgeTypeId, layerIds, verticesX, verticesY,
+        %           type, directed)
         %   id:         unique identifier for edge region
-        %   systemId:   system id for assignment
         %   edgeTypeId: edge type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
@@ -44,9 +42,8 @@ classdef EdgeRegion < AbstractRegion
         %   type:       constant parameter to define type of generation
         %   directed:   0 if undirected, 1 if directed edges
         %
-        % obj = EdgeRegion(systemId, edgeTypeId, layerIds, verticesX,
-        %           verticesY, type, directed)
-        %   systemId:   system id for assignment
+        % obj = EdgeRegion(edgeTypeId, layerIds, verticesX, verticesY, 
+        %           type, directed)
         %   edgeTypeId: edge type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
@@ -56,27 +53,24 @@ classdef EdgeRegion < AbstractRegion
         %
         % obj = EdgeRegion()
         function obj = EdgeRegion(varargin)
-            if nargin == 8
+            if nargin == 7
                 obj.id = varargin{1};
-                obj.systemId = varargin{2};
-                obj.edgeTypeId = varargin{3};
-                obj.layerIds = varargin{4};
-                obj.verticesX = varargin{5};
-                obj.verticesY = varargin{6};
-                obj.type = varargin{7};
-                obj.directed = varargin{8};
-            elseif nargin == 7
-                obj.id = SynthesisTemplate.GetNextNodeRegionId();
-                obj.systemId = varargin{1};
                 obj.edgeTypeId = varargin{2};
                 obj.layerIds = varargin{3};
                 obj.verticesX = varargin{4};
                 obj.verticesY = varargin{5};
                 obj.type = varargin{6};
                 obj.directed = varargin{7};
+            elseif nargin == 6
+                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
+                obj.edgeTypeId = varargin{1};
+                obj.layerIds = varargin{2};
+                obj.verticesX = varargin{3};
+                obj.verticesY = varargin{4};
+                obj.type = varargin{5};
+                obj.directed = varargin{6};
             else
-                obj.id = SynthesisTemplate.GetNextNodeRegionId();
-                obj.systemId = 0;
+                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
                 obj.edgeTypeId = 0;
                 obj.layerIds = 0;
                 obj.verticesX = 0;
@@ -89,9 +83,11 @@ classdef EdgeRegion < AbstractRegion
         %% GenerateEdges Function
         % Generates the edges within the edge region and automatically adds
         % to system definition.
-        function GenerateEdges(obj)
+        %
+        % GenerateEdges(system)
+        %   system: the system within which to generate edges
+        function GenerateEdges(obj,system)
             synthTemp = SynthesisTemplate.instance();
-            system = synthTemp.city.systems{obj.systemId};
             if obj.type==EdgeRegion.POLYLINE_PERIMETER
                 % find corresponding node id for each vertex
                 nodeIds = zeros(length(obj.layerIds),1);

@@ -14,11 +14,14 @@ clc
 synthTemp = SynthesisTemplate.instance();
 SpreadsheetReader.ReadTemplate('masdar.xls');
 
-for i=1:length(synthTemp.city.nodeRegions)
-    synthTemp.city.nodeRegions(i).GenerateNodes();
-end
-for i=1:length(synthTemp.city.edgeRegions)
-    synthTemp.city.edgeRegions(i).GenerateEdges();
+for i=1:length(synthTemp.city.systems)
+    system = synthTemp.city.systems{1};
+    for j=1:length(system.nodeRegions)
+        system.nodeRegions(j).GenerateNodes(system);
+    end
+    for j=1:length(system.edgeRegions)
+        system.edgeRegions(j).GenerateEdges(system);
+    end
 end
 
 %% render system

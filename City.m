@@ -20,8 +20,6 @@ classdef City < handle
         systems;    % mutable cell array of System objects
         % note: systems must be a cell array to enable polymorphism, i.e.
         % subclasses of System to be stored within the same data structure
-        nodeRegions;        % mutable object array of NodeRegion objects
-        edgeRegions;        % mutable object array of EdgeRegion objects
     end
     methods
         %% City Constructor
@@ -48,8 +46,6 @@ classdef City < handle
             obj.cells = Cell.empty();
             obj.layers = Layer.empty();
             obj.systems = {};
-            obj.nodeRegions = NodeRegion.empty();
-            obj.edgeRegions = EdgeRegion.empty();
         end
     end
 end
