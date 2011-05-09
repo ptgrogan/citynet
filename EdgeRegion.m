@@ -97,6 +97,9 @@ classdef EdgeRegion < AbstractRegion
                         if system.nodes(n).layer.id==obj.layerIds(i) && ...
                                 inpolygon(obj.verticesX(i),obj.verticesY(i),cVx,cVy)
                             nodeIds(i) = system.nodes(n).id;
+                            % break out of for loop in case the point is on the
+                            % boundary between two adjacent nodes
+                            break;
                         end
                     end
                 end
