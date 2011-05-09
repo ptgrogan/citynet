@@ -77,10 +77,10 @@ classdef SynthesisTemplate < Singleton
             hold on
             nodeAlpha = 0.75;
             cellAlpha = 0.50;
-            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+            if obj.city.HasImage()
                 imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
                 obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
-                imread(obj.city.imagePath))
+                obj.city.GetImage())
                 nodeAlpha = 0.50;
                 cellAlpha = 0.25;
             end
@@ -154,7 +154,7 @@ classdef SynthesisTemplate < Singleton
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
                 imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
                 obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
-                imread(obj.city.imagePath))
+                obj.city.GetImage())
             end
             for i=1:length(obj.city.cells)
                 [cVx cVy] = obj.city.cells(i).GetVertices();
@@ -184,12 +184,12 @@ classdef SynthesisTemplate < Singleton
             nodeAlpha = 0.75;
             cellAlpha = 0.50;
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
-                I = imread(obj.city.imagePath);
+                I = obj.city.GetImage();
                 surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
                     linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
                     zeros(size(I(:,:,1))), ...
                     reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
-                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
+                colormap(obj.city.imageMap)
                 nodeAlpha = 0.50;
                 cellAlpha = 0.25;
             end
@@ -263,7 +263,7 @@ classdef SynthesisTemplate < Singleton
             nodeAlpha = 0.75;
             cellAlpha = 0.50;
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
-                I = imread(obj.city.imagePath);
+                I = obj.city.GetImage();
                 surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
                     linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
                     zeros(size(I(:,:,1))), ...

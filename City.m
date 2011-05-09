@@ -21,6 +21,11 @@ classdef City < handle
         % note: systems must be a cell array to enable polymorphism, i.e.
         % subclasses of System to be stored within the same data structure
     end
+    properties(Access=private,Transient=true)
+        image;              % lazy-loaded image
+        imageX;             % lazy-loaded imageX
+        imageMap;           % lazy-loaded imageMap
+    end
     methods
         %% City Constructor
         % Instantiates a new City object with specified name.
@@ -42,10 +47,32 @@ classdef City < handle
             obj.imagePath = '';
             obj.imageLocation = [0 0];
             obj.imageDimensions = [0 0];
+            obj.imageX = [];
+            obj.imageMap = [];
             
             obj.cells = Cell.empty();
             obj.layers = Layer.empty();
             obj.systems = {};
+        end
+        
+        %% HasImage Method
+        % Determines whether the city has an image to display.
+        %
+        %   out = HasImage()
+        function out = HasImage(obj)
+            out = ~isempty(obj.GetImage());
+        end
+        
+        %% GetImage Method
+        % Lazy-loading method to access city image.
+        %
+        %   out = GetImage()
+        %       out: the image
+        function out = GetImage(obj)
+            if isempty(obj.imageX) && ischar(obj.imagePath)
+                obj.image = imread(obj.imagePath);
+            end
+            out = obj.image;
         end
     end
 end
