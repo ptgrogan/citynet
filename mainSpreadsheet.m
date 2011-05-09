@@ -25,6 +25,16 @@ for i=1:length(synthTemp.city.systems)
 end
 
 %% render system
+figure(1)
+subplot(2,2,1)
+synthTemp.RenderCells();
+subplot(2,2,2)
+synthTemp.RenderLayer(1);
+subplot(2,2,3)
+synthTemp.RenderLayer(2);
+subplot(2,2,4)
+synthTemp.RenderLayer(3);
+figure(2)
 synthTemp.RenderCity;
 
 %% shortest path calculation

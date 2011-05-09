@@ -68,11 +68,9 @@ classdef SynthesisTemplate < Singleton
     end
     methods
         %% RenderLayer Function
-        % Displays a specific layer of the city using a 2-D plot in a new
-        % figure.
+        % Displays a specific layer of the city using a 2-D plot in the
+        % current figure.
         function RenderLayer(obj,layerId)
-            figure
-            axis ij square
             title([obj.city.name ', ' obj.city.layers([obj.city.layers.id]==layerId).name ' Layer'])
             xlabel('x (km)')
             ylabel('y (km)')
@@ -137,19 +135,18 @@ classdef SynthesisTemplate < Singleton
                     end
                 end
             end
+            axis ij square tight
             hold off
         end
         
         %% RenderCells Function
-        % renders the cells using a 2-D plot in a new figure.
+        % renders the cells using a 2-D plot in the current figure.
         function RenderCells(obj)
             % options start
             showCellIds = 1;
             edgeColor = [0 0 0];
             textColor = [0 0 0];
             % options end
-            figure
-            axis ij square
             title([obj.city.name ' Cells'])
             xlabel('x (km)')
             ylabel('y (km)')
@@ -168,21 +165,20 @@ classdef SynthesisTemplate < Singleton
                         'HorizontalAlignment','center','Color',textColor)
                 end
             end
+            axis ij square tight
             hold off
         end
         
         %% RenderSystem Function
-        % Renders a single system using a 3-D plot in a new figure.
+        % Renders a single system using a 3-D plot in the current figure.
         function RenderSystem(obj,systemId)
 %             TODO: hard-code systems into city to resolve polymorphism
 %             system = obj.city.systems([obj.city.systems.id]==systemId);
             system = obj.city.systems{systemId};
-            figure
             zlabel('Layer')
             xlabel('x (km)')
             ylabel('y (km)')
             title([obj.city.name ', ' system.name ' System'])
-            axis ij equal
             hold on
             view(3)
             nodeAlpha = 0.75;
@@ -251,18 +247,17 @@ classdef SynthesisTemplate < Singleton
                     line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
                 end
             end
+            axis ij equal tight
             hold off
         end
         
         %% RenderCity Function
-        % Renders the complete city using a 3-D plot in a new figure.
+        % Renders the complete city using a 3-D plot in the current figure.
         function RenderCity(obj)
-            figure
             zlabel('Layer')
             xlabel('x (km)')
             ylabel('y (km)')
             title(obj.city.name)
-            axis ij equal
             hold on
             view(3)
             nodeAlpha = 0.75;
@@ -337,6 +332,7 @@ classdef SynthesisTemplate < Singleton
                     end
                 end
             end
+            axis ij equal tight
             hold off
         end
         
