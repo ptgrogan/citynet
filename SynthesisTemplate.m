@@ -140,6 +140,37 @@ classdef SynthesisTemplate < Singleton
             hold off
         end
         
+        %% RenderCells Function
+        % renders the cells using a 2-D plot in a new figure.
+        function RenderCells(obj)
+            % options start
+            showCellIds = 1;
+            edgeColor = [0 0 0];
+            textColor = [0 0 0];
+            % options end
+            figure
+            axis ij square
+            title([obj.city.name ' Cells'])
+            xlabel('x (km)')
+            ylabel('y (km)')
+            hold on
+            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+                imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
+                obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
+                imread(obj.city.imagePath))
+            end
+            for i=1:length(obj.city.cells)
+                [cVx cVy] = obj.city.cells(i).GetVertices();
+                patch(cVx, cVy, [1 1 1],'FaceAlpha',0.1,'EdgeColor',edgeColor);
+                if showCellIds
+                    text(sum(cVx)/4,sum(cVy)/4, ...
+                        num2str(obj.city.cells(i).id), ...
+                        'HorizontalAlignment','center','Color',textColor)
+                end
+            end
+            hold off
+        end
+        
         %% RenderSystem Function
         % Renders a single system using a 3-D plot in a new figure.
         function RenderSystem(obj,systemId)
