@@ -9,6 +9,7 @@ classdef SpreadsheetReader
     properties(Constant)
         cityWorksheet = 'city';     % name of the city worksheet
         cityName = 1;               % row of the city name input
+        minIntersectionArea = 2;    % row of the minimum intersection area input
         nodeTypesWorksheet = 'node_types'; % name of the node types worksheet
         nodeTypesId = 1;            % column of the node type id input
         nodeTypesName = 2;          % column of the node type name input
@@ -244,6 +245,7 @@ classdef SpreadsheetReader
         function ReadCity(filepath,synthTemp)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
             synthTemp.city = City(raw{SpreadsheetReader.cityName,2});
+            synthTemp.minIntersectionArea = raw{SpreadsheetReader.minIntersectionArea,2};
             SpreadsheetReader.ReadNodeRegions(filepath,synthTemp.city);
             SpreadsheetReader.ReadEdgeRegions(filepath,synthTemp.city);
             SpreadsheetReader.ReadCells(filepath,synthTemp.city);
