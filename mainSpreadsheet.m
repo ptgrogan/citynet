@@ -28,7 +28,7 @@ end
 synthTemp.RenderCity;
 
 %% shortest path calculation
-path = synthTemp.city.systems{1}.GetShortestPath(1,80);
+path = synthTemp.city.systems{1}.GetShortestPathBetweenLocations([0.25 0.0],1,[1.3 2.1],1);
 synthTemp.RenderSystemPath(1,path);
 distance = synthTemp.city.systems{1}.GetPathDistance(path);
 duration = synthTemp.city.systems{1}.GetPathDuration(path);

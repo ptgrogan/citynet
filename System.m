@@ -50,8 +50,42 @@ classdef System < handle
             obj.edgeRegions = EdgeRegion.empty();
         end
         
+        %% GetShortestPathBetweenLocations Function
+        % Gets the path (set of edges) correspondign to the shortest path
+        % between an origin and destination location. Uses Djikstra's
+        % algorithm with Euclidean distances for edge weights.
+        %
+        % path = GetShortestPathBetweenLocations(obj,originLocation,
+        %           originLayerId,destinationLocation,destinationLayerId)
+        %   originLocation:         origin x-y location
+        %   originLayerId:          origin layer identifier
+        %   destinationLocation:    destination x-y location
+        %   destinationLayerId:     destination layer identifier
+        function path = GetShortestPathBetweenLocations(obj,originLocation, ...
+                originLayerId,destinationLocation,destinationLayerId)
+            originId = 0;
+            destinationId = 0;
+            for i=1:length(obj.nodes)
+                node = obj.nodes(i);
+                [cVx cVy] = node.cell.GetVertices();
+                if originId==0 && node.layer.id==originLayerId && ...
+                        sum(inpolygon(originLocation(1),originLocation(2),cVx,cVy))==1
+                    originId = node.id;
+                end
+                if destinationId==0 && node.layer.id==destinationLayerId && ...
+                        sum(inpolygon(destinationLocation(1),destinationLocation(2),cVx,cVy))==1
+                    destinationId = node.id;
+                end
+            end
+            if originId > 0 && destinationId > 0
+                path = obj.GetShortestPath(originId,destinationId);
+            else
+                path = [];
+            end
+        end
+        
         %% GetShortestPath Function
-        % Gets the path (set of edges) corresponding to the the shortest
+        % Gets the path (set of edge IDs) corresponding to the shortest
         % path between an origin and destination cell IDs. Uses Djikstra's
         % algorithm with Euclidean distances for edge weights.
         %
@@ -67,7 +101,7 @@ classdef System < handle
         end
         
         %% GetPathDistance Function
-        % Gets the length of a path (set of edges). Uses Euclidean
+        % Gets the length of a path (set of edge IDs). Uses Euclidean
         % distances for edge lengths.
         %
         % out = GetPathDistance(obj,path)
