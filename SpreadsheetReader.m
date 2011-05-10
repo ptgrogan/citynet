@@ -12,12 +12,10 @@ classdef SpreadsheetReader
         cityLatitude = 2;           % row of the city latitude input
         cityLongitude = 3;          % row of the city longitude input
         cityRotation = 4;           % row of the city rotation input
-        cityImagePath = 5;
-        cityImageX = 6;
-        cityImageY = 7;
-        cityImageWidth = 8;
-        cityImageHeight = 9;
-        minIntersectionFraction = 10; % row of the minimum intersection area input
+        cityImagePath = 5;          % row of the city image file path
+        cityImageVerticesX = 6;     % row of the city image x-vertices
+        cityImageVerticesY = 7;     % row of the city image y-vertices
+        minIntersectionFraction = 8; % row of the minimum intersection area input
         nodeTypesWorksheet = 'node_types'; % name of the node types worksheet
         nodeTypesId = 1;            % column of the node type id input
         nodeTypesName = 2;          % column of the node type name input
@@ -277,8 +275,8 @@ classdef SpreadsheetReader
             synthTemp.city.longitude = raw{SpreadsheetReader.cityLongitude,2};
             synthTemp.city.rotation = raw{SpreadsheetReader.cityRotation,2};
             synthTemp.city.imagePath = raw{SpreadsheetReader.cityImagePath,2};
-            synthTemp.city.imageLocation = [raw{SpreadsheetReader.cityImageX,2} raw{SpreadsheetReader.cityImageY,2}];
-            synthTemp.city.imageDimensions = [raw{SpreadsheetReader.cityImageWidth,2} raw{SpreadsheetReader.cityImageHeight,2}];
+            synthTemp.city.imageVerticesX = eval(raw{SpreadsheetReader.cityImageVerticesX,2});
+            synthTemp.city.imageVerticesY = eval(raw{SpreadsheetReader.cityImageVerticesY,2});
             synthTemp.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
             SpreadsheetReader.ReadCells(filepath,synthTemp.city);
             SpreadsheetReader.ReadLayers(filepath,synthTemp.city);

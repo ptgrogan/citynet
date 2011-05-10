@@ -9,7 +9,6 @@
 clear classes
 close all
 clc
-addpath('..');
 addpath(['..' filesep '..']);
 
 %% define synthesis properties

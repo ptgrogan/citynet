@@ -78,8 +78,8 @@ classdef SynthesisTemplate < Singleton
             nodeAlpha = 0.75;
             cellAlpha = 0.50;
             if obj.city.HasImage()
-                imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
-                obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
+                imagesc([min(obj.city.imageVerticesX) max(obj.city.imageVerticesX)], ...
+                [min(obj.city.imageVerticesY) max(obj.city.imageVerticesY)], ...
                 obj.city.GetImage())
                 nodeAlpha = 0.50;
                 cellAlpha = 0.25;
@@ -152,8 +152,8 @@ classdef SynthesisTemplate < Singleton
             ylabel('y (km)')
             hold on
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
-                imagesc(obj.city.imageLocation(1)+[0 obj.city.imageDimensions(1)], ...
-                obj.city.imageLocation(2)+[0 obj.city.imageDimensions(2)], ...
+                imagesc([min(obj.city.imageVerticesX) max(obj.city.imageVerticesX)], ...
+                [min(obj.city.imageVerticesY) max(obj.city.imageVerticesY)], ...
                 obj.city.GetImage())
             end
             for i=1:length(obj.city.cells)
@@ -185,8 +185,8 @@ classdef SynthesisTemplate < Singleton
             cellAlpha = 0.50;
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
                 I = obj.city.GetImage();
-                surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
-                    linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
+                surf(linspace(min(obj.city.imageVerticesX),max(obj.city.imageVerticesX),size(I,1)), ...
+                    linspace(min(obj.city.imageVerticesY),max(obj.city.imageVerticesY),size(I,2)), ...
                     zeros(size(I(:,:,1))), ...
                     reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
                 colormap(obj.city.imageMap)
@@ -264,8 +264,8 @@ classdef SynthesisTemplate < Singleton
             cellAlpha = 0.50;
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
                 I = obj.city.GetImage();
-                surf(linspace(obj.city.imageLocation(1),obj.city.imageDimensions(1),size(I,1)), ...
-                    linspace(obj.city.imageLocation(2),obj.city.imageDimensions(2),size(I,2)), ...
+                surf(linspace(min(obj.city.imageVerticesX),max(obj.city.imageVerticesX),size(I,1)), ...
+                    linspace(min(obj.city.imageVerticesY),max(obj.city.imageVerticesY),size(I,2)), ...
                     zeros(size(I(:,:,1))), ...
                     reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
                 colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
@@ -292,7 +292,7 @@ classdef SynthesisTemplate < Singleton
             % fill in blank squares
             for i=1:size(filled,1)
                 for j=1:size(filled,2)
-                    if sum(filled(:,j))>0 && filled(i,j)==0
+                    if filled(i,j)==0
                         cell = obj.city.cells([obj.city.cells.id]==i);
                         x = cell.location(1);
                         w = cell.dimensions(1);
@@ -304,8 +304,8 @@ classdef SynthesisTemplate < Singleton
                     end
                 end
             end
-            filteredLayerHeights = [obj.city.layers(sum(filled,1)>0).displayHeight];
-            filteredLayers = {obj.city.layers(sum(filled,1)>0).name};
+            filteredLayerHeights = [obj.city.layers.displayHeight];
+            filteredLayers = {obj.city.layers.name};
             [vals order] = sort(filteredLayerHeights);
             set(gca,'ZTick',filteredLayerHeights(order))
             set(gca,'ZTickLabel',filteredLayers(order))

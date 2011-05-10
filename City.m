@@ -13,8 +13,8 @@ classdef City < handle
         longitude;  % longitude of city local coordinate frame origin (degrees)
         rotation;   % rotation of city local coordinate frame from cardinal (degrees counterclockwise)
         imagePath;          % path to city image
-        imageLocation;      % location of city image upper left corner
-        imageDimensions;    % dimensions of city image
+        imageVerticesX;     % x-coordinate vertices
+        imageVerticesY;     % y-coordinate vertices
         cells;      % mutable object array of Cell objects
         layers;     % mutable object array of Layer objects
         systems;    % mutable cell array of System objects
@@ -45,8 +45,8 @@ classdef City < handle
             obj.longitude = 0;
             obj.rotation = 0;
             obj.imagePath = '';
-            obj.imageLocation = [0 0];
-            obj.imageDimensions = [0 0];
+            obj.imageVerticesX = [0 0 0 0];
+            obj.imageVerticesY = [0 0 0 0];
             obj.imageX = [];
             obj.imageMap = [];
             
