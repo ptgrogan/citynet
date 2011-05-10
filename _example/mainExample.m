@@ -9,7 +9,7 @@
 clear classes
 close all
 clc
-addpath(['..' filesep '..']);
+addpath(['..']);
 
 %% define synthesis properties
 synthTemp = SynthesisTemplate.instance();
