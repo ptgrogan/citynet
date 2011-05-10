@@ -26,12 +26,13 @@ classdef AbstractRegion < handle
         % Determines whether a region contains the area enclosed by a set
         % of vertices.
         %
-        % out = ContainsCell(obj,cell)
-        %   cell:   the cell to check
-        function out = ContainsVertices(obj,verticesX, verticesY)
+        % out = ContainsVertices(obj,verticesX,verticesY)
+        %   verticesX:  the x-coordinates of the vertices to check
+        %   verticesY:  the y-coordinates of the vertices to check
+        function out = ContainsVertices(obj,verticesX,verticesY)
             [ix iy] = polybool('intersection',obj.verticesX,obj.verticesY,verticesX,verticesY);
             out = sum(inpolygon(obj.verticesX,obj.verticesY,verticesX,verticesY))>0 || ...
-                polyarea(ix,iy)/polyarea(verticesX,verticesY) > SynthesisTemplate.instance().minIntersectionArea;
+                polyarea(ix,iy)/polyarea(verticesX,verticesY) > SynthesisTemplate.instance().minIntersectionFraction;
         end
     end
 end

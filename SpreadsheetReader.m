@@ -17,7 +17,7 @@ classdef SpreadsheetReader
         cityImageY = 7;
         cityImageWidth = 8;
         cityImageHeight = 9;
-        minIntersectionArea = 10;    % row of the minimum intersection area input
+        minIntersectionFraction = 10; % row of the minimum intersection area input
         nodeTypesWorksheet = 'node_types'; % name of the node types worksheet
         nodeTypesId = 1;            % column of the node type id input
         nodeTypesName = 2;          % column of the node type name input
@@ -279,7 +279,7 @@ classdef SpreadsheetReader
             synthTemp.city.imagePath = raw{SpreadsheetReader.cityImagePath,2};
             synthTemp.city.imageLocation = [raw{SpreadsheetReader.cityImageX,2} raw{SpreadsheetReader.cityImageY,2}];
             synthTemp.city.imageDimensions = [raw{SpreadsheetReader.cityImageWidth,2} raw{SpreadsheetReader.cityImageHeight,2}];
-            synthTemp.minIntersectionArea = raw{SpreadsheetReader.minIntersectionArea,2};
+            synthTemp.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
             SpreadsheetReader.ReadCells(filepath,synthTemp.city);
             SpreadsheetReader.ReadLayers(filepath,synthTemp.city);
             SpreadsheetReader.ReadSystems(filepath,synthTemp.city);
