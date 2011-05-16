@@ -108,6 +108,9 @@ classdef SpreadsheetReader
         function ReadTemplate(filepath)
             waitbar(0,SpreadsheetReader.h,'Initializing Synthesis Template');
             synthTemp = SynthesisTemplate.instance();
+            
+            % suppress xlsread warnings
+            warning('off','MATLAB:xlsread:Mode');
                                     
             SpreadsheetReader.ReadNodeTypes(filepath,synthTemp);
             SpreadsheetReader.ReadEdgeTypes(filepath,synthTemp);
@@ -178,7 +181,7 @@ classdef SpreadsheetReader
         %   synthTemp:  the synthesis template for which to read the node
         %   types
         function ReadNodeTypes(filepath,synthTemp)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypesWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(0+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.nodeTypesName} ' Node Type']);
                 % color is formated as 0x######
@@ -201,7 +204,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   nodeType:   the node type for which to read attributes
         function ReadNodeTypeAttributes(filepath,nodeType)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypeAttributesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeTypeAttributesWorksheet,'','basic');
             for i=2:size(raw,1)
                 if nodeType.id==raw{i,SpreadsheetReader.nodeTypeAttributesTypeId}
                     nodeType.attributes(end+1) = NodeTypeAttribute( ...
@@ -224,7 +227,7 @@ classdef SpreadsheetReader
         %   synthTemp:  the synthesis template for which to read the edge
         %   types
         function ReadEdgeTypes(filepath,synthTemp)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypesWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(.1+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.edgeTypesName} ' Edge Type']);
                 % color is formated as 0x######
@@ -247,7 +250,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   edgeType:   the edge type for which to read attributes
         function ReadEdgeTypeAttributes(filepath,edgeType)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypeAttributesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeTypeAttributesWorksheet,'','basic');
             for i=2:size(raw,1)
                 if edgeType.id==raw{i,SpreadsheetReader.edgeTypeAttributesTypeId}
                     edgeType.attributes(end+1) = EdgeTypeAttribute( ...
@@ -269,7 +272,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   synthTemp:  the synthesis template for which to read the city
         function ReadCity(filepath,synthTemp)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet,'','basic');
             synthTemp.city = City(raw{SpreadsheetReader.cityName,2});
             synthTemp.city.latitude = raw{SpreadsheetReader.cityLatitude,2};
             synthTemp.city.longitude = raw{SpreadsheetReader.cityLongitude,2};
@@ -290,7 +293,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   city:       the city in which to create the cells
         function ReadCells(filepath,city)
-            [num txt raw] =  xlsread(filepath,SpreadsheetReader.cellsWorksheet);
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.cellsWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(.4+.1*i/size(raw,1),SpreadsheetReader.h,['Reading Cell ' num2str(raw{i,SpreadsheetReader.cellsId})]);
                 city.cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
@@ -306,7 +309,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   city:       the city in which to create the layers
         function ReadLayers(filepath,city)
-            [num txt raw] =  xlsread(filepath,SpreadsheetReader.layersWorksheet);
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.layersWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(.5+.1*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.layersName} ' Layer']);
                 city.layers(end+1) = Layer(raw{i,SpreadsheetReader.layersId},...
@@ -323,7 +326,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   city:       the city in which to create the systems
         function ReadSystems(filepath,city)
-            [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet);
+            [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(0.6+0.3*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.systemsName} ' System']);
                 if strcmp(raw{i,SpreadsheetReader.systemsName},'Building')
@@ -366,7 +369,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   system:   the system for which to read nodes
         function ReadNodes(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodesWorksheet,'','basic');
             synthTemp = SynthesisTemplate.instance();
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.nodesSystemId}
@@ -386,7 +389,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   system:     the system for which to read edges
         function ReadEdges(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgesWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgesWorksheet,'','basic');
             synthTemp = SynthesisTemplate.instance();
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.edgesSystemId}
@@ -407,7 +410,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   system:     system handle
         function ReadNodeRegions(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet,'','basic');
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
                     system.nodeRegions(end+1) = NodeRegion( ...
@@ -428,7 +431,7 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   system:     system handle
         function ReadEdgeRegions(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet);
+            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet,'','basic');
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
                     connectionType = EdgeRegion.POLYLINE_PERIMETER;
