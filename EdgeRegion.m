@@ -62,7 +62,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.type = varargin{6};
                 obj.directed = varargin{7};
             elseif nargin == 6
-                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
+                obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = varargin{1};
                 obj.layerIds = varargin{2};
                 obj.verticesX = varargin{3};
@@ -70,7 +70,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.type = varargin{5};
                 obj.directed = varargin{6};
             else
-                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
+                obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = 0;
                 obj.layerIds = 0;
                 obj.verticesX = 0;
