@@ -12,6 +12,7 @@ classdef City < handle
         latitude;   % latitude of city local coordinate frame origin (degrees)
         longitude;  % longitude of city local coordinate frame origin (degrees)
         rotation;   % rotation of city local coordinate frame from cardinal (degrees counterclockwise)
+        distanceUnits;      % units of distance used
         imagePath;          % path to city image
         imageVerticesX;     % x-coordinate vertices
         imageVerticesY;     % y-coordinate vertices
@@ -31,16 +32,25 @@ classdef City < handle
         %% City Constructor
         % Instantiates a new City object with specified name.
         %
+        % obj = City(name, distanceUnits)
+        %   name:           name of the city
+        %   distanceUnits:  units of distance to use
+        %
         % obj = City(name)
         %   name:       name of the city
         %
         % obj = City()
         
         function obj = City(varargin)
-            if nargin==1
+            if nargin==2
                 obj.name = varargin{1};
+                obj.distanceUnits = varargin{2};
+            elseif nargin==1
+                obj.name = varargin{1};
+                obj.distanceUnits = 'km';
             else
                 obj.name = 'New City';
+                obj.distanceUnits = 'km';
             end
             obj.latitude = 0;
             obj.longitude = 0;

@@ -74,8 +74,8 @@ classdef SynthesisTemplate < Singleton
         % current figure.
         function RenderLayer(obj,layerId)
             title([obj.city.name ', ' obj.city.layers([obj.city.layers.id]==layerId).name ' Layer'])
-            xlabel('x (km)')
-            ylabel('y (km)')
+            xlabel(['x (' obj.city.distanceUnits ')'])
+            ylabel(['y (' obj.city.distanceUnits ')'])
             hold on
             nodeAlpha = 0.75;
             cellAlpha = 0.50;
@@ -150,8 +150,8 @@ classdef SynthesisTemplate < Singleton
             textColor = [0 0 0];
             % options end
             title([obj.city.name ' Cells'])
-            xlabel('x (km)')
-            ylabel('y (km)')
+            xlabel(['x (' obj.city.distanceUnits ')'])
+            ylabel(['y (' obj.city.distanceUnits ')'])
             hold on
             if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
                 imagesc([min(obj.city.imageVerticesX) max(obj.city.imageVerticesX)], ...
@@ -178,8 +178,8 @@ classdef SynthesisTemplate < Singleton
 %             system = obj.city.systems([obj.city.systems.id]==systemId);
             system = obj.city.systems{systemId};
             zlabel('Layer')
-            xlabel('x (km)')
-            ylabel('y (km)')
+            xlabel(['x (' obj.city.distanceUnits ')'])
+            ylabel(['y (' obj.city.distanceUnits ')'])
             title([obj.city.name ', ' system.name ' System'])
             hold on
             view(3)
@@ -257,8 +257,8 @@ classdef SynthesisTemplate < Singleton
         % Renders the complete city using a 3-D plot in the current figure.
         function RenderCity(obj)
             zlabel('Layer')
-            xlabel('x (km)')
-            ylabel('y (km)')
+            xlabel(['x (' obj.city.distanceUnits ')'])
+            ylabel(['y (' obj.city.distanceUnits ')'])
             title(obj.city.name)
             hold on
             view(3)
