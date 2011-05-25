@@ -86,6 +86,12 @@ classdef SpreadsheetReader
         edgeRegionsVerticesY = 6;   % column of the edge regions y-vertices input
         edgeRegionsType = 7;        % column of the edge regions connection type input
         edgeRegionsDirected = 8;    % column of the edge regions directed input
+        cellRegionsWorksheet = 'cell_regions';  % name of the cell regions worksheet
+        cellRegionsId = 1;          % column of the cell regions id input
+        cellRegionsVerticesX = 2;   % column of the cell regions x-vertices input
+        cellRegionsVerticesY = 3;   % column of the cell regions y-vertices input
+        cellRegionsNumRows = 4;     % column of the cell regions number rows input
+        cellRegionsNumCols = 5;     % column of the cell regions number columns input
         h = waitbar(0);             % handle of waitbar
     end
     methods(Access=private)
@@ -140,6 +146,10 @@ classdef SpreadsheetReader
             if ~isempty(synthTemp.city.cells)
                 synthTemp.nextCellId = max(synthTemp.nextCellId, ...
                     max([synthTemp.city.cells.id])+1);
+            end
+            if ~isempty(synthTemp.city.cellRegions)
+                synthTemp.nextCellRegionId = max(synthTemp.nextCellRegionId, ...
+                    max([synthTemp.city.cellRegions.id])+1);
             end
             if ~isempty(synthTemp.city.layers)
                 synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
@@ -282,6 +292,7 @@ classdef SpreadsheetReader
             synthTemp.city.imageVerticesY = eval(raw{SpreadsheetReader.cityImageVerticesY,2});
             synthTemp.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
             SpreadsheetReader.ReadCells(filepath,synthTemp.city);
+            SpreadsheetReader.ReadCellRegions(filepath,synthTemp.city);
             SpreadsheetReader.ReadLayers(filepath,synthTemp.city);
             SpreadsheetReader.ReadSystems(filepath,synthTemp.city);
         end
@@ -299,6 +310,32 @@ classdef SpreadsheetReader
                 city.cells(end+1) = Cell(raw{i,SpreadsheetReader.cellsId},...
                     [raw{i,SpreadsheetReader.cellsLocationX} raw{i,SpreadsheetReader.cellsLocationY}], ...
                     [raw{i,SpreadsheetReader.cellsDimensionX} raw{i,SpreadsheetReader.cellsDimensionY}]);
+            end
+        end
+        
+        %% ReadCellRegions Function
+        % ReadCellRegions opens a spreadsheet file and reads in the cell
+        % regions.
+        %
+        % ReadCellRegions(filepath,city)
+        %   filepath:   the path to the spreadsheet template
+        %   city:     	city handle
+        function ReadCellRegions(filepath,city)
+            try
+                [num txt raw] = xlsread(filepath,SpreadsheetReader.cellRegionsWorksheet,'','basic');
+                for i=2:size(raw,1)
+                    city.cellRegions(end+1) = CellRegion( ...
+                        raw{i,SpreadsheetReader.cellRegionsId}, ...
+                        eval(raw{i,SpreadsheetReader.cellRegionsVerticesX}), ...
+                        eval(raw{i,SpreadsheetReader.cellRegionsVerticesY}), ...
+                        [raw{i,SpreadsheetReader.cellRegionsNumRows}, ...
+                        raw{i,SpreadsheetReader.cellRegionsNumCols}]);
+                end
+            catch ex
+                % if worksheet does not exist, print temporary message
+                disp(['CityNet Warning: Could not read "' ...
+                    SpreadsheetReader.cellRegionsWorksheet ...
+                    '" worksheet - please add at your convenience.'])
             end
         end
         
@@ -381,6 +418,34 @@ classdef SpreadsheetReader
             end
         end
         
+        %% ReadNodeRegions Function
+        % ReadNodeRegions opens a spreadsheet file and reads in the node
+        % regions.
+        %
+        % ReadNodeRegions(filepath,system)
+        %   filepath:   the path to the spreadsheet template
+        %   system:     system handle
+        function ReadNodeRegions(filepath,system)
+            try
+                [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet,'','basic');
+                for i=2:size(raw,1)
+                    if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
+                        system.nodeRegions(end+1) = NodeRegion( ...
+                            raw{i,SpreadsheetReader.nodeRegionsId}, ...
+                            raw{i,SpreadsheetReader.nodeRegionsNodeTypeId}, ...
+                            raw{i,SpreadsheetReader.nodeRegionsLayerId}, ...
+                            eval(raw{i,SpreadsheetReader.nodeRegionsVerticesX}), ...
+                            eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}));
+                    end
+                end
+            catch ex
+                % if worksheet does not exist, print temporary message
+                disp(['CityNet Warning: Could not read "' ...
+                    SpreadsheetReader.nodeRegionsWorksheet ...
+                    '" worksheet - please add at your convenience.'])
+            end
+        end
+        
         %% ReadEdges Function
         % ReadEdges opens a spreadsheet file and reads in the edges for a 
         % particular system.
@@ -402,27 +467,6 @@ classdef SpreadsheetReader
             end
         end
         
-        %% ReadNodeRegions Function
-        % ReadNodeRegions opens a spreadsheet file and reads in the node
-        % regions.
-        %
-        % ReadNodeRegions(filepath,system)
-        %   filepath:   the path to the spreadsheet template
-        %   system:     system handle
-        function ReadNodeRegions(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet,'','basic');
-            for i=2:size(raw,1)
-                if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
-                    system.nodeRegions(end+1) = NodeRegion( ...
-                        raw{i,SpreadsheetReader.nodeRegionsId}, ...
-                        raw{i,SpreadsheetReader.nodeRegionsNodeTypeId}, ...
-                        raw{i,SpreadsheetReader.nodeRegionsLayerId}, ...
-                        eval(raw{i,SpreadsheetReader.nodeRegionsVerticesX}), ...
-                        eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}));
-                end
-            end
-        end
-        
         %% ReadEdgeRegions Function
         % ReadEdgeRegions opens a spreadsheet file and reads in the edge
         % regions.
@@ -431,26 +475,33 @@ classdef SpreadsheetReader
         %   filepath:   the path to the spreadsheet template
         %   system:     system handle
         function ReadEdgeRegions(filepath,system)
-            [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet,'','basic');
-            for i=2:size(raw,1)
-                if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
-                    connectionType = EdgeRegion.POLYLINE_PERIMETER;
-                    if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'orthogonal')
-                        connectionType = EdgeRegion.ORTHOGONAL_NEIGHBORS;
-                    elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors')
-                        connectionType = EdgeRegion.ALL_NEIGHBORS;
-                    elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'connected')
-                        connectionType = EdgeRegion.FULLY_CONNECTED;
+            try
+                [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet,'','basic');
+                for i=2:size(raw,1)
+                    if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
+                        connectionType = EdgeRegion.POLYLINE_PERIMETER;
+                        if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'orthogonal')
+                            connectionType = EdgeRegion.ORTHOGONAL_NEIGHBORS;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors')
+                            connectionType = EdgeRegion.ALL_NEIGHBORS;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'connected')
+                            connectionType = EdgeRegion.FULLY_CONNECTED;
+                        end
+                        system.edgeRegions(end+1) = EdgeRegion( ...
+                            raw{i,SpreadsheetReader.edgeRegionsId}, ...
+                            raw{i,SpreadsheetReader.edgeRegionsNodeTypeId}, ...
+                            eval(raw{i,SpreadsheetReader.edgeRegionsLayerIds}), ...
+                            eval(raw{i,SpreadsheetReader.edgeRegionsVerticesX}), ...
+                            eval(raw{i,SpreadsheetReader.edgeRegionsVerticesY}), ...
+                            connectionType, ...
+                            raw{i,SpreadsheetReader.edgeRegionsDirected});
                     end
-                    system.edgeRegions(end+1) = EdgeRegion( ...
-                        raw{i,SpreadsheetReader.edgeRegionsId}, ...
-                        raw{i,SpreadsheetReader.edgeRegionsNodeTypeId}, ...
-                        eval(raw{i,SpreadsheetReader.edgeRegionsLayerIds}), ...
-                        eval(raw{i,SpreadsheetReader.edgeRegionsVerticesX}), ...
-                        eval(raw{i,SpreadsheetReader.edgeRegionsVerticesY}), ...
-                        connectionType, ...
-                        raw{i,SpreadsheetReader.edgeRegionsDirected});
                 end
+            catch ex
+                % if worksheet does not exist, print temporary message
+                disp(['CityNet Warning: Could not read "' ...
+                    SpreadsheetReader.edgeRegionsWorksheet ...
+                    '" worksheet - please add at your convenience.'])
             end
         end
     end

@@ -18,6 +18,7 @@ classdef City < handle
         cells;      % mutable object array of Cell objects
         layers;     % mutable object array of Layer objects
         systems;    % mutable cell array of System objects
+        cellRegions;    % mutable object array of CellRegion objects
         % note: systems must be a cell array to enable polymorphism, i.e.
         % subclasses of System to be stored within the same data structure
     end
@@ -53,6 +54,7 @@ classdef City < handle
             obj.cells = Cell.empty();
             obj.layers = Layer.empty();
             obj.systems = {};
+            obj.cellRegions = CellRegion.empty();
         end
         
         %% HasImage Method

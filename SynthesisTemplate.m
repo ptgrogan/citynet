@@ -25,6 +25,7 @@ classdef SynthesisTemplate < Singleton
         nextEdgeId;         % next available identifier for edges
         nextNodeRegionId;   % next available identifier for node regions
         nextEdgeRegionId;   % next available identifier for edge regions
+        nextCellRegionId;   % next available identifier for cell regions
     end
     methods(Access=private)
         %% SynthesisTemplate Constructor
@@ -51,6 +52,7 @@ classdef SynthesisTemplate < Singleton
             obj.nextEdgeId = 1;
             obj.nextNodeRegionId = 1;
             obj.nextEdgeRegionId = 1;
+            obj.nextCellRegionId = 1;
         end
     end
     methods(Static)
@@ -432,6 +434,13 @@ classdef SynthesisTemplate < Singleton
         function out = GetNextEdgeRegionId(obj)
             out = obj.nextEdgeRegionId;
             obj.nextEdgeRegionId = obj.nextEdgeRegionId + 1;
+        end
+                
+        %% GetNextCellRegionId Function
+        % Gets and increments the next cell region identifier.
+        function out = GetNextCellRegionId(obj)
+            out = obj.nextCellRegionId;
+            obj.nextCellRegionId = obj.nextCellRegionId + 1;
         end
     end
     methods(Access=private)
