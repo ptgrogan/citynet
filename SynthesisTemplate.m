@@ -191,7 +191,7 @@ classdef SynthesisTemplate < Singleton
                     linspace(min(obj.city.imageVerticesY),max(obj.city.imageVerticesY),size(I,2)), ...
                     zeros(size(I(:,:,1))), ...
                     reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
-                colormap(obj.city.imageMap)
+                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
                 nodeAlpha = 0.50;
                 cellAlpha = 0.25;
             end
