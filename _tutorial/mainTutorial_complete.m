@@ -9,6 +9,7 @@
 clear classes
 close all
 clc
+addpath('..')
 
 %% define synthesis properties
 synthTemp = SynthesisTemplate.instance();
@@ -31,7 +32,6 @@ end
 %% render system
 figure(1)
 subplot(2,3,1)
-%synthTemp.RenderCells();
 synthTemp.RenderLayer(1);
 subplot(2,3,2)
 synthTemp.RenderLayer(2);
@@ -43,5 +43,3 @@ subplot(2,3,5)
 synthTemp.RenderLayer(5);
 subplot(2,3,6)
 synthTemp.RenderLayer(6);
-figure(2)
-synthTemp.RenderCity;
