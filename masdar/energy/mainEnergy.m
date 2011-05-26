@@ -49,3 +49,17 @@ end
 
 figure(1)
 synthTemp.RenderCity;
+
+figure(2)
+subplot(3,2,1)
+synthTemp.RenderCells();
+subplot(3,2,2)
+synthTemp.RenderLayer(1);
+subplot(3,2,3)
+synthTemp.RenderLayer(2);
+subplot(3,2,4)
+synthTemp.RenderLayer(3);
+subplot(3,2,5)
+synthTemp.RenderLayer(4);
+subplot(3,2,6)
+synthTemp.RenderLayer(5);
