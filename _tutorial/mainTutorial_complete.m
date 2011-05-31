@@ -13,7 +13,7 @@ addpath('..')
 
 %% define synthesis properties
 synthTemp = SynthesisTemplate.instance();
-SpreadsheetReader.ReadTemplate('synthesisTutorial.xls');
+SpreadsheetReader.ReadTemplate('synthesisTutorial_complete.xls');
 
 synthTemp.GenerateCells();
 synthTemp.GenerateNodes();
