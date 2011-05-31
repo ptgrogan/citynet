@@ -77,7 +77,8 @@ classdef SpreadsheetReader
         nodeRegionsLayerId = 4;     % column of the node regions layer id input
         nodeRegionsVerticesX = 5;   % column of the node regions x-vertices input
         nodeRegionsVerticesY = 6;   % column of the node regions y-vertices input
-        nodeRegionsDescription = 7; % column of the node regions description input
+        nodeRegionsType = 7;        % column of the node regions description input
+        nodeRegionsDescription = 8; % column of the node regions description input
         edgeRegionsWorksheet = 'edge_regions';  % name of the edge regions worksheet
         edgeRegionsId = 1;          % column of the edge regions id input
         edgeRegionsSystemId = 2;    % column of the edge regions system id input
@@ -434,12 +435,21 @@ classdef SpreadsheetReader
                 [num txt raw] = xlsread(filepath,SpreadsheetReader.nodeRegionsWorksheet,'','basic');
                 for i=2:size(raw,1)
                     if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
+                        regionType = NodeRegion.UNDEFINED;
+                        if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'polygon')
+                            regionType = NodeRegion.POLYGON;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'polyline')
+                            regionType = NodeRegion.POLYLINE;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'polypoint')
+                            regionType = NodeRegion.POLYPOINT;
+                        end
                         system.nodeRegions(end+1) = NodeRegion( ...
                             raw{i,SpreadsheetReader.nodeRegionsId}, ...
                             raw{i,SpreadsheetReader.nodeRegionsNodeTypeId}, ...
                             raw{i,SpreadsheetReader.nodeRegionsLayerId}, ...
                             eval(raw{i,SpreadsheetReader.nodeRegionsVerticesX}), ...
                             eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}), ...
+                            regionType, ...
                             raw{i,SpreadsheetReader.nodeRegionsDescription});
                     end
                 end
@@ -483,14 +493,19 @@ classdef SpreadsheetReader
             try
                 [num txt raw] = xlsread(filepath,SpreadsheetReader.edgeRegionsWorksheet,'','basic');
                 for i=2:size(raw,1)
-                    if system.id==raw{i,SpreadsheetReader.nodeRegionsSystemId}
-                        connectionType = EdgeRegion.POLYLINE_PERIMETER;
+                    if system.id==raw{i,SpreadsheetReader.edgeRegionsSystemId}
+                        regionType = EdgeRegion.UNDEFINED;
                         if strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'orthogonal')
-                            connectionType = EdgeRegion.ORTHOGONAL_NEIGHBORS;
-                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors')
-                            connectionType = EdgeRegion.ALL_NEIGHBORS;
+                            regionType = EdgeRegion.POLYGON_ORTHOGONAL;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'neighbors') || ...
+                                strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'adjacent')
+                            regionType = EdgeRegion.POLYGON_ADJACENT;
                         elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'connected')
-                            connectionType = EdgeRegion.FULLY_CONNECTED;
+                            regionType = EdgeRegion.POLYGON_CONNECTED;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'polyline')
+                            regionType = EdgeRegion.POLYLINE;
+                        elseif strcmp(raw{i,SpreadsheetReader.edgeRegionsType},'polypoint')
+                            regionType = EdgeRegion.POLYPOINT;
                         end
                         system.edgeRegions(end+1) = EdgeRegion( ...
                             raw{i,SpreadsheetReader.edgeRegionsId}, ...
@@ -498,7 +513,7 @@ classdef SpreadsheetReader
                             eval(raw{i,SpreadsheetReader.edgeRegionsLayerIds}), ...
                             eval(raw{i,SpreadsheetReader.edgeRegionsVerticesX}), ...
                             eval(raw{i,SpreadsheetReader.edgeRegionsVerticesY}), ...
-                            connectionType, ...
+                            regionType, ...
                             raw{i,SpreadsheetReader.edgeRegionsDirected}, ...
                             raw{i,SpreadsheetReader.edgeRegionsDescription});
                     end

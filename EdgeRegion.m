@@ -16,10 +16,12 @@
 %%
 classdef EdgeRegion < AbstractRegion
     properties(Constant)
-        POLYLINE_PERIMETER = 1;     % connects adjacent nodes in perimeter (polyline)
-        ORTHOGONAL_NEIGHBORS = 2;   % connects orthogonal neighbors in region
-        ALL_NEIGHBORS = 3;          % connects orthogonal and diagonal neighbors in region
-        FULLY_CONNECTED = 4;        % connects all nodes in region
+        UNDEFINED = 0;              % type not defined
+        POLYGON_ORTHOGONAL = 1;     % connects orthogonal neighbors in polygon
+        POLYGON_ADJACENT = 2;       % connects orthogonal and diagonal neighbors in polygon
+        POLYGON_CONNECTED = 3;      % connects all nodes within polygon
+        POLYLINE = 4;               % connects adjacent nodes along polyline
+        POLYPOINT = 5;              % connects nodes at polypoints
     end
     properties
         id;                 % unique identifier for edge region
@@ -80,7 +82,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.layerIds = 0;
                 obj.verticesX = 0;
                 obj.verticesY = 0;
-                obj.type = EdgeRegion.POLYLINE_PERIMETER;
+                obj.type = EdgeRegion.UNDEFINED;
                 obj.directed = 0;
                 obj.description = '';
             end
@@ -93,19 +95,17 @@ classdef EdgeRegion < AbstractRegion
         % GenerateEdges(system)
         %   system: the system within which to generate edges
         function GenerateEdges(obj,system)
-            synthTemp = SynthesisTemplate.instance();
-            if obj.type==EdgeRegion.POLYLINE_PERIMETER
-                % find corresponding node id for each vertex
-                nodeIds = zeros(length(obj.layerIds),1);
-                for i=1:length(obj.layerIds)
+            if obj.type==EdgeRegion.POLYLINE
+                % find corresponding node ids along line
+                nodeIds = [];
+                for i=1:length(obj.layerIds)-1
                     for n=1:length(system.nodes)
-                        [cVx cVy] = system.nodes(n).cell.GetVertices();
-                        if system.nodes(n).layer.id==obj.layerIds(i) && ...
-                                inpolygon(obj.verticesX(i),obj.verticesY(i),cVx,cVy)
-                            nodeIds(i) = system.nodes(n).id;
-                            % break out of for loop in case the point is on the
-                            % boundary between two adjacent nodes
-                            break;
+                        % TODO: processes nodes in uncertain order
+                        if system.nodes(n).layer.id == obj.layerIds(i) && ...
+                                system.nodes(n).cell.IntersectsLine( ...
+                                obj.verticesX(i),obj.verticesY(i), ...
+                                obj.verticesX(i+1),obj.verticesY(i+1))
+                            nodeIds(end+1) = system.nodes(n).id;
                         end
                     end
                 end
@@ -114,14 +114,32 @@ classdef EdgeRegion < AbstractRegion
                     destination = system.nodes([system.nodes.id]==nodeIds(i+1));
                     if ~isempty(origin) && ~isempty(destination) && ...
                             origin.id~=destination.id
-                        system.edges(end+1) = Edge(...
-                            system.nodes([system.nodes.id]==nodeIds(i)), ...
-                            system.nodes([system.nodes.id]==nodeIds(i+1)), ...
-                            synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
-                            obj.directed);
+                        obj.CreateEdge(system,origin,destination);
                     end
                 end
-            elseif obj.type==EdgeRegion.ORTHOGONAL_NEIGHBORS
+            elseif obj.type==EdgeRegion.POLYPOINT
+                % find corresponding node ids for each vertex
+                nodeIds = zeros(length(obj.layerIds),1);
+                for i=1:length(obj.layerIds)
+                    for n=1:length(system.nodes)
+                        if system.nodes(n).layer.id == obj.layerIds(i) && ...
+                                system.nodes(n).cell.ContainsPoint(obj.verticesX(i),obj.verticesY(i))
+                            nodeIds(i) = system.nodes(n).id;
+                            % break out of for loop in case the point is on the
+                            % boundary between two adjacent nodes
+                            break
+                        end
+                    end
+                end
+                for i=1:length(nodeIds)-1
+                    origin = system.nodes([system.nodes.id]==nodeIds(i));
+                    destination = system.nodes([system.nodes.id]==nodeIds(i+1));
+                    if ~isempty(origin) && ~isempty(destination) && ...
+                            origin.id~=destination.id
+                        obj.CreateEdge(system,origin,destination);
+                    end
+                end
+            elseif obj.type==EdgeRegion.POLYGON_ORTHOGONAL
                 nodeIds = [];
                 % find corresponding cell id for each vertex in region
                 for n=1:length(system.nodes)
@@ -142,15 +160,11 @@ classdef EdgeRegion < AbstractRegion
                         if ~isempty(origin) && ~isempty(destination) && ...
                                 origin.id~=destination.id && ...
                                 size(intersect([vxo;vyo]',[vxd;vyd]','rows'),1)==2
-                            system.edges(end+1) = Edge(...
-                                system.nodes([system.nodes.id]==nodeIds(i)), ...
-                                system.nodes([system.nodes.id]==nodeIds(j)), ...
-                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
-                                obj.directed);
+                            obj.CreateEdge(system,origin,destination);
                         end
                     end
                 end
-            elseif obj.type==EdgeRegion.ALL_NEIGHBORS
+            elseif obj.type==EdgeRegion.POLYGON_ADJACENT
                 nodeIds = [];
                 % find corresponding cell id for each vertex in region
                 for n=1:length(system.nodes)
@@ -171,15 +185,11 @@ classdef EdgeRegion < AbstractRegion
                         if ~isempty(origin) && ~isempty(destination) && ...
                                  origin.id~=destination.id && ...
                                  size(intersect([vxo;vyo]',[vxd;vyd]','rows'),1)>=1
-                            system.edges(end+1) = Edge(...
-                                system.nodes([system.nodes.id]==nodeIds(i)), ...
-                                system.nodes([system.nodes.id]==nodeIds(j)), ...
-                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
-                                obj.directed);
+                            obj.CreateEdge(system,origin,destination);
                         end
                     end
                 end
-            elseif obj.type==EdgeRegion.FULLY_CONNECTED
+            elseif obj.type==EdgeRegion.POLYGON_CONNECTED
                 nodeIds = [];
                 % find corresponding cell id for each vertex in region
                 for n=1:length(system.nodes)
@@ -195,15 +205,22 @@ classdef EdgeRegion < AbstractRegion
                         destination = system.nodes([system.nodes.id]==nodeIds(j));
                         if ~isempty(origin) && ~isempty(destination) && ...
                                 origin.id~=destination.id
-                            system.edges(end+1) = Edge(...
-                                system.nodes([system.nodes.id]==nodeIds(i)), ...
-                                system.nodes([system.nodes.id]==nodeIds(j)), ...
-                                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
-                                obj.directed);
+                            obj.CreateEdge(system,origin,destination);
                         end
                     end
                 end
             end
+        end
+    end
+    methods(Access=private)
+        %% CreateEdge Function
+        % Creates a new edge between origin and destination nodes within a 
+        % system.
+        function CreateEdge(obj,system,origin,destination)
+            synthTemp = SynthesisTemplate.instance();
+            system.edges(end+1) = Edge(origin, destination, ...
+                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
+                obj.directed);
         end
     end
 end

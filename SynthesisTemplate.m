@@ -144,7 +144,12 @@ classdef SynthesisTemplate < Singleton
                 end
             end
             hold on
-            for i=1:length(nodeRegion.verticesX)
+            if nodeRegion.type == nodeRegion.POLYGON;
+                x = 0;
+            else
+                x = 1;
+            end
+            for i=1:length(nodeRegion.verticesX)-x
                 x1 = nodeRegion.verticesX(i);
                 x2 = nodeRegion.verticesX(mod(i,length(nodeRegion.verticesX))+1);
                 y1 = nodeRegion.verticesY(i);
@@ -175,7 +180,12 @@ classdef SynthesisTemplate < Singleton
                 end
             end
             hold on
-            for i=1:length(nodeRegion.verticesX)
+            if nodeRegion.type == nodeRegion.POLYGON;
+                x = 0;
+            else
+                x = 1;
+            end
+            for i=1:length(nodeRegion.verticesX)-x
                 x1 = nodeRegion.verticesX(i);
                 x2 = nodeRegion.verticesX(mod(i,length(nodeRegion.verticesX))+1);
                 y1 = nodeRegion.verticesY(i);
