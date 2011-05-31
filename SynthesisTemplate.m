@@ -69,6 +69,96 @@ classdef SynthesisTemplate < Singleton
         end
     end
     methods
+        %% GenerateCells Function
+        % Generates cells for all defined cell regions.
+        function GenerateCells(obj)
+            for i=1:length(obj.city.cellRegions)
+                obj.city.cellRegions(i).GenerateCells(obj.city);
+            end
+        end
+        
+        %% GenerateNodes Function
+        % Generates nodes for all defined node regions in all systems.
+        function GenerateNodes(obj)
+            for i=1:length(obj.city.systems)
+                system = obj.city.systems{i};
+                for j=1:length(system.nodeRegions)
+                    system.nodeRegions(j).GenerateNodes(system);
+                end
+            end
+        end
+        
+        %% GenerateEdges Function
+        % Generates edges for all defined edge regions in all systems.
+        function GenerateEdges(obj)
+            for i=1:length(obj.city.systems)
+                system = obj.city.systems{i};
+                for j=1:length(system.edgeRegions)
+                    system.edgeRegions(j).GenerateEdges(system);
+                end
+            end
+        end
+        
+        %% RenderNodeRegion3d Function
+        % Renders a node region in the current 3D figure with a thick line, 
+        % the same color as the node type color.
+        function RenderNodeRegion3d(obj,nodeRegionId)
+            nodeRegion = [];
+            for i=1:length(obj.city.systems)
+                for j=1:length(obj.city.systems{i}.nodeRegions)
+                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
+                        nodeRegion = obj.city.systems{i}.nodeRegions(j);
+                        break
+                    end
+                end
+                if ~isempty(nodeRegion)
+                    break
+                end
+            end
+            hold on
+            for i=1:length(nodeRegion.verticesX)
+                x1 = nodeRegion.verticesX(i);
+                x2 = nodeRegion.verticesX(mod(i,length(nodeRegion.verticesX))+1);
+                y1 = nodeRegion.verticesY(i);
+                y2 = nodeRegion.verticesY(mod(i,length(nodeRegion.verticesY))+1);
+                z1 = obj.city.layers([obj.city.layers.id]==nodeRegion.layerId).displayHeight;
+                z2 = obj.city.layers([obj.city.layers.id]==nodeRegion.layerId).displayHeight;
+                line([x1;x2], [y1;y2], [z1;z2], ...
+                    'Color',obj.nodeTypes([obj.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
+                    'LineWidth',2);
+            end
+            hold off
+        end
+        
+        %% RenderNodeRegion2d Function
+        % Renders a node region in the current 2d figure with a thick line, 
+        % the same color as the node type color.
+        function RenderNodeRegion2d(obj,nodeRegionId)
+            nodeRegion = [];
+            for i=1:length(obj.city.systems)
+                for j=1:length(obj.city.systems{i}.nodeRegions)
+                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
+                        nodeRegion = obj.city.systems{i}.nodeRegions(j);
+                        break
+                    end
+                end
+                if ~isempty(nodeRegion)
+                    break
+                end
+            end
+            hold on
+            for i=1:length(nodeRegion.verticesX)
+                x1 = nodeRegion.verticesX(i);
+                x2 = nodeRegion.verticesX(mod(i,length(nodeRegion.verticesX))+1);
+                y1 = nodeRegion.verticesY(i);
+                y2 = nodeRegion.verticesY(mod(i,length(nodeRegion.verticesY))+1);
+                line([x1;x2], [y1;y2], ...
+                    'Color',obj.nodeTypes([obj.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
+                    'LineWidth',2);
+            end
+            hold off
+        end
+        
         %% RenderLayer Function
         % Displays a specific layer of the city using a 2-D plot in the
         % current figure.
