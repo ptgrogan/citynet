@@ -99,6 +99,34 @@ classdef SynthesisTemplate < Singleton
             end
         end
         
+        %% ClearCells Function
+        % Clears all defined cells. Also calls ClearNodes.
+        function ClearCells(obj)
+            obj.ClearNodes();
+            obj.city.cells = Cell.empty();
+            obj.nextCellId = 1;
+        end
+        
+        %% ClearNodes Function
+        % Clears all defined nodes across all systems. Also calls
+        % ClearEdges.
+        function ClearNodes(obj)
+            obj.ClearEdges();
+            for i=1:length(obj.city.systems)
+                obj.city.systems{i}.nodes = Node.empty();
+            end
+            obj.nextNodeId = 1;
+        end
+        
+        %% ClearEdges Function
+        % Clears all defined edges across all systems.
+        function ClearEdges(obj)
+            for i=1:length(obj.city.systems)
+                obj.city.systems{i}.edges = Edge.empty();
+            end
+            obj.nextEdgeId = 1;
+        end
+        
         %% RenderNodeRegion3d Function
         % Renders a node region in the current 3D figure with a thick line, 
         % the same color as the node type color.
