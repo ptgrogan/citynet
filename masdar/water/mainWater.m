@@ -24,15 +24,9 @@ SpreadsheetReader.ReadTemplate('synthesisWater.xls');
 % edges. normally this would occur within the graphical user interface, but
 % as a proxy in this case, it is explicitly called via the following
 % functions. you should not have to change them.
-for i=1:length(synthTemp.city.systems)
-    system = synthTemp.city.systems{i};
-    for j=1:length(system.nodeRegions)
-        system.nodeRegions(j).GenerateNodes(system);
-    end
-    for j=1:length(system.edgeRegions)
-        system.edgeRegions(j).GenerateEdges(system);
-    end
-end
+synthTemp.GenerateCells();
+synthTemp.GenerateNodes();
+synthTemp.GenerateEdges();
 
 %% render system
 
