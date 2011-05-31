@@ -2,7 +2,7 @@
 % This file uses a spreadsheet-based input file to synthesize the
 % quick start tutorial city (Boston) model.
 %
-% 25-May 2011
+% 30-May 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
 
@@ -13,33 +13,34 @@ addpath('..')
 
 %% define synthesis properties
 synthTemp = SynthesisTemplate.instance();
-SpreadsheetReader.ReadTemplate('synthesisTutorial_complete.xls');
+SpreadsheetReader.ReadTemplate('synthesisTutorial.xls');
 
-for i=1:length(synthTemp.city.cellRegions)
-    synthTemp.city.cellRegions(i).GenerateCells(synthTemp.city);
-end
+synthTemp.GenerateCells();
+synthTemp.GenerateNodes();
+synthTemp.GenerateEdges();
 
-for i=1:length(synthTemp.city.systems)
-    system = synthTemp.city.systems{i};
-    for j=1:length(system.nodeRegions)
-        system.nodeRegions(j).GenerateNodes(system);
-    end
-    for j=1:length(system.edgeRegions)
-        system.edgeRegions(j).GenerateEdges(system);
-    end
-end
-
-%% render system
 figure(1)
-subplot(2,3,1)
+synthTemp.RenderCity();
+
+figure(2)
+subplot(2,2,1)
 synthTemp.RenderLayer(1);
-subplot(2,3,2)
+synthTemp.RenderNodeRegion2d(1);
+synthTemp.RenderNodeRegion2d(2);
+synthTemp.RenderNodeRegion2d(3);
+synthTemp.RenderNodeRegion2d(4);
+subplot(2,2,2)
 synthTemp.RenderLayer(2);
-subplot(2,3,3)
+synthTemp.RenderNodeRegion2d(5);
+synthTemp.RenderNodeRegion2d(6);
+subplot(2,2,3)
 synthTemp.RenderLayer(3);
-subplot(2,3,4)
+synthTemp.RenderNodeRegion2d(7);
+synthTemp.RenderNodeRegion2d(8);
+synthTemp.RenderNodeRegion2d(9);
+synthTemp.RenderNodeRegion2d(10);
+subplot(2,2,4)
 synthTemp.RenderLayer(4);
-subplot(2,3,5)
-synthTemp.RenderLayer(5);
-subplot(2,3,6)
-synthTemp.RenderLayer(6);
+synthTemp.RenderNodeRegion2d(11);
+synthTemp.RenderNodeRegion2d(12);
+synthTemp.RenderNodeRegion2d(13);
