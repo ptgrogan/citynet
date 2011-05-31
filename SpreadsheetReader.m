@@ -77,6 +77,7 @@ classdef SpreadsheetReader
         nodeRegionsLayerId = 4;     % column of the node regions layer id input
         nodeRegionsVerticesX = 5;   % column of the node regions x-vertices input
         nodeRegionsVerticesY = 6;   % column of the node regions y-vertices input
+        nodeRegionsDescription = 7; % column of the node regions description input
         edgeRegionsWorksheet = 'edge_regions';  % name of the edge regions worksheet
         edgeRegionsId = 1;          % column of the edge regions id input
         edgeRegionsSystemId = 2;    % column of the edge regions system id input
@@ -86,12 +87,14 @@ classdef SpreadsheetReader
         edgeRegionsVerticesY = 6;   % column of the edge regions y-vertices input
         edgeRegionsType = 7;        % column of the edge regions connection type input
         edgeRegionsDirected = 8;    % column of the edge regions directed input
+        edgeRegionsDescription = 9; % column of the edge regions description input
         cellRegionsWorksheet = 'cell_regions';  % name of the cell regions worksheet
         cellRegionsId = 1;          % column of the cell regions id input
         cellRegionsVerticesX = 2;   % column of the cell regions x-vertices input
         cellRegionsVerticesY = 3;   % column of the cell regions y-vertices input
         cellRegionsNumRows = 4;     % column of the cell regions number rows input
         cellRegionsNumCols = 5;     % column of the cell regions number columns input
+        cellRegionsDescription = 6; % column of the cell regions description input
         h = waitbar(0);             % handle of waitbar
     end
     methods(Access=private)
@@ -329,7 +332,8 @@ classdef SpreadsheetReader
                         eval(raw{i,SpreadsheetReader.cellRegionsVerticesX}), ...
                         eval(raw{i,SpreadsheetReader.cellRegionsVerticesY}), ...
                         [raw{i,SpreadsheetReader.cellRegionsNumRows}, ...
-                        raw{i,SpreadsheetReader.cellRegionsNumCols}]);
+                        raw{i,SpreadsheetReader.cellRegionsNumCols}], ...
+                        raw{i,SpreadsheetReader.cellRegionsDescription});
                 end
             catch ex
                 % if worksheet does not exist, print temporary message
@@ -435,7 +439,8 @@ classdef SpreadsheetReader
                             raw{i,SpreadsheetReader.nodeRegionsNodeTypeId}, ...
                             raw{i,SpreadsheetReader.nodeRegionsLayerId}, ...
                             eval(raw{i,SpreadsheetReader.nodeRegionsVerticesX}), ...
-                            eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}));
+                            eval(raw{i,SpreadsheetReader.nodeRegionsVerticesY}), ...
+                            raw{i,SpreadsheetReader.nodeRegionsDescription});
                     end
                 end
             catch ex
@@ -494,7 +499,8 @@ classdef SpreadsheetReader
                             eval(raw{i,SpreadsheetReader.edgeRegionsVerticesX}), ...
                             eval(raw{i,SpreadsheetReader.edgeRegionsVerticesY}), ...
                             connectionType, ...
-                            raw{i,SpreadsheetReader.edgeRegionsDirected});
+                            raw{i,SpreadsheetReader.edgeRegionsDirected}, ...
+                            raw{i,SpreadsheetReader.edgeRegionsDescription});
                     end
                 end
             catch ex

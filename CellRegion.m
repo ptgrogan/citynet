@@ -13,37 +13,45 @@ classdef CellRegion < AbstractRegion
     properties
         id;                 % unique identifier for cell region
         gridSize;           % 2x1 vector to define grid size (rows,cols)
+        description;        % description of region, string
     end
     methods
         %% CellRegion Constructor
         % Instantiates a new CellRegion with specified parameters.
         %
-        % obj = CellRegion(id, verticesX, verticesY, gridSize, square)
+        % obj = CellRegion(id, verticesX, verticesY, gridSize, description)
         %   id:         unique identifier for cell region
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
         %   gridSize:   2x1 vector to define grid size (rows,cols)
+        %   description:description of the region, string
         %
-        % obj = CellRegion(verticesX, verticesY, gridSize, square)
+        % obj = CellRegion(verticesX, verticesY, gridSize, description)
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
         %   gridSize:   2x1 vector to define grid size (rows,cols)
+        %   description:description of the region, string
         %
         % obj = CellRegion()
         function obj = CellRegion(varargin)
-            if nargin == 4
+            if nargin == 5
                 obj.id = varargin{1};
                 obj.verticesX = varargin{2};
                 obj.verticesY = varargin{3};
                 obj.gridSize = varargin{4};
-            elseif nargin == 3
+                obj.description = varargin{5};
+            elseif nargin == 4
                 obj.id = SynthesisTemplate.instance().GetNextCellRegionId();
                 obj.verticesX = varargin{1};
                 obj.verticesY = varargin{2};
                 obj.gridSize = varargin{3};
+                obj.description = varargin{4};
             else
                 obj.id = SynthesisTemplate.instance().GetNextCellRegionId();
+                obj.verticesX = 0;
+                obj.verticesY = 0;
                 obj.gridSize = [0,0];
+                obj.description = '';
             end
         end
         

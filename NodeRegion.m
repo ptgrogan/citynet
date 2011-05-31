@@ -8,47 +8,55 @@
 %%
 classdef NodeRegion < AbstractRegion
     properties
-        id;                     % unique identifier for node region
-        nodeTypeId;             % node type id for assignment
-        layerId;                % layer id for assignment
+        id;                 % unique identifier for node region
+        nodeTypeId;         % node type id for assignment
+        layerId;            % layer id for assignment
+        description;        % description of region, string
     end
     methods
         %% NodeRegion Constructor
         % Instantiates a new NodeRegion with specified parameters.
         %
-        % obj = NodeRegion(id, nodeTypeId, layerIds, verticesX, verticesY)
+        % obj = NodeRegion(id, nodeTypeId, layerIds, verticesX, verticesY, 
+        %           description)
         %   id:         unique identifier for node region
         %   nodeTypeId: node type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %   description:description of the region, string
         %
-        % obj = NodeRegion(nodeTypeId, layerIds, verticesX, verticesY)
+        % obj = NodeRegion(nodeTypeId, layerIds, verticesX, verticesY, 
+        %           description)
         %   nodeTypeId: node type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
+        %   description:description of the region, string
         %
         % obj = NodeRegion()
         function obj = NodeRegion(varargin)
-            if nargin == 5
+            if nargin == 6
                 obj.id = varargin{1};
                 obj.nodeTypeId = varargin{2};
                 obj.layerId = varargin{3};
                 obj.verticesX = varargin{4};
                 obj.verticesY = varargin{5};
-            elseif nargin == 4
+                obj.description = varargin{6};
+            elseif nargin == 5
                 obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
                 obj.nodeTypeId = varargin{1};
                 obj.layerId = varargin{2};
                 obj.verticesX = varargin{3};
                 obj.verticesY = varargin{4};
+                obj.description = varargin{5};
             else
                 obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
                 obj.nodeTypeId = 0;
                 obj.layerId = 0;
                 obj.verticesX = 0;
                 obj.verticesY = 0;
+                obj.description = '';
             end
         end
         

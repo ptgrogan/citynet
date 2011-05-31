@@ -27,13 +27,14 @@ classdef EdgeRegion < AbstractRegion
         layerIds;           % list of layer ids
         type;               % type of connectivity desired in region
         directed;           % flag (0 or 1) if edge is directed
+        description;        % description of region, string
     end
     methods
         %% EdgeRegion Constructor
         % Instantiates a new EdgeRegion with specified parameters.
         %
         % obj = EdgeRegion(id, edgeTypeId, layerIds, verticesX, verticesY,
-        %           type, directed)
+        %           type, directed, description)
         %   id:         unique identifier for edge region
         %   edgeTypeId: edge type id for assignment
         %   layerIds:   array of layer ids for assignment
@@ -41,19 +42,21 @@ classdef EdgeRegion < AbstractRegion
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
         %   type:       constant parameter to define type of generation
         %   directed:   0 if undirected, 1 if directed edges
+        %   description:description of the region, string
         %
         % obj = EdgeRegion(edgeTypeId, layerIds, verticesX, verticesY, 
-        %           type, directed)
+        %           type, directed, description)
         %   edgeTypeId: edge type id for assignment
         %   layerIds:   array of layer ids for assignment
         %   verticesX:  array of x-coordinate vertices (counter-clockwise)
         %   verticesY:  array of y-coordinate vertices (counter-clockwise)
         %   type:       constant parameter to define type of generation
         %   directed:   0 if undirected, 1 if directed edges
+        %   description:description of the region, string
         %
         % obj = EdgeRegion()
         function obj = EdgeRegion(varargin)
-            if nargin == 7
+            if nargin == 8
                 obj.id = varargin{1};
                 obj.edgeTypeId = varargin{2};
                 obj.layerIds = varargin{3};
@@ -61,7 +64,8 @@ classdef EdgeRegion < AbstractRegion
                 obj.verticesY = varargin{5};
                 obj.type = varargin{6};
                 obj.directed = varargin{7};
-            elseif nargin == 6
+                obj.description = varargin{8};
+            elseif nargin == 7
                 obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = varargin{1};
                 obj.layerIds = varargin{2};
@@ -69,6 +73,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.verticesY = varargin{4};
                 obj.type = varargin{5};
                 obj.directed = varargin{6};
+                obj.description = varargin{7};
             else
                 obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = 0;
@@ -77,6 +82,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.verticesY = 0;
                 obj.type = EdgeRegion.POLYLINE_PERIMETER;
                 obj.directed = 0;
+                obj.description = '';
             end
         end
         
