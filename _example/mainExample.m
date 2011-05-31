@@ -15,19 +15,9 @@ addpath(['..']);
 synthTemp = SynthesisTemplate.instance();
 SpreadsheetReader.ReadTemplate('synthesisExample.xls');
 
-for i=1:length(synthTemp.city.cellRegions)
-    synthTemp.city.cellRegions(i).GenerateCells(synthTemp.city);
-end
-
-for i=1:length(synthTemp.city.systems)
-    system = synthTemp.city.systems{i};
-    for j=1:length(system.nodeRegions)
-        system.nodeRegions(j).GenerateNodes(system);
-    end
-    for j=1:length(system.edgeRegions)
-        system.edgeRegions(j).GenerateEdges(system);
-    end
-end
+synthTemp.GenerateCells();
+synthTemp.GenerateNodes();
+synthTemp.GenerateEdges();
 
 %% render system
 figure(1)
