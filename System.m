@@ -10,6 +10,9 @@ classdef System < handle
         id;                 % unique indentifier, integer
         name;               % layer name, string
         description;        % layer description, string
+        layers;             % mutable object array of Layer objects
+        nodeTypes;          % mutable object array of NodeType objects
+        edgeTypes;          % mutable object array of EdgeType objects
         nodes;              % mutable object array of Node objects
         edges;              % mutable object array of Edge objects
         nodeRegions;        % mutable object array of NodeRegion objects
@@ -44,6 +47,9 @@ classdef System < handle
                 obj.name = ['System ' num2str(obj.id)];
                 obj.description = '';
             end
+            obj.layers = Layer.empty();
+            obj.nodeTypes = NodeType.empty();
+            obj.edgeTypes = EdgeType.empty();
             obj.nodes = Node.empty();
             obj.edges = Edge.empty();
             obj.nodeRegions = NodeRegion.empty();

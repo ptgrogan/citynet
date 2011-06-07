@@ -9,7 +9,7 @@
 clear classes
 close all
 clc
-addpath(['..']);
+addpath('..');
 
 %% define synthesis properties
 synthTemp = SynthesisTemplate.instance();
@@ -30,7 +30,7 @@ synthTemp.RenderLayer(2);
 subplot(2,2,4)
 synthTemp.RenderLayer(3);
 figure(2)
-synthTemp.RenderCity;
+synthTemp.RenderSystem(3);
 
 %% shortest path calculation
 path = synthTemp.city.systems{3}.GetShortestPathBetweenLocations([0.25 0.0],1,[1.3 2.1],1);

@@ -120,10 +120,9 @@ classdef NodeRegion < AbstractRegion
         %% CreateNode Function
         % Creates a new node at a cell within a system.
         function CreateNode(obj,system,cell)
-            synthTemp = SynthesisTemplate.instance();
             system.nodes(end+1) = Node(cell, ...
-                synthTemp.city.layers([synthTemp.city.layers.id]==obj.layerId), ...
-                synthTemp.nodeTypes([synthTemp.nodeTypes.id]==obj.nodeTypeId));
+                system.layers([system.layers.id]==obj.layerId), ...
+                system.nodeTypes([system.nodeTypes.id]==obj.nodeTypeId));
         end
     end
 end

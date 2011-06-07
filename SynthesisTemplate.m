@@ -12,10 +12,8 @@ classdef SynthesisTemplate < Singleton
         city;               % mutable City object to contain state
         minIntersectionFraction; % lower bound of intersection area
                             % required to specify a node (0-1)
-        nodeTypes;          % mutable object array of NodeType objects
         nextNodeTypeId;     % next available identifier for node types
         nextNodeTypeAttributeId; % next available identifier for node type attributes
-        edgeTypes;          % mutable object array of EdgeType objects
         nextEdgeTypeId;     % next available identifier for edge types
         nextEdgeTypeAttributeId; % next available identifier for edge type attributes
         nextCellId;         % next available identifier for cells
@@ -39,10 +37,8 @@ classdef SynthesisTemplate < Singleton
         function obj = SynthesisTemplate()
             obj.city = City();
             obj.minIntersectionFraction = 0.1;
-            obj.nodeTypes = NodeType.empty();
             obj.nextNodeTypeId = 1;
             obj.nextNodeTypeAttributeId = 1;
-            obj.edgeTypes = EdgeType.empty();
             obj.nextEdgeTypeId = 1;
             obj.nextEdgeTypeAttributeId = 1;
             obj.nextCellId = 1;
@@ -131,22 +127,13 @@ classdef SynthesisTemplate < Singleton
         % Renders a node region in the current 3D figure with a thick line, 
         % the same color as the node type color.
         function RenderNodeRegion3d(obj,nodeRegionId)
-            nodeRegion = [];
-            for i=1:length(obj.city.systems)
-                for j=1:length(obj.city.systems{i}.nodeRegions)
-                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
-                        nodeRegion = obj.city.systems{i}.nodeRegions(j);
-                        break
-                    end
-                end
-                if ~isempty(nodeRegion)
-                    break
-                end
-            end
+            [nodeRegion system] = obj.GetNodeRegionHandle(nodeRegionId);
             hold on
             if nodeRegion.type == nodeRegion.POLYGON;
+                % close polygon shape: use first vertex as last
                 x = 0;
             else
+                % do not close polygon shape
                 x = 1;
             end
             for i=1:length(nodeRegion.verticesX)-x
@@ -154,10 +141,10 @@ classdef SynthesisTemplate < Singleton
                 x2 = nodeRegion.verticesX(mod(i,length(nodeRegion.verticesX))+1);
                 y1 = nodeRegion.verticesY(i);
                 y2 = nodeRegion.verticesY(mod(i,length(nodeRegion.verticesY))+1);
-                z1 = obj.city.layers([obj.city.layers.id]==nodeRegion.layerId).displayHeight;
-                z2 = obj.city.layers([obj.city.layers.id]==nodeRegion.layerId).displayHeight;
+                z1 = system.layers([system.layers.id]==nodeRegion.layerId).displayHeight;
+                z2 = system.layers([system.layers.id]==nodeRegion.layerId).displayHeight;
                 line([x1;x2], [y1;y2], [z1;z2], ...
-                    'Color',obj.nodeTypes([obj.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
+                    'Color',system.nodeTypes([system.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
                     'LineWidth',2);
             end
             hold off
@@ -167,22 +154,13 @@ classdef SynthesisTemplate < Singleton
         % Renders a node region in the current 2d figure with a thick line, 
         % the same color as the node type color.
         function RenderNodeRegion2d(obj,nodeRegionId)
-            nodeRegion = [];
-            for i=1:length(obj.city.systems)
-                for j=1:length(obj.city.systems{i}.nodeRegions)
-                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
-                        nodeRegion = obj.city.systems{i}.nodeRegions(j);
-                        break
-                    end
-                end
-                if ~isempty(nodeRegion)
-                    break
-                end
-            end
+            [nodeRegion system] = obj.GetNodeRegionHandle(nodeRegionId);
             hold on
             if nodeRegion.type == nodeRegion.POLYGON;
+                % close polygon shape: use first vertex as last
                 x = 0;
             else
+                % do not close polygon shape
                 x = 1;
             end
             for i=1:length(nodeRegion.verticesX)-x
@@ -191,7 +169,7 @@ classdef SynthesisTemplate < Singleton
                 y1 = nodeRegion.verticesY(i);
                 y2 = nodeRegion.verticesY(mod(i,length(nodeRegion.verticesY))+1);
                 line([x1;x2], [y1;y2], ...
-                    'Color',obj.nodeTypes([obj.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
+                    'Color',system.nodeTypes([system.nodeTypes.id]==nodeRegion.nodeTypeId).rgbColor, ...
                     'LineWidth',2);
             end
             hold off
@@ -201,7 +179,8 @@ classdef SynthesisTemplate < Singleton
         % Displays a specific layer of the city using a 2-D plot in the
         % current figure.
         function RenderLayer(obj,layerId)
-            title([obj.city.name ', ' obj.city.layers([obj.city.layers.id]==layerId).name ' Layer'])
+            [layer system] = obj.GetLayerHandle(layerId);
+            title([obj.city.name ', ' layer.name ' Layer'])
             xlabel(['x (' obj.city.distanceUnits ')'])
             ylabel(['y (' obj.city.distanceUnits ')'])
             hold on
@@ -216,19 +195,16 @@ classdef SynthesisTemplate < Singleton
             end
             filled = zeros(length(obj.city.cells),1);
             % display the nodes
-            nodeTypeColorMap = obj.GetNodeTypeColorMap;
-            for s=1:length(obj.city.systems)
-                for n=1:length(obj.city.systems{s}.nodes)
-                    node = obj.city.systems{s}.nodes(n);
-                    if node.layer.id==layerId
-                        filled(node.cell.id)=1;
-                        x = node.cell.location(1);
-                        w = node.cell.dimensions(1);
-                        y = node.cell.location(2);
-                        h = node.cell.dimensions(2);
-                        patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
-                            nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
-                    end
+            for n=1:length(system.nodes)
+                node = system.nodes(n);
+                if node.layer.id==layerId
+                    filled([obj.city.cells.id]==node.cell.id)=1;
+                    x = node.cell.location(1);
+                    w = node.cell.dimensions(1);
+                    y = node.cell.location(2);
+                    h = node.cell.dimensions(2);
+                    patch([x; x+w; x+w; x], [y; y; y+h; y+h], ...
+                        node.type.rgbColor,'FaceAlpha',nodeAlpha);
                 end
             end
             % fill in blank squares
@@ -244,24 +220,21 @@ classdef SynthesisTemplate < Singleton
                 end
             end
             % display the edges
-            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
-            for s=1:length(obj.city.systems)
-                for e=1:length(obj.city.systems{s}.edges)
-                    edge = obj.city.systems{s}.edges(e);
-                    if edge.origin.layer.id==layerId && edge.destination.layer.id==layerId
-                        x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
-                        x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
-                        y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
-                        y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
-                        line([x1;x2], [y1;y2],'Color',edgeTypeColorMap(edge.type.id,:));
-                        line(x1,y1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
-                        line(x2,y2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
-                        if ~edge.directed
-                            % if the edge is undirected, draw origin and
-                            % destination symbols on both ends
-                            line(x1,y1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
-                            line(x2,y2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
-                        end
+            for e=1:length(system.edges)
+                edge = system.edges(e);
+                if edge.origin.layer.id==layerId && edge.destination.layer.id==layerId
+                    x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                    x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                    y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                    y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                    line([x1;x2], [y1;y2],'Color',edge.type.rgbColor);
+                    line(x1,y1,'Color',edge.type.rgbColor,'Marker','o');
+                    line(x2,y2,'Color',edge.type.rgbColor,'Marker','.');
+                    if ~edge.directed
+                        % if the edge is undirected, draw origin and
+                        % destination symbols on both ends
+                        line(x1,y1,'Color',edge.type.rgbColor,'Marker','.');
+                        line(x2,y2,'Color',edge.type.rgbColor,'Marker','o');
                     end
                 end
             end
@@ -299,90 +272,9 @@ classdef SynthesisTemplate < Singleton
             hold off
         end
         
-        %% RenderSystem Function
-        % Renders a single system using a 3-D plot in the current figure.
-        function RenderSystem(obj,systemId)
-%             TODO: hard-code systems into city to resolve polymorphism
-%             system = obj.city.systems([obj.city.systems.id]==systemId);
-            system = obj.city.systems{systemId};
-            zlabel('Layer')
-            xlabel(['x (' obj.city.distanceUnits ')'])
-            ylabel(['y (' obj.city.distanceUnits ')'])
-            title([obj.city.name ', ' system.name ' System'])
-            hold on
-            view(3)
-            nodeAlpha = 0.75;
-            cellAlpha = 0.50;
-            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
-                I = obj.city.GetImage();
-                surf(linspace(min(obj.city.imageVerticesX),max(obj.city.imageVerticesX),size(I,1)), ...
-                    linspace(min(obj.city.imageVerticesY),max(obj.city.imageVerticesY),size(I,2)), ...
-                    zeros(size(I(:,:,1))), ...
-                    reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
-                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
-                nodeAlpha = 0.50;
-                cellAlpha = 0.25;
-            end
-            filled = zeros(length(obj.city.cells),length(obj.city.layers));
-            % display nodes
-            nodeTypeColorMap = obj.GetNodeTypeColorMap;
-            for n=1:length(system.nodes)
-                node = system.nodes(n);
-                filled(node.cell.id,node.layer.id)=1;
-                x = node.cell.location(1);
-                w = node.cell.dimensions(1);
-                y = node.cell.location(2);
-                h = node.cell.dimensions(2);
-                z = node.layer.displayHeight;
-                patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                    nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
-            end
-            % fill in blank squares
-            for i=1:size(filled,1)
-                for j=1:size(filled,2)
-                    if sum(filled(:,j))>0 && filled(i,j)==0
-                        cell = obj.city.cells([obj.city.cells.id]==i);
-                        x = cell.location(1);
-                        w = cell.dimensions(1);
-                        y = cell.location(2);
-                        h = cell.dimensions(2);
-                        z = obj.city.layers(j).displayHeight;
-                        patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
-                            [1 1 1],'FaceAlpha',cellAlpha);
-                    end
-                end
-            end
-            filteredLayerHeights = [obj.city.layers(sum(filled,1)>0).displayHeight];
-            filteredLayers = {obj.city.layers(sum(filled,1)>0).name};
-            [vals order] = sort(filteredLayerHeights);
-            set(gca,'ZTick',filteredLayerHeights(order))
-            set(gca,'ZTickLabel',filteredLayers(order))
-            % display edges
-            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
-            for e=1:length(system.edges)
-                edge = system.edges(e);
-                x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
-                x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
-                y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
-                y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
-                z1 = edge.origin.layer.displayHeight;
-                z2 = edge.destination.layer.displayHeight;
-                line([x1;x2],[y1;y2],[z1;z2],'Color',edgeTypeColorMap(edge.type.id,:));
-                line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
-                line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
-                if ~edge.directed
-                    % if the edge is undirected, draw origin and
-                    % destination symbols on both ends
-                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
-                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
-                end
-            end
-            axis ij equal tight
-            hold off
-        end
-        
         %% RenderCity Function
-        % Renders the complete city using a 3-D plot in the current figure.
+        % Renders an entire city (all systems) using a 3-D plot in the
+        % current figure.
         function RenderCity(obj)
             zlabel('Layer')
             xlabel(['x (' obj.city.distanceUnits ')'])
@@ -402,45 +294,43 @@ classdef SynthesisTemplate < Singleton
                 nodeAlpha = 0.50;
                 cellAlpha = 0.25;
             end
-            filled = zeros(length(obj.city.cells),length(obj.city.layers));
-            % display nodes
-            nodeTypeColorMap = obj.GetNodeTypeColorMap;
+            layers = obj.city.GetLayers();
+            filled = zeros(length(obj.city.cells),length(layers));
             for s=1:length(obj.city.systems)
                 system = obj.city.systems{s};
+                % display nodes
                 for n=1:length(system.nodes)
                     node = system.nodes(n);
-                    filled(node.cell.id,node.layer.id)=1;
+                    filled([obj.city.cells.id]==node.cell.id,[layers.id]==node.layer.id)=1;
                     x = node.cell.location(1);
                     w = node.cell.dimensions(1);
                     y = node.cell.location(2);
                     h = node.cell.dimensions(2);
                     z = node.layer.displayHeight;
                     patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
-                        nodeTypeColorMap(node.type.id,:),'FaceAlpha',nodeAlpha);
+                        node.type.rgbColor,'FaceAlpha',nodeAlpha);
                 end
             end
             % fill in blank squares
             for i=1:size(filled,1)
                 for j=1:size(filled,2)
-                    if filled(i,j)==0
+                    if sum(filled(:,j))>0 && filled(i,j)==0
                         cell = obj.city.cells([obj.city.cells.id]==i);
                         x = cell.location(1);
                         w = cell.dimensions(1);
                         y = cell.location(2);
                         h = cell.dimensions(2);
-                        z = obj.city.layers(j).displayHeight;
+                        z = layers(j).displayHeight;
                         patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
                             [1 1 1],'FaceAlpha',cellAlpha);
                     end
                 end
             end
-            filteredLayerHeights = [obj.city.layers.displayHeight];
-            filteredLayers = {obj.city.layers.name};
+            filteredLayerHeights = [layers(sum(filled,1)>0).displayHeight];
+            filteredLayers = {layers(sum(filled,1)>0).name};
             [vals order] = sort(filteredLayerHeights);
             set(gca,'ZTick',filteredLayerHeights(order))
             set(gca,'ZTickLabel',filteredLayers(order))
-            % display edges
-            edgeTypeColorMap = obj.GetEdgeTypeColorMap;
             for s=1:length(obj.city.systems)
                 system = obj.city.systems{s};
                 for e=1:length(system.edges)
@@ -451,15 +341,93 @@ classdef SynthesisTemplate < Singleton
                     y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
                     z1 = edge.origin.layer.displayHeight;
                     z2 = edge.destination.layer.displayHeight;
-                    line([x1;x2],[y1;y2],[z1;z2],'Color',edgeTypeColorMap(edge.type.id,:));
-                    line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
-                    line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
+                    line([x1;x2],[y1;y2],[z1;z2],'Color',edge.type.rgbColor);
+                    line(x1,y1,z1,'Color',edge.type.rgbColor,'Marker','o');
+                    line(x2,y2,z2,'Color',edge.type.rgbColor,'Marker','.');
                     if ~edge.directed
                         % if the edge is undirected, draw origin and
                         % destination symbols on both ends
-                        line(x1,y1,z1,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','.');
-                        line(x2,y2,z2,'Color',edgeTypeColorMap(edge.type.id,:),'Marker','o');
+                        line(x1,y1,z1,'Color',edge.type.rgbColor,'Marker','.');
+                        line(x2,y2,z2,'Color',edge.type.rgbColor,'Marker','o');
                     end
+                end
+            end
+            axis ij equal tight
+            hold off
+        end
+        
+        %% RenderSystem Function
+        % Renders a single system using a 3-D plot in the current figure.
+        function RenderSystem(obj,systemId)
+            system = obj.city.systems{systemId};
+            zlabel('Layer')
+            xlabel(['x (' obj.city.distanceUnits ')'])
+            ylabel(['y (' obj.city.distanceUnits ')'])
+            title([obj.city.name ', ' system.name ' System'])
+            hold on
+            view(3)
+            nodeAlpha = 0.75;
+            cellAlpha = 0.50;
+            if ischar(obj.city.imagePath) && ~strcmp(obj.city.imagePath,'')
+                I = obj.city.GetImage();
+                surf(linspace(min(obj.city.imageVerticesX),max(obj.city.imageVerticesX),size(I,1)), ...
+                    linspace(min(obj.city.imageVerticesY),max(obj.city.imageVerticesY),size(I,2)), ...
+                    zeros(size(I(:,:,1))), ...
+                    reshape(1:size(I,1)*size(I,2),size(I,1),size(I,2)),'EdgeColor','none')
+                colormap(reshape(double(I)/255,size(I,1)*size(I,2),3))
+                nodeAlpha = 0.50;
+                cellAlpha = 0.25;
+            end
+            filled = zeros(length(obj.city.cells),length(system.layers));
+            % display nodes
+            for n=1:length(system.nodes)
+                node = system.nodes(n);
+                filled([obj.city.cells.id]==node.cell.id,[system.layers.id]==node.layer.id)=1;
+                x = node.cell.location(1);
+                w = node.cell.dimensions(1);
+                y = node.cell.location(2);
+                h = node.cell.dimensions(2);
+                z = node.layer.displayHeight;
+                patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z], ...
+                    node.type.rgbColor,'FaceAlpha',nodeAlpha);
+            end
+            % fill in blank squares
+            for i=1:size(filled,1)
+                for j=1:size(filled,2)
+                    if sum(filled(:,j))>0 && filled(i,j)==0
+                        cell = obj.city.cells([obj.city.cells.id]==i);
+                        x = cell.location(1);
+                        w = cell.dimensions(1);
+                        y = cell.location(2);
+                        h = cell.dimensions(2);
+                        z = system.layers(j).displayHeight;
+                        patch([x;x+w;x+w;x],[y;y;y+h;y+h],[z;z;z;z],...
+                            [1 1 1],'FaceAlpha',cellAlpha);
+                    end
+                end
+            end
+            filteredLayerHeights = [system.layers(sum(filled,1)>0).displayHeight];
+            filteredLayers = {system.layers(sum(filled,1)>0).name};
+            [vals order] = sort(filteredLayerHeights);
+            set(gca,'ZTick',filteredLayerHeights(order))
+            set(gca,'ZTickLabel',filteredLayers(order))
+            % display edges
+            for e=1:length(system.edges)
+                edge = system.edges(e);
+                x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
+                x2 = edge.destination.cell.location(1)+edge.destination.cell.dimensions(1)/2;
+                y1 = edge.origin.cell.location(2)+edge.origin.cell.dimensions(2)/2;
+                y2 = edge.destination.cell.location(2)+edge.destination.cell.dimensions(2)/2;
+                z1 = edge.origin.layer.displayHeight;
+                z2 = edge.destination.layer.displayHeight;
+                line([x1;x2],[y1;y2],[z1;z2],'Color',edge.type.rgbColor);
+                line(x1,y1,z1,'Color',edge.type.rgbColor,'Marker','o');
+                line(x2,y2,z2,'Color',edge.type.rgbColor,'Marker','.');
+                if ~edge.directed
+                    % if the edge is undirected, draw origin and
+                    % destination symbols on both ends
+                    line(x1,y1,z1,'Color',edge.type.rgbColor,'Marker','.');
+                    line(x2,y2,z2,'Color',edge.type.rgbColor,'Marker','o');
                 end
             end
             axis ij equal tight
@@ -470,8 +438,6 @@ classdef SynthesisTemplate < Singleton
         % Renders a path (list of edge IDs) within a system in the 
         % existing figure using a thick black line.
         function RenderSystemPath(obj,systemId,path)
-%             TODO: hard-code systems into city to resolve polymorphism
-%             system = obj.city.systems([obj.city.systems.id]==systemId);
             system = obj.city.systems{systemId};
             hold on
             for i=1:length(path)
@@ -572,18 +538,61 @@ classdef SynthesisTemplate < Singleton
         end
     end
     methods(Access=private)
-        %% GetNodeTypeColorMap Function
-        % Returns a color map containing the specified display colors of 
-        % each node type.
-        function nodeTypeColorMap = GetNodeTypeColorMap(obj)
-            nodeTypeColorMap = reshape([obj.nodeTypes.rgbColor],[3 length(obj.nodeTypes)])';
+        %% GetLayerHandle Function
+        % Returns a layer and system handle from layer id.
+        function [layer system] = GetLayerHandle(obj,layerId)
+            layer = [];
+            system = [];
+            for i=1:length(obj.city.systems)
+                for j=1:length(obj.city.systems{i}.layers)
+                    if layerId == obj.city.systems{i}.layers(j).id
+                        system = obj.city.systems{i};
+                        layer = system.layers(j);
+                        break
+                    end
+                end
+                if ~isempty(layer)
+                    break
+                end
+            end
         end
         
-        %% GetEdgeTypeColorMap Function
-        % Returns a color map containing the specified display colors of 
-        % each edge type.
-        function edgeTypeColorMap = GetEdgeTypeColorMap(obj)
-            edgeTypeColorMap = reshape([obj.edgeTypes.rgbColor],[3 length(obj.edgeTypes)])';
+        %% GetNodeRegionHandle Function
+        % Returns a node region and system handle from node region id.
+        function [nodeRegion system] = GetNodeRegionHandle(obj,nodeRegionId)
+            nodeRegion = [];
+            system = [];
+            for i=1:length(obj.city.systems)
+                for j=1:length(obj.city.systems{i}.nodeRegions)
+                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
+                        system = obj.city.systems{i};
+                        nodeRegion = system.nodeRegions(j);
+                        break
+                    end
+                end
+                if ~isempty(nodeRegion)
+                    break
+                end
+            end
+        end
+        
+        %% GetEdgeRegionHandle Function
+        % Returns an edge region and system handle from edge region id.
+        function [edgeRegion system] = GetEdgeRegionHandle(obj,edgeRegionId)
+            edgeRegion = [];
+            system = [];
+            for i=1:length(obj.city.systems)
+                for j=1:length(obj.city.systems{i}.edgeRegion)
+                    if edgeRegionId == obj.city.systems{i}.edgeRegion(j).id
+                        system = obj.city.systems{i};
+                        edgeRegion = system.edgeRegion(j);
+                        break
+                    end
+                end
+                if ~isempty(edgeRegion)
+                    break
+                end
+            end
         end
     end
 end

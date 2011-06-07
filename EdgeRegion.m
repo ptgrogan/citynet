@@ -217,9 +217,8 @@ classdef EdgeRegion < AbstractRegion
         % Creates a new edge between origin and destination nodes within a 
         % system.
         function CreateEdge(obj,system,origin,destination)
-            synthTemp = SynthesisTemplate.instance();
             system.edges(end+1) = Edge(origin, destination, ...
-                synthTemp.edgeTypes([synthTemp.edgeTypes.id]==obj.edgeTypeId), ...
+                system.edgeTypes([system.edgeTypes.id]==obj.edgeTypeId), ...
                 obj.directed);
         end
     end

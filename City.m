@@ -16,10 +16,9 @@ classdef City < handle
         imagePath;          % path to city image
         imageVerticesX;     % x-coordinate vertices
         imageVerticesY;     % y-coordinate vertices
-        cells;      % mutable object array of Cell objects
-        layers;     % mutable object array of Layer objects
-        systems;    % mutable cell array of System objects
-        cellRegions;    % mutable object array of CellRegion objects
+        cells;              % mutable object array of Cell objects
+        systems;            % mutable cell array of System objects
+        cellRegions;        % mutable object array of CellRegion objects
         % note: systems must be a cell array to enable polymorphism, i.e.
         % subclasses of System to be stored within the same data structure
     end
@@ -62,7 +61,6 @@ classdef City < handle
             obj.imageMap = [];
             
             obj.cells = Cell.empty();
-            obj.layers = Layer.empty();
             obj.systems = {};
             obj.cellRegions = CellRegion.empty();
         end
@@ -85,6 +83,15 @@ classdef City < handle
                 obj.image = imread(obj.imagePath);
             end
             out = obj.image;
+        end
+        
+        %% GetLayers Method
+        % Returns the set of all layers across all systems.
+        function layers = GetLayers(obj)
+            layers = Layer.empty();
+            for i=1:length(obj.systems)
+                layers = [layers [obj.systems{i}.layers]];
+            end
         end
     end
 end
