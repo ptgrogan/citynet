@@ -6,14 +6,9 @@
 % 31-March 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
-classdef NodeTypeAttribute
+classdef NodeTypeAttribute < Attribute
     properties
         id;             % unique identifier of node type attribute, integer
-        name;           % name of node type attribute, string
-        description;    % description of node type attribute, string
-        units;          % units of attribute value, string
-        bounds;         % allowable bounds on attribute value, string
-        value;          % numerical value of cell attribute, double
     end
     methods
         %% NodeTypeAttribute Constructor
@@ -21,6 +16,7 @@ classdef NodeTypeAttribute
         % its name and value attributes
         %        
         % obj = NodeTypeAttribute(id, name, description, units, bounds, value)
+        %   obj:            the new NodeTypeAttribute instance
         %   id:             identifier of the node type attribute (integer)
         %   name:           name of the node type attribute (string)
         %   description:    description of the node type attribute (string)
@@ -29,6 +25,7 @@ classdef NodeTypeAttribute
         %   value:          attribute value (-)
         %
         % obj = NodeTypeAttribute(name, description, units, bounds, value)
+        %   obj:            the new NodeTypeAttribute instance
         %   name:           name of the node type attribute (string)
         %   description:    description of the node type attribute (string)
         %   units:          units of attribute value (string)
@@ -36,22 +33,32 @@ classdef NodeTypeAttribute
         %   value:          attribute value (-)
         % 
         % obj = NodeTypeAttribute()
+        %   obj:            the new NodeTypeAttribute instance
         
         function obj=NodeTypeAttribute(varargin)
+            % pre-initialization: package superconstructor arguments
+            if nargin==6
+                args{1} = varargin{2};
+                args{2} = varargin{3};
+                args{3} = varargin{4};
+                args{4} = varargin{5};
+                args{5} = varargin{6};
+            elseif nargin==5
+                args{1} = varargin{1};
+                args{2} = varargin{2};
+                args{3} = varargin{3};
+                args{4} = varargin{4};
+                args{5} = varargin{5};
+            else
+                args = {};
+            end
+            % object initialization: call superconstructor
+            obj = obj@Attribute(args{:});
+            % post-initialization: set class-specific values
             if nargin==6
                 obj.id = varargin{1};
-                obj.name = varargin{2};
-                obj.description = varargin{3};
-                obj.units = varargin{4};
-                obj.bounds = varargin{5};
-                obj.value = varargin{6};
             elseif nargin==5
                 obj.id = CityNet.instance().GetNextNodeTypeAttributeId();
-                obj.name = varargin{1};
-                obj.description = varargin{2};
-                obj.units = varargin{3};
-                obj.bounds = varargin{4};
-                obj.value = varargin{5};
             else
                 obj.id = CityNet.instance().GetNextNodeTypeAttributeId();
                 obj.name = ['Node Type Attribute ' num2str(obj.id)];
