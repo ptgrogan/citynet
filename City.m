@@ -17,10 +17,8 @@ classdef City < handle
         imageVerticesX;     % x-coordinate vertices
         imageVerticesY;     % y-coordinate vertices
         cells;              % mutable object array of Cell objects
-        systems;            % mutable cell array of System objects
         cellRegions;        % mutable object array of CellRegion objects
-        % note: systems must be a cell array to enable polymorphism, i.e.
-        % subclasses of System to be stored within the same data structure
+        systems;            % mutable cell array of System objects
     end
     properties(Access=private,Transient=true)
         image;              % lazy-loaded image

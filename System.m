@@ -17,6 +17,7 @@ classdef System < handle
         edges;              % mutable object array of Edge objects
         nodeRegions;        % mutable object array of NodeRegion objects
         edgeRegions;        % mutable object array of EdgeRegion objects
+        behaviors;          % mutable cell array of SystemBehavior objects
     end
     methods
         %% System Constructor
@@ -54,6 +55,7 @@ classdef System < handle
             obj.edges = Edge.empty();
             obj.nodeRegions = NodeRegion.empty();
             obj.edgeRegions = EdgeRegion.empty();
+            obj.behaviors = {};
         end
         
         %% GetShortestPathBetweenLocations Function
