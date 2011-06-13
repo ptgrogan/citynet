@@ -12,28 +12,28 @@ clc
 addpath('..');
 
 %% define synthesis properties
-synthTemp = SynthesisTemplate.instance();
+cityNet = CityNet.instance();
 SpreadsheetReader.ReadTemplate('synthesisExample.xls');
 
-synthTemp.GenerateCells();
-synthTemp.GenerateNodes();
-synthTemp.GenerateEdges();
+cityNet.GenerateCells();
+cityNet.GenerateNodes();
+cityNet.GenerateEdges();
 
 %% render system
 figure(1)
 subplot(2,2,1)
-synthTemp.RenderCells();
+cityNet.RenderCells();
 subplot(2,2,2)
-synthTemp.RenderLayer(1);
+cityNet.RenderLayer(1);
 subplot(2,2,3)
-synthTemp.RenderLayer(2);
+cityNet.RenderLayer(2);
 subplot(2,2,4)
-synthTemp.RenderLayer(3);
+cityNet.RenderLayer(3);
 figure(2)
-synthTemp.RenderSystem(3);
+cityNet.RenderSystem(3);
 
 %% shortest path calculation
-path = synthTemp.city.systems{3}.GetShortestPathBetweenLocations([0.25 0.0],1,[1.3 2.1],1);
-synthTemp.RenderSystemPath(3,path);
-distance = synthTemp.city.systems{3}.GetPathDistance(path);
-duration = synthTemp.city.systems{3}.GetPathDuration(path);
+path = cityNet.city.systems{3}.GetShortestPathBetweenLocations([0.25 0.0],1,[1.3 2.1],1);
+cityNet.RenderSystemPath(3,path);
+distance = cityNet.city.systems{3}.GetPathDistance(path);
+duration = cityNet.city.systems{3}.GetPathDuration(path);

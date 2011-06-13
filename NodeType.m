@@ -40,12 +40,12 @@ classdef NodeType < handle
                 obj.description = varargin{3};
                 obj.rgbColor = varargin{4};
             elseif nargin==3
-                obj.id = SynthesisTemplate.instance().GetNextNodeTypeId();
+                obj.id = CityNet.instance().GetNextNodeTypeId();
                 obj.name = varargin{1};
                 obj.description = varargin{2};
                 obj.rgbColor = varargin{3};
             else
-                obj.id = SynthesisTemplate.instance().GetNextNodeTypeId();
+                obj.id = CityNet.instance().GetNextNodeTypeId();
                 obj.name = ['Node Type ' num2str(obj.id)];
                 obj.description = '';
                 obj.rgbColor = [0 0 0];

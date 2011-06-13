@@ -12,35 +12,35 @@ clc
 addpath('..')
 
 %% define synthesis properties
-synthTemp = SynthesisTemplate.instance();
+cityNet = CityNet.instance();
 SpreadsheetReader.ReadTemplate('synthesisTutorial_complete.xls');
 
-synthTemp.GenerateCells();
-synthTemp.GenerateNodes();
-synthTemp.GenerateEdges();
+cityNet.GenerateCells();
+cityNet.GenerateNodes();
+cityNet.GenerateEdges();
 
 figure(1)
-synthTemp.RenderCity();
+cityNet.RenderCity();
 
 figure(2)
 subplot(2,2,1)
-synthTemp.RenderLayer(1);
-synthTemp.RenderNodeRegion2d(1);
-synthTemp.RenderNodeRegion2d(2);
-synthTemp.RenderNodeRegion2d(3);
-synthTemp.RenderNodeRegion2d(4);
+cityNet.RenderLayer(1);
+cityNet.RenderNodeRegion2d(1);
+cityNet.RenderNodeRegion2d(2);
+cityNet.RenderNodeRegion2d(3);
+cityNet.RenderNodeRegion2d(4);
 subplot(2,2,2)
-synthTemp.RenderLayer(2);
-synthTemp.RenderNodeRegion2d(5);
-synthTemp.RenderNodeRegion2d(6);
+cityNet.RenderLayer(2);
+cityNet.RenderNodeRegion2d(5);
+cityNet.RenderNodeRegion2d(6);
 subplot(2,2,3)
-synthTemp.RenderLayer(3);
-synthTemp.RenderNodeRegion2d(7);
-synthTemp.RenderNodeRegion2d(8);
-synthTemp.RenderNodeRegion2d(9);
-synthTemp.RenderNodeRegion2d(10);
+cityNet.RenderLayer(3);
+cityNet.RenderNodeRegion2d(7);
+cityNet.RenderNodeRegion2d(8);
+cityNet.RenderNodeRegion2d(9);
+cityNet.RenderNodeRegion2d(10);
 subplot(2,2,4)
-synthTemp.RenderLayer(4);
-synthTemp.RenderNodeRegion2d(11);
-synthTemp.RenderNodeRegion2d(12);
-synthTemp.RenderNodeRegion2d(13);
+cityNet.RenderLayer(4);
+cityNet.RenderNodeRegion2d(11);
+cityNet.RenderNodeRegion2d(12);
+cityNet.RenderNodeRegion2d(13);

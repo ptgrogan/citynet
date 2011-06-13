@@ -68,7 +68,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.directed = varargin{7};
                 obj.description = varargin{8};
             elseif nargin == 7
-                obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
+                obj.id = CityNet.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = varargin{1};
                 obj.layerIds = varargin{2};
                 obj.verticesX = varargin{3};
@@ -77,7 +77,7 @@ classdef EdgeRegion < AbstractRegion
                 obj.directed = varargin{6};
                 obj.description = varargin{7};
             else
-                obj.id = SynthesisTemplate.instance().GetNextEdgeRegionId();
+                obj.id = CityNet.instance().GetNextEdgeRegionId();
                 obj.edgeTypeId = 0;
                 obj.layerIds = 0;
                 obj.verticesX = 0;

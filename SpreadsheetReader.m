@@ -119,64 +119,64 @@ classdef SpreadsheetReader
         % ReadTemplate(filepath)
         %   filepath:   the path to the spreadsheet template
         function ReadTemplate(filepath)
-            waitbar(0,SpreadsheetReader.h,'Initializing Synthesis Template');
-            synthTemp = SynthesisTemplate.instance();
+            waitbar(0,SpreadsheetReader.h,'Initializing City.Net');
+            cityNet = CityNet.instance();
             
             % suppress xlsread warnings
             warning('off','MATLAB:xlsread:Mode');
                                     
-            SpreadsheetReader.ReadCity(filepath,synthTemp);
+            SpreadsheetReader.ReadCity(filepath,cityNet);
             
-            waitbar(1,SpreadsheetReader.h,'Updating Synthesis Template');
-            if ~isempty(synthTemp.city.cells)
-                synthTemp.nextCellId = max(synthTemp.nextCellId, ...
-                    max([synthTemp.city.cells.id])+1);
+            waitbar(1,SpreadsheetReader.h,'Updating City.Net');
+            if ~isempty(cityNet.city.cells)
+                cityNet.nextCellId = max(cityNet.nextCellId, ...
+                    max([cityNet.city.cells.id])+1);
             end
-            if ~isempty(synthTemp.city.cellRegions)
-                synthTemp.nextCellRegionId = max(synthTemp.nextCellRegionId, ...
-                    max([synthTemp.city.cellRegions.id])+1);
+            if ~isempty(cityNet.city.cellRegions)
+                cityNet.nextCellRegionId = max(cityNet.nextCellRegionId, ...
+                    max([cityNet.city.cellRegions.id])+1);
             end
-            synthTemp.nextSystemId = length(synthTemp.city.systems)+1;
-            for i=1:length(synthTemp.city.systems)
-                system = synthTemp.city.systems{i};
+            cityNet.nextSystemId = length(cityNet.city.systems)+1;
+            for i=1:length(cityNet.city.systems)
+                system = cityNet.city.systems{i};
                 if ~isempty(system.nodeTypes)
-                    synthTemp.nextNodeTypeId = max(synthTemp.nextNodeTypeId, ...
+                    cityNet.nextNodeTypeId = max(cityNet.nextNodeTypeId, ...
                         max([system.nodeTypes.id])+1);
                 end
                 for j=1:length(system.nodeTypes)
                     if ~isempty(system.nodeTypes(j).attributes)
-                        synthTemp.nextNodeTypeAttributeId = max(synthTemp.nextNodeTypeAttributeId, ...
+                        cityNet.nextNodeTypeAttributeId = max(cityNet.nextNodeTypeAttributeId, ...
                             max([system.nodeTypes(j).attributes.id])+1);
                     end
                 end
                 if ~isempty(system.edgeTypes)
-                    synthTemp.nextEdgeTypeId = max(synthTemp.nextEdgeTypeId, ...
+                    cityNet.nextEdgeTypeId = max(cityNet.nextEdgeTypeId, ...
                         max([system.edgeTypes.id])+1);
                 end
                 for j=1:length(system.edgeTypes)
                     if ~isempty(system.edgeTypes(j).attributes)
-                        synthTemp.nextEdgeTypeAttributeId = max(synthTemp.nextEdgeTypeAttributeId, ...
+                        cityNet.nextEdgeTypeAttributeId = max(cityNet.nextEdgeTypeAttributeId, ...
                             max([system.edgeTypes(j).attributes.id])+1);
                     end
                 end
                 if ~isempty(system.layers)
-                    synthTemp.nextLayerId = max(synthTemp.nextLayerId, ...
+                    cityNet.nextLayerId = max(cityNet.nextLayerId, ...
                         max([system.layers.id])+1);
                 end
                 if ~isempty(system.nodes)
-                    synthTemp.nextNodeId = max(synthTemp.nextNodeId, ...
+                    cityNet.nextNodeId = max(cityNet.nextNodeId, ...
                         max([system.nodes.id])+1);
                 end
                 if ~isempty(system.edges)
-                    synthTemp.nextEdgeId = max(synthTemp.nextEdgeId, ...
+                    cityNet.nextEdgeId = max(cityNet.nextEdgeId, ...
                         max([system.edges.id])+1);
                 end
                 if ~isempty(system.nodeRegions)
-                    synthTemp.nextNodeRegionId = max(synthTemp.nextNodeRegionId, ...
+                    cityNet.nextNodeRegionId = max(cityNet.nextNodeRegionId, ...
                         max([system.nodeRegions.id])+1);
                 end
                 if ~isempty(system.edgeRegions)
-                    synthTemp.nextEdgeRegionId = max(synthTemp.nextEdgeRegionId, ...
+                    cityNet.nextEdgeRegionId = max(cityNet.nextEdgeRegionId, ...
                         max([system.edgeRegions.id])+1);
                 end
             end
@@ -188,22 +188,22 @@ classdef SpreadsheetReader
         % ReadCity opens a spreadsheet file and reads in the city object
         % definition, including dependent objects, e.g. cells.
         %
-        % ReadCity(filepath,synthTemp)
+        % ReadCity(filepath,cityNet)
         %   filepath:   the path to the spreadsheet template
-        %   synthTemp:  the synthesis template for which to read the city
-        function ReadCity(filepath,synthTemp)
+        %   cityNet:  the synthesis template for which to read the city
+        function ReadCity(filepath,cityNet)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.cityWorksheet,'','basic');
-            synthTemp.city = City(raw{SpreadsheetReader.cityName,2});
-            synthTemp.city.latitude = raw{SpreadsheetReader.cityLatitude,2};
-            synthTemp.city.longitude = raw{SpreadsheetReader.cityLongitude,2};
-            synthTemp.city.rotation = raw{SpreadsheetReader.cityRotation,2};
-            synthTemp.city.imagePath = raw{SpreadsheetReader.cityImagePath,2};
-            synthTemp.city.imageVerticesX = eval(raw{SpreadsheetReader.cityImageVerticesX,2});
-            synthTemp.city.imageVerticesY = eval(raw{SpreadsheetReader.cityImageVerticesY,2});
-            synthTemp.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
-            SpreadsheetReader.ReadCells(filepath,synthTemp.city);
-            SpreadsheetReader.ReadCellRegions(filepath,synthTemp.city);
-            SpreadsheetReader.ReadSystems(filepath,synthTemp.city);
+            cityNet.city = City(raw{SpreadsheetReader.cityName,2});
+            cityNet.city.latitude = raw{SpreadsheetReader.cityLatitude,2};
+            cityNet.city.longitude = raw{SpreadsheetReader.cityLongitude,2};
+            cityNet.city.rotation = raw{SpreadsheetReader.cityRotation,2};
+            cityNet.city.imagePath = raw{SpreadsheetReader.cityImagePath,2};
+            cityNet.city.imageVerticesX = eval(raw{SpreadsheetReader.cityImageVerticesX,2});
+            cityNet.city.imageVerticesY = eval(raw{SpreadsheetReader.cityImageVerticesY,2});
+            cityNet.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
+            SpreadsheetReader.ReadCells(filepath,cityNet.city);
+            SpreadsheetReader.ReadCellRegions(filepath,cityNet.city);
+            SpreadsheetReader.ReadSystems(filepath,cityNet.city);
         end
                 
         %% ReadCells Function
@@ -414,11 +414,11 @@ classdef SpreadsheetReader
         %   system:   the system for which to read nodes
         function ReadNodes(filepath,system)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.nodesWorksheet,'','basic');
-            synthTemp = SynthesisTemplate.instance();
+            cityNet = CityNet.instance();
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.nodesSystemId}
                     system.nodes(end+1) = Node(raw{i,SpreadsheetReader.nodesId}, ...
-                        synthTemp.city.cells([synthTemp.city.cells.id]==raw{i,SpreadsheetReader.nodesCellId}), ...
+                        cityNet.city.cells([cityNet.city.cells.id]==raw{i,SpreadsheetReader.nodesCellId}), ...
                         system.layers([system.layers.id]==raw{i,SpreadsheetReader.nodesLayerId}), ...
                         system.nodeTypes([system.nodeTypes.id]==raw{i,SpreadsheetReader.nodesTypeId}));
                 end
@@ -457,7 +457,7 @@ classdef SpreadsheetReader
                 end
             catch ex
                 % if worksheet does not exist, print temporary message
-                disp(['CityNet Warning: Could not read "' ...
+                disp(['City.Net Warning: Could not read "' ...
                     SpreadsheetReader.nodeRegionsWorksheet ...
                     '" worksheet - please add at your convenience.'])
             end
@@ -472,7 +472,7 @@ classdef SpreadsheetReader
         %   system:     the system for which to read edges
         function ReadEdges(filepath,system)
             [num txt raw] = xlsread(filepath,SpreadsheetReader.edgesWorksheet,'','basic');
-            synthTemp = SynthesisTemplate.instance();
+            cityNet = CityNet.instance();
             for i=2:size(raw,1)
                 if system.id==raw{i,SpreadsheetReader.edgesSystemId}
                     system.edges(end+1) = Edge(raw{i,SpreadsheetReader.edgesId}, ...
@@ -522,7 +522,7 @@ classdef SpreadsheetReader
                 end
             catch ex
                 % if worksheet does not exist, print temporary message
-                disp(['CityNet Warning: Could not read "' ...
+                disp(['City.Net Warning: Could not read "' ...
                     SpreadsheetReader.edgeRegionsWorksheet ...
                     '" worksheet - please add at your convenience.'])
             end

@@ -41,13 +41,13 @@ classdef Edge < handle
                 obj.type = varargin{4};
                 obj.directed = varargin{5};
             elseif nargin==4
-                obj.id = SynthesisTemplate.instance().GetNextEdgeId();
+                obj.id = CityNet.instance().GetNextEdgeId();
                 obj.origin = varargin{1};
                 obj.destination = varargin{2};
                 obj.type = varargin{3};
                 obj.directed = varargin{4};
             else
-                obj.id = SynthesisTemplate.instance().GetNextEdgeId();
+                obj.id = CityNet.instance().GetNextEdgeId();
                 obj.origin = [];
                 obj.destination = [];
                 obj.type = [];

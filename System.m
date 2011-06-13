@@ -39,11 +39,11 @@ classdef System < handle
                 obj.name = varargin{2};
                 obj.description = varargin{3};
             elseif nargin==2
-                obj.id = SynthesisTemplate.instance().GetNextSystemId();
+                obj.id = CityNet.instance().GetNextSystemId();
                 obj.name = varargin{1};
                 obj.description = varargin{2};
             else
-                obj.id = SynthesisTemplate.instance().GetNextSystemId();
+                obj.id = CityNet.instance().GetNextSystemId();
                 obj.name = ['System ' num2str(obj.id)];
                 obj.description = '';
             end

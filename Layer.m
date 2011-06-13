@@ -37,12 +37,12 @@ classdef Layer < handle
                 obj.description = varargin{3};
                 obj.displayHeight = varargin{4};
             elseif nargin==3
-                obj.id = SynthesisTemplate.instance().GetNextLayerId();
+                obj.id = CityNet.instance().GetNextLayerId();
                 obj.name = varargin{1};
                 obj.description = varargin{2};
                 obj.displayHeight = varargin{3};
             else
-                obj.id = SynthesisTemplate.instance().GetNextLayerId();
+                obj.id = CityNet.instance().GetNextLayerId();
                 obj.name = ['Layer ' num2str(obj.id)];
                 obj.description = '';
                 obj.displayHeight = obj.id;

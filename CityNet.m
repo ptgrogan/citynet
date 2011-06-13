@@ -1,40 +1,40 @@
-%% SynthesisTemplate Class Definition
-% The SynthesisTemplate is the class of the primary object used to maintain
-% state in the synthesis template application. Its attributes include a
-% System object which maintains state for cells and edges, and sets of both
-% NodeType objects and EdgeType objects.
+%% CityNet Class Definition
+% The CityNet is the class of the object used to maintain state in the 
+% CityNet application. Its attributes include a City object which 
+% maintains state for cells and systems.
 %
-% 1-May 2011
+% 13-June 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
-classdef SynthesisTemplate < Singleton
+classdef CityNet < Singleton
     properties
-        city;               % mutable City object to contain state
+        city;                   % mutable City object to contain state
         minIntersectionFraction; % lower bound of intersection area
-                            % required to specify a node (0-1)
-        nextNodeTypeId;     % next available identifier for node types
-        nextNodeTypeAttributeId; % next available identifier for node type attributes
-        nextEdgeTypeId;     % next available identifier for edge types
-        nextEdgeTypeAttributeId; % next available identifier for edge type attributes
-        nextCellId;         % next available identifier for cells
-        nextLayerId;        % next available identifier for layers
-        nextSystemId;       % next available identifier for systems
-        nextNodeId;         % next available identifier for nodes
-        nextEdgeId;         % next available identifier for edges
-        nextNodeRegionId;   % next available identifier for node regions
-        nextEdgeRegionId;   % next available identifier for edge regions
-        nextCellRegionId;   % next available identifier for cell regions
+                                % required to specify a node (0-1)
+        nextNodeTypeId;         % next available id for node types
+        nextNodeTypeAttributeId; % next available id for node type attributes
+        nextEdgeTypeId;         % next available id for edge types
+        nextEdgeTypeAttributeId; % next available id for edge type attributes
+        nextCellId;             % next available id for cells
+        nextLayerId;            % next available id for layers
+        nextSystemId;           % next available id for systems
+        nextNodeId;             % next available id for nodes
+        nextEdgeId;             % next available id for edges
+        nextNodeRegionId;       % next available id for node regions
+        nextEdgeRegionId;       % next available id for edge regions
+        nextCellRegionId;       % next available id for cell regions
+        nextSystemBehaviorId;   % next available id for system behaviors
     end
     methods(Access=private)
-        %% SynthesisTemplate Constructor
-        % Creates a new instance of a SynthesisTemplate object with a new 
-        % city. (Note: this constructor is private to support the 
-        % Singleton design pattern, which allows only one active 
-        % SynthesisTemplate at a time.)
+        %% CityNet Constructor
+        % Creates a new instance of a CityNet object with a new city. 
+        % (Note: this constructor is private to support the Singleton 
+        % design pattern, which allows only one active CityNet at a time.)
         %
-        % obj = SynthesisTemplate()
+        % obj = CityNet()
+        %   obj:    the new CityNet object
         
-        function obj = SynthesisTemplate()
+        function obj = CityNet()
             obj.city = City();
             obj.minIntersectionFraction = 0.1;
             obj.nextNodeTypeId = 1;
@@ -57,7 +57,7 @@ classdef SynthesisTemplate < Singleton
         function obj = instance()
             persistent uniqueInstance
             if isempty(uniqueInstance)
-                obj = SynthesisTemplate();
+                obj = CityNet();
                 uniqueInstance = obj;
             else
                 obj = uniqueInstance;
@@ -535,6 +535,13 @@ classdef SynthesisTemplate < Singleton
         function out = GetNextCellRegionId(obj)
             out = obj.nextCellRegionId;
             obj.nextCellRegionId = obj.nextCellRegionId + 1;
+        end
+                
+        %% GetNextSystemBehaviorId Function
+        % Gets and increments the next system behavior identifier.
+        function out = GetNextSystemBehaviorId(obj)
+            out = obj.nextSystemBehaviorId;
+            obj.nextSystemBehaviorId = obj.nextSystemBehaviorId + 1;
         end
     end
     methods(Access=private)

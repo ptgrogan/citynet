@@ -33,11 +33,11 @@ classdef Cell < handle
                 obj.location = varargin{2};
                 obj.dimensions = varargin{3};
             elseif nargin==2
-                obj.id = SynthesisTemplate.instance().GetNextCellId();
+                obj.id = CityNet.instance().GetNextCellId();
                 obj.location = varargin{1};
                 obj.dimensions = varargin{2};
             else
-                obj.id = SynthesisTemplate.instance().GetNextCellId();
+                obj.id = CityNet.instance().GetNextCellId();
                 obj.location = [0,0];
                 obj.dimensions = [0,0];
             end

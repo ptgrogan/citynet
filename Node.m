@@ -38,12 +38,12 @@ classdef Node < handle
                 obj.layer = varargin{3};
                 obj.type = varargin{4};
             elseif nargin==3
-                obj.id = SynthesisTemplate.instance().GetNextNodeId();
+                obj.id = CityNet.instance().GetNextNodeId();
                 obj.cell = varargin{1};
                 obj.layer = varargin{2};
                 obj.type = varargin{3};
             else
-                obj.id = SynthesisTemplate.instance().GetNextNodeId();
+                obj.id = CityNet.instance().GetNextNodeId();
                 obj.cell = [];
                 obj.layer = [];
                 obj.type = [];

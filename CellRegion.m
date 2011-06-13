@@ -41,13 +41,13 @@ classdef CellRegion < AbstractRegion
                 obj.gridSize = varargin{4};
                 obj.description = varargin{5};
             elseif nargin == 4
-                obj.id = SynthesisTemplate.instance().GetNextCellRegionId();
+                obj.id = CityNet.instance().GetNextCellRegionId();
                 obj.verticesX = varargin{1};
                 obj.verticesY = varargin{2};
                 obj.gridSize = varargin{3};
                 obj.description = varargin{4};
             else
-                obj.id = SynthesisTemplate.instance().GetNextCellRegionId();
+                obj.id = CityNet.instance().GetNextCellRegionId();
                 obj.verticesX = 0;
                 obj.verticesY = 0;
                 obj.gridSize = [0,0];

@@ -32,7 +32,7 @@ classdef AbstractRegion < handle
         function out = ContainsVertices(obj,verticesX,verticesY)
             try
                 [ix iy] = polybool('intersection',obj.verticesX,obj.verticesY,verticesX,verticesY);
-                out = polyarea(ix,iy)/polyarea(verticesX,verticesY) > SynthesisTemplate.instance().minIntersectionFraction;
+                out = polyarea(ix,iy)/polyarea(verticesX,verticesY) > CityNet.instance().minIntersectionFraction;
             catch
                 % if the user does not have the mapping toolbox installed,
                 % the previous line will not execute... as a hack, let's
@@ -46,7 +46,7 @@ classdef AbstractRegion < handle
                 samplesX = reshape(samplesX,num_samples,1);
                 samplesY = reshape(samplesY,num_samples,1);
                 intersectionFraction = sum(inpolygon(samplesX,samplesY,obj.verticesX,obj.verticesY))/num_samples;
-                out = intersectionFraction > SynthesisTemplate.instance().minIntersectionFraction;
+                out = intersectionFraction > CityNet.instance().minIntersectionFraction;
             end
         end
     end

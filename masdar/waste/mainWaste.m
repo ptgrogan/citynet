@@ -15,7 +15,7 @@ addpath(['..' filesep '..']);
 
 % the following line generates a reference to the synthesis template
 % application object.
-synthTemp = SynthesisTemplate.instance();
+cityNet = CityNet.instance();
 
 % the following line loads a template from a saved spreadsheet file.
 SpreadsheetReader.ReadTemplate('synthesisWaste.xls');
@@ -24,22 +24,22 @@ SpreadsheetReader.ReadTemplate('synthesisWaste.xls');
 % edges. normally this would occur within the graphical user interface, but
 % as a proxy in this case, it is explicitly called via the following
 % functions. you should not have to change them.
-synthTemp.GenerateCells();
-synthTemp.GenerateNodes();
-synthTemp.GenerateEdges();
+cityNet.GenerateCells();
+cityNet.GenerateNodes();
+cityNet.GenerateEdges();
 
 %% render system
 
 % consider using the following functions for visualizations. note that
 % these function calls do not automatically open new figures.
 %
-% synthTemp.RenderCells();      % displays the cells and cell ids
+% cityNet.RenderCells();      % displays the cells and cell ids
 %
-% synthTemp.RenderLayer(1);     % displays a layer (here: 1) in a 2d plot
+% cityNet.RenderLayer(1);     % displays a layer (here: 1) in a 2d plot
 %
-% synthTemp.RenderSystem(1);    % displays all system layers in a 3d plot
+% cityNet.RenderSystem(1);    % displays all system layers in a 3d plot
 %
-% synthTemp.RenderCity();       % displays all systems in a 3d plot
+% cityNet.RenderCity();       % displays all systems in a 3d plot
 
 figure(1)
-synthTemp.RenderCity;
+cityNet.RenderCity;

@@ -54,7 +54,7 @@ classdef NodeRegion < AbstractRegion
                 obj.type = varargin{6};
                 obj.description = varargin{7};
             elseif nargin == 6
-                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
+                obj.id = CityNet.instance().GetNextNodeRegionId();
                 obj.nodeTypeId = varargin{1};
                 obj.layerId = varargin{2};
                 obj.verticesX = varargin{3};
@@ -62,7 +62,7 @@ classdef NodeRegion < AbstractRegion
                 obj.type = varargin{5};
                 obj.description = varargin{6};
             else
-                obj.id = SynthesisTemplate.instance().GetNextNodeRegionId();
+                obj.id = CityNet.instance().GetNextNodeRegionId();
                 obj.nodeTypeId = 0;
                 obj.layerId = 0;
                 obj.verticesX = 0;
@@ -79,17 +79,17 @@ classdef NodeRegion < AbstractRegion
         % GenerateNodes(system)
         %   system: the system within which to generate nodes
         function GenerateNodes(obj,system)
-            synthTemp = SynthesisTemplate.instance();
+            cityNet = CityNet.instance();
             if obj.type==NodeRegion.POLYGON
-                for i=1:length(synthTemp.city.cells)
-                    cell = synthTemp.city.cells(i);
+                for i=1:length(cityNet.city.cells)
+                    cell = cityNet.city.cells(i);
                     if obj.ContainsCell(cell)
                         obj.CreateNode(system,cell);
                     end
                 end
             elseif obj.type==NodeRegion.POLYLINE
-                for i=1:length(synthTemp.city.cells)
-                    cell = synthTemp.city.cells(i);
+                for i=1:length(cityNet.city.cells)
+                    cell = cityNet.city.cells(i);
                     for p=1:length(obj.verticesX)-1
                         x1 = obj.verticesX(p);
                         y1 = obj.verticesY(p);
@@ -102,8 +102,8 @@ classdef NodeRegion < AbstractRegion
                     end
                 end
             elseif obj.type==NodeRegion.POLYPOINT
-                for i=1:length(synthTemp.city.cells)
-                    cell = synthTemp.city.cells(i);
+                for i=1:length(cityNet.city.cells)
+                    cell = cityNet.city.cells(i);
                     for p=1:length(obj.verticesX)
                         x = obj.verticesX(p);
                         y = obj.verticesY(p);

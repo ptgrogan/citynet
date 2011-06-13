@@ -46,14 +46,14 @@ classdef EdgeTypeAttribute
                 obj.bounds = varargin{5};
                 obj.value = varargin{6};
             elseif nargin==5
-                obj.id = SynthesisTemplate.instance().GetNextEdgeTypeAttributeId();
+                obj.id = CityNet.instance().GetNextEdgeTypeAttributeId();
                 obj.name = varargin{1};
                 obj.description = varargin{2};
                 obj.units = varargin{3};
                 obj.bounds = varargin{4};
                 obj.value = varargin{5};
             else
-                obj.id = SynthesisTemplate.instance().GetNextEdgeTypeAttributeId();
+                obj.id = CityNet.instance().GetNextEdgeTypeAttributeId();
                 obj.name = ['Edge Type Attribute ' num2str(obj.id)];
                 obj.description = '';
                 obj.units = '-';
