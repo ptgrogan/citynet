@@ -54,5 +54,15 @@ classdef Edge < handle
                 obj.directed = 0;
             end
         end
+        
+        %% GetEuclideanLength Function
+        % Gets the length of an edge using Euclidean distance metric.
+        %
+        % out = obj.GetEuclideanLength()
+        %   out:    the length
+        %   obj:    the edge object handle
+        function out = GetEuclideanLength(obj)
+            out = sqrt(sum((obj.origin.cell.location-obj.destination.cell.location).^2));
+        end
     end
 end
