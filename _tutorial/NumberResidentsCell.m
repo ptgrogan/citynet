@@ -4,7 +4,7 @@
 %
 % 14-June, 2011
 % Paul Grogan, ptgrogan@mit.edu
-
+%%
 classdef NumberResidentsCell < CellBehavior
     methods
         %% NumberResidentsCell Constructor

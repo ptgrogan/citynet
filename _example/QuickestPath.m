@@ -6,7 +6,7 @@
 %
 % 14-June, 2011
 % Paul Grogan, ptgrogan@mit.edu
-
+%%
 classdef QuickestPath < SystemBehavior
     properties
         origin;       % origin location (x, y, layer id)

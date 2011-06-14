@@ -53,7 +53,7 @@ classdef CityBehavior < Behavior
             obj.value = val;
         end
     end
-    methods(Abstract)
+    methods(Abstract,Access=protected)
         %% EvaluateImpl Function
         % Implementation that evaluates the behavior and returns the value.
         %
@@ -77,8 +77,8 @@ classdef CityBehavior < Behavior
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
                     node = systems(s).nodes(i);
-                    if sum(strcmp({node.type.attributes.name},attributeName))==1
-                        val = val + node.type.attributes(strcmp({node.type.attributes.name},attributeName)).value;
+                    if sum(strcmpi({node.type.attributes.name},attributeName))==1
+                        val = val + node.type.attributes(strcmpi({node.type.attributes.name},attributeName)).value;
                     end
                 end
             end
@@ -97,9 +97,9 @@ classdef CityBehavior < Behavior
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
                     node = city.systems(s).nodes(i);
-                    if sum(strcmp({node.type.attributes.name},attributeName))==1
+                    if sum(strcmpi({node.type.attributes.name},attributeName))==1
                         val = val + node.cell.GetArea()*node.type.attributes( ...
-                            strcmp({node.type.attributes.name},attributeName)).value;
+                            strcmpi({node.type.attributes.name},attributeName)).value;
                     end
                 end
             end
