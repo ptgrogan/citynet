@@ -18,7 +18,7 @@ classdef City < handle
         imageVerticesY;     % y-coordinate vertices
         cells;              % mutable object array of Cell objects
         cellRegions;        % mutable object array of CellRegion objects
-        systems;            % mutable cell array of System objects
+        systems;            % mutable object array of System objects
     end
     properties(Access=private,Transient=true)
         image;              % lazy-loaded image
@@ -59,7 +59,7 @@ classdef City < handle
             obj.imageMap = [];
             
             obj.cells = Cell.empty();
-            obj.systems = {};
+            obj.systems = System.empty();
             obj.cellRegions = CellRegion.empty();
         end
         
@@ -88,7 +88,7 @@ classdef City < handle
         function layers = GetLayers(obj)
             layers = Layer.empty();
             for i=1:length(obj.systems)
-                layers = [layers [obj.systems{i}.layers]];
+                layers = [layers [obj.systems(i).layers]];
             end
         end
     end

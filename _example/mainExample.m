@@ -33,7 +33,7 @@ figure(2)
 cityNet.RenderSystem(3);
 
 %% shortest path calculation
-path = cityNet.city.systems{3}.GetShortestPathBetweenLocations([0.25 0.0],1,[1.3 2.1],1);
+
+b = QuickestPath([0.25 0.0 1],[1.3 2.1 1]);
+path = b.Evaluate(cityNet.city.systems(3));
 cityNet.RenderSystemPath(3,path);
-distance = cityNet.city.systems{3}.GetPathDistance(path);
-duration = cityNet.city.systems{3}.GetPathDuration(path);

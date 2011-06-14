@@ -23,7 +23,6 @@ classdef CityNet < Singleton
         nextNodeRegionId;       % next available id for node regions
         nextEdgeRegionId;       % next available id for edge regions
         nextCellRegionId;       % next available id for cell regions
-        nextSystemBehaviorId;   % next available id for system behaviors
     end
     methods(Access=private)
         %% CityNet Constructor
@@ -77,7 +76,7 @@ classdef CityNet < Singleton
         % Generates nodes for all defined node regions in all systems.
         function GenerateNodes(obj)
             for i=1:length(obj.city.systems)
-                system = obj.city.systems{i};
+                system = obj.city.systems(i);
                 for j=1:length(system.nodeRegions)
                     system.nodeRegions(j).GenerateNodes(system);
                 end
@@ -88,7 +87,7 @@ classdef CityNet < Singleton
         % Generates edges for all defined edge regions in all systems.
         function GenerateEdges(obj)
             for i=1:length(obj.city.systems)
-                system = obj.city.systems{i};
+                system = obj.city.systems(i);
                 for j=1:length(system.edgeRegions)
                     system.edgeRegions(j).GenerateEdges(system);
                 end
@@ -109,7 +108,7 @@ classdef CityNet < Singleton
         function ClearNodes(obj)
             obj.ClearEdges();
             for i=1:length(obj.city.systems)
-                obj.city.systems{i}.nodes = Node.empty();
+                obj.city.systems(i).nodes = Node.empty();
             end
             obj.nextNodeId = 1;
         end
@@ -118,7 +117,7 @@ classdef CityNet < Singleton
         % Clears all defined edges across all systems.
         function ClearEdges(obj)
             for i=1:length(obj.city.systems)
-                obj.city.systems{i}.edges = Edge.empty();
+                obj.city.systems(i).edges = Edge.empty();
             end
             obj.nextEdgeId = 1;
         end
@@ -297,7 +296,7 @@ classdef CityNet < Singleton
             layers = obj.city.GetLayers();
             filled = zeros(length(obj.city.cells),length(layers));
             for s=1:length(obj.city.systems)
-                system = obj.city.systems{s};
+                system = obj.city.systems(s);
                 % display nodes
                 for n=1:length(system.nodes)
                     node = system.nodes(n);
@@ -332,7 +331,7 @@ classdef CityNet < Singleton
             set(gca,'ZTick',filteredLayerHeights(order))
             set(gca,'ZTickLabel',filteredLayers(order))
             for s=1:length(obj.city.systems)
-                system = obj.city.systems{s};
+                system = obj.city.systems(s);
                 for e=1:length(system.edges)
                     edge = system.edges(e);
                     x1 = edge.origin.cell.location(1)+edge.origin.cell.dimensions(1)/2;
@@ -359,7 +358,7 @@ classdef CityNet < Singleton
         %% RenderSystem Function
         % Renders a single system using a 3-D plot in the current figure.
         function RenderSystem(obj,systemId)
-            system = obj.city.systems{systemId};
+            system = obj.city.systems(systemId);
             zlabel('Layer')
             xlabel(['x (' obj.city.distanceUnits ')'])
             ylabel(['y (' obj.city.distanceUnits ')'])
@@ -438,7 +437,7 @@ classdef CityNet < Singleton
         % Renders a path (list of edge IDs) within a system in the 
         % existing figure using a thick black line.
         function RenderSystemPath(obj,systemId,path)
-            system = obj.city.systems{systemId};
+            system = obj.city.systems(systemId);
             hold on
             for i=1:length(path)
                 edge = system.edges([system.edges.id]==path(i));
@@ -536,13 +535,6 @@ classdef CityNet < Singleton
             out = obj.nextCellRegionId;
             obj.nextCellRegionId = obj.nextCellRegionId + 1;
         end
-                
-        %% GetNextSystemBehaviorId Function
-        % Gets and increments the next system behavior identifier.
-        function out = GetNextSystemBehaviorId(obj)
-            out = obj.nextSystemBehaviorId;
-            obj.nextSystemBehaviorId = obj.nextSystemBehaviorId + 1;
-        end
     end
     methods(Access=private)
         %% GetLayerHandle Function
@@ -551,9 +543,9 @@ classdef CityNet < Singleton
             layer = [];
             system = [];
             for i=1:length(obj.city.systems)
-                for j=1:length(obj.city.systems{i}.layers)
-                    if layerId == obj.city.systems{i}.layers(j).id
-                        system = obj.city.systems{i};
+                for j=1:length(obj.city.systems(i).layers)
+                    if layerId == obj.city.systems(i).layers(j).id
+                        system = obj.city.systems(i);
                         layer = system.layers(j);
                         break
                     end
@@ -570,9 +562,9 @@ classdef CityNet < Singleton
             nodeRegion = [];
             system = [];
             for i=1:length(obj.city.systems)
-                for j=1:length(obj.city.systems{i}.nodeRegions)
-                    if nodeRegionId == obj.city.systems{i}.nodeRegions(j).id
-                        system = obj.city.systems{i};
+                for j=1:length(obj.city.systems(i).nodeRegions)
+                    if nodeRegionId == obj.city.systems(i).nodeRegions(j).id
+                        system = obj.city.systems(i);
                         nodeRegion = system.nodeRegions(j);
                         break
                     end
@@ -589,9 +581,9 @@ classdef CityNet < Singleton
             edgeRegion = [];
             system = [];
             for i=1:length(obj.city.systems)
-                for j=1:length(obj.city.systems{i}.edgeRegion)
-                    if edgeRegionId == obj.city.systems{i}.edgeRegion(j).id
-                        system = obj.city.systems{i};
+                for j=1:length(obj.city.systems(i).edgeRegion)
+                    if edgeRegionId == obj.city.systems(i).edgeRegion(j).id
+                        system = obj.city.systems(i);
                         edgeRegion = system.edgeRegion(j);
                         break
                     end

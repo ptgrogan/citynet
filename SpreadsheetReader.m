@@ -138,7 +138,7 @@ classdef SpreadsheetReader
             end
             cityNet.nextSystemId = length(cityNet.city.systems)+1;
             for i=1:length(cityNet.city.systems)
-                system = cityNet.city.systems{i};
+                system = cityNet.city.systems(i);
                 if ~isempty(system.nodeTypes)
                     cityNet.nextNodeTypeId = max(cityNet.nextNodeTypeId, ...
                         max([system.nodeTypes.id])+1);
@@ -260,38 +260,16 @@ classdef SpreadsheetReader
             [num txt raw] =  xlsread(filepath,SpreadsheetReader.systemsWorksheet,'','basic');
             for i=2:size(raw,1)
                 waitbar(0.2+0.8*i/size(raw,1),SpreadsheetReader.h,['Reading ' raw{i,SpreadsheetReader.systemsName} ' System']);
-                if strcmp(raw{i,SpreadsheetReader.systemsName},'Building')
-                    city.systems{end+1} = BuildingSystem(raw{i,SpreadsheetReader.systemsId},...
+                city.systems(end+1) = System(raw{i,SpreadsheetReader.systemsId},...
                         raw{i,SpreadsheetReader.systemsName}, ...
                         raw{i,SpreadsheetReader.systemsDescription});
-                elseif strcmp(raw{i,SpreadsheetReader.systemsName},'Energy')
-                    city.systems{end+1} = EnergySystem(raw{i,SpreadsheetReader.systemsId},...
-                        raw{i,SpreadsheetReader.systemsName}, ...
-                        raw{i,SpreadsheetReader.systemsDescription});
-                elseif strcmp(raw{i,SpreadsheetReader.systemsName},'Transportation')
-                    city.systems{end+1} = TransportationSystem(raw{i,SpreadsheetReader.systemsId},...
-                        raw{i,SpreadsheetReader.systemsName}, ...
-                        raw{i,SpreadsheetReader.systemsDescription});
-                elseif strcmp(raw{i,SpreadsheetReader.systemsName},'Waste')
-                    city.systems{end+1} = WasteSystem(raw{i,SpreadsheetReader.systemsId},...
-                        raw{i,SpreadsheetReader.systemsName}, ...
-                        raw{i,SpreadsheetReader.systemsDescription});
-                elseif strcmp(raw{i,SpreadsheetReader.systemsName},'Water')
-                    city.systems{end+1} = WaterSystem(raw{i,SpreadsheetReader.systemsId},...
-                        raw{i,SpreadsheetReader.systemsName}, ...
-                        raw{i,SpreadsheetReader.systemsDescription});
-                else
-                    city.systems{end+1} = System(raw{i,SpreadsheetReader.systemsId},...
-                        raw{i,SpreadsheetReader.systemsName}, ...
-                        raw{i,SpreadsheetReader.systemsDescription});
-                end
-                SpreadsheetReader.ReadNodeTypes(filepath,city.systems{end});
-                SpreadsheetReader.ReadEdgeTypes(filepath,city.systems{end});
-                SpreadsheetReader.ReadLayers(filepath,city.systems{end});
-                SpreadsheetReader.ReadNodes(filepath,city.systems{end});
-                SpreadsheetReader.ReadEdges(filepath,city.systems{end});
-                SpreadsheetReader.ReadNodeRegions(filepath,city.systems{end});
-                SpreadsheetReader.ReadEdgeRegions(filepath,city.systems{end});
+                SpreadsheetReader.ReadNodeTypes(filepath,city.systems(end));
+                SpreadsheetReader.ReadEdgeTypes(filepath,city.systems(end));
+                SpreadsheetReader.ReadLayers(filepath,city.systems(end));
+                SpreadsheetReader.ReadNodes(filepath,city.systems(end));
+                SpreadsheetReader.ReadEdges(filepath,city.systems(end));
+                SpreadsheetReader.ReadNodeRegions(filepath,city.systems(end));
+                SpreadsheetReader.ReadEdgeRegions(filepath,city.systems(end));
             end
         end
         
