@@ -128,7 +128,7 @@ classdef ShortestPath < SystemBehavior
                 node = system.nodes(i);
                 [cVx cVy] = node.cell.GetVertices();
                 if node.layer.id==location(3) && ...
-                        sum(inpolygon(location(1),location(2),cVx,cVy))==1
+                        node.cell.ContainsPoint(location(1),location(2))
                     id = node.id;
                     break;
                 end
