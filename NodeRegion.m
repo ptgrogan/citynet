@@ -118,11 +118,15 @@ classdef NodeRegion < AbstractRegion
     end
     methods(Access=private)
         %% CreateNode Function
-        % Creates a new node at a cell within a system.
+        % Creates a new node at a cell within a system (if no node yet
+        % exists at the specific layer and cell).
         function CreateNode(obj,system,cell)
-            system.nodes(end+1) = Node(cell, ...
-                system.layers([system.layers.id]==obj.layerId), ...
-                system.nodeTypes([system.nodeTypes.id]==obj.nodeTypeId));
+            layer = system.layers([system.layers.id]==obj.layerId);
+            if isempty(intersect([system.nodes([system.nodes.layer]==layer).id], ...
+                    [system.nodes([system.nodes.cell]==cell).id]))
+                system.nodes(end+1) = Node(cell, layer, ...
+                    system.nodeTypes([system.nodeTypes.id]==obj.nodeTypeId));
+            end
         end
     end
 end
