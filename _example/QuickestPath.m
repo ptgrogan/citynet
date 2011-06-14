@@ -1,18 +1,46 @@
+%% QuickestPath Class Definition
+% The QuickestPath behavior identifies the shortest path with respect to
+% time between two locations. An implementation of Djikstra's algorithm is
+% used to find the shortest path using Euclidean distance for edge lengths
+% and speed specified by the `Speed` edge type attribute.
+%
+% 14-June, 2011
+% Paul Grogan, ptgrogan@mit.edu
+
 classdef QuickestPath < SystemBehavior
     properties
         origin;       % origin location (x, y, layer id)
         destination;  % destination location (x, y, layer id)
+        path;         % the evaluated path (list of edge ids)
     end
     methods
+        %% QuickestPath Constructor
+        % Instantiates a new QuickestPath object.
+        % 
+        % obj = QuickestPath(origin, destination)
+        %   obj:            the new QuickestPath object
+        %   origin:         the origin location (x-coord, y-coord, layer id)
+        %   destination:    the destination location (x-coord, y-coord, layer id)
         function obj = QuickestPath(origin, destination)
             obj = obj@SystemBehavior('Quickest Path', ...
-                ['Gets the list of edge IDs corresponding to the ' ...
+                ['Gets the time corresponding to the ' ...
                 'quickest path between origin and destination nodes. ' ...
-                'Uses Djikstra''s algorithm with Manhattan edge lengths.'], ...
-                '-','-');
+                'Uses Djikstra''s algorithm with Euclidean edge lengths.'], ...
+                'hour','[0,inf)');
             obj.origin = origin;
             obj.destination = destination;
         end
+    end
+    methods(Access=protected)
+        %% EvaluateImpl Function
+        % Evalutaes the behavior for a specified system. Note: the
+        % superclass Evaluate function should be used for evaluation during
+        % execution.
+        %
+        % val = obj.EvaluateImpl(system)
+        %   val:    the evaluated value
+        %   obj:    the QuickestPath object handle
+        %   system: the system in which this behavior is evaluated
         function val = EvaluateImpl(obj,system)
             originId = obj.GetNodeId(system,obj.origin);
             destinationId = obj.GetNodeId(system,obj.destination);
@@ -20,9 +48,9 @@ classdef QuickestPath < SystemBehavior
             lengths = zeros(length(system.edges),1);
             for i=1:length(system.edges)
                 if ~isempty(system.edges(i).type.attributes) && ...
-                        sum(strcmp({system.edges(i).type.attributes.name},'Speed'))==1
-                    speed = system.edges(i).type.attributes(strcmp({system.edges(i).type.attributes.name},'Speed')).value;
-                    lengths(i) = sqrt(sum((system.edges(i).origin.cell.location-system.edges(i).destination.cell.location).^2))/speed;
+                        sum(strcmpi({system.edges(i).type.attributes.name},'speed'))==1
+                    speed = system.edges(i).type.attributes(strcmpi({system.edges(i).type.attributes.name},'speed')).value;
+                    lengths(i) = system.edges(i).GetEuclideanLength()/speed;
                 else
                     lengths(i) = inf;
                 end
@@ -81,10 +109,13 @@ classdef QuickestPath < SystemBehavior
                 end
             end
             
-            val = [];
+            obj.path = [];
+            val = 0;
             u = destinationId;
             while previousNodeId(u)>0
-                val = [previousEdgeId(u) val];
+                edge = system.edges([system.edges.id]==previousEdgeId(u));
+                obj.path = [previousEdgeId(u) obj.path];
+                val = val + edge.GetEuclideanLength()/edge.type.attributes(strcmpi({edge.type.attributes.name},'speed')).value;
                 u = previousNodeId(u);
             end
         end
@@ -103,7 +134,7 @@ classdef QuickestPath < SystemBehavior
                 node = system.nodes(i);
                 [cVx cVy] = node.cell.GetVertices();
                 if node.layer.id==location(3) && ...
-                        sum(inpolygon(location(1),location(2),cVx,cVy))==1
+                        node.cell.ContainsPoint(location(1),location(2))
                     id = node.id;
                     break;
                 end

@@ -56,7 +56,7 @@ classdef SystemBehavior < Behavior
             obj.value = val;
         end
     end
-    methods(Abstract)
+    methods(Abstract,Access=protected)
         %% EvaluateImpl Function
         % Implementation that evaluates the behavior and returns the value.
         %
@@ -79,8 +79,8 @@ classdef SystemBehavior < Behavior
             val = 0;
             for i=1:length(system.nodes)
                 node = system.nodes(i);
-                if sum(strcmp({node.type.attributes.name},attributeName))==1
-                    val = val + node.type.attributes(strcmp({node.type.attributes.name},attributeName)).value;
+                if sum(strcmpi({node.type.attributes.name},attributeName))==1
+                    val = val + node.type.attributes(strcmpi({node.type.attributes.name},attributeName)).value;
                 end
             end
         end
@@ -97,9 +97,9 @@ classdef SystemBehavior < Behavior
             val = 0;
             for i=1:length(system.nodes)
                 node = system.nodes(i);
-                if sum(strcmp({node.type.attributes.name},attributeName))==1
+                if sum(strcmpi({node.type.attributes.name},attributeName))==1
                     val = val + node.cell.GetArea()*node.type.attributes( ...
-                        strcmp({node.type.attributes.name},attributeName)).value;
+                        strcmpi({node.type.attributes.name},attributeName)).value;
                 end
             end
         end

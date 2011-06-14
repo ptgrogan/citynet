@@ -1,31 +1,59 @@
+%% ShortestPath Class Definition
+% The ShortestPath behavior identifies the shortest path with respect to
+% distance between two locations. An implementation of Djikstra's algorithm
+% is used to find the shortest path using Euclidean distance for edge 
+% lengths.
+%
+% 14-June, 2011
+% Paul Grogan, ptgrogan@mit.edu
+
 classdef ShortestPath < SystemBehavior
     properties
         origin;       % origin location (x, y, layer id)
         destination;  % destination location (x, y, layer id)
+        path;         % the evaluated path (list of edge ids)
     end
     methods
+        %% ShortestPath Constructor
+        % Instantiates a new ShortestPath object.
+        % 
+        % obj = ShortestPath(origin, destination)
+        %   obj:            the new ShortestPath object
+        %   origin:         the origin location (x-coord, y-coord, layer id)
+        %   destination:    the destination location (x-coord, y-coord, layer id)
         function obj = ShortestPath(origin, destination)
             obj = obj@SystemBehavior('Shortest Path', ...
-                ['Gets the list of edge IDs corresponding to the ' ...
+                ['Gets the distance corresponding to the ' ...
                 'shortest path between origin and destination nodes. ' ...
-                'Uses Djikstra''s algorithm with Manhattan edge lengths.'], ...
-                '-','-');
+                'Uses Djikstra''s algorithm with Euclidean edge lengths.'], ...
+                'km','[0,inf)');
             obj.origin = origin;
             obj.destination = destination;
         end
+    end
+    methods(Access=protected)
+        %% EvaluateImpl Function
+        % Evalutaes the behavior for a specified system. Note: the
+        % superclass Evaluate function should be used for evaluation during
+        % execution.
+        %
+        % val = obj.EvaluateImpl(system)
+        %   val:    the evaluated value
+        %   obj:    the ShortestPath object handle
+        %   system: the system in which this behavior is evaluated
         function val = EvaluateImpl(obj,system)
             originId = obj.GetNodeId(system,obj.origin);
             destinationId = obj.GetNodeId(system,obj.destination);
             
             lengths = zeros(length(system.edges),1);
             for i=1:length(system.edges)
-                lengths(i) = sqrt(sum((system.edges(i).origin.cell.location-system.edges(i).destination.cell.location).^2));
+                lengths(i) = system.edges(i).GetEuclideanLength();
             end
             
             distance = inf*ones(1,length(system.nodes));           % unknown distance from origin to destination
             previousNodeId = zeros(1,length(system.nodes));        % previous node in optimal path from origin
             previousEdgeId = zeros(1,length(system.nodes));        % previous edge in optimal path from origin
-            distance([system.nodes.id]==originId) = 0;         % distance from origin to origin
+            distance([system.nodes.id]==originId) = 0;             % distance from origin to origin
             Q = 1:length(system.nodes);                            % list of 'optimized' nodes
             while ~isempty(Q)
                 % u is the position of the node in Q with smallest distance
@@ -75,10 +103,13 @@ classdef ShortestPath < SystemBehavior
                 end
             end
             
-            val = [];
+            obj.path = [];
+            val = 0;
             u = destinationId;
             while previousNodeId(u)>0
-                val = [previousEdgeId(u) val];
+                edge = system.edges([system.edges.id]==previousEdgeId(u));
+                obj.path = [previousEdgeId(u) obj.path];
+                val = val + edge.GetEuclideanLength();
                 u = previousNodeId(u);
             end
         end
