@@ -115,5 +115,15 @@ classdef Cell < handle
             Vx = [obj.location(1) obj.location(1) obj.location(1)+obj.dimensions(1) obj.location(1)+obj.dimensions(1)];
             Vy = [obj.location(2) obj.location(2)+obj.dimensions(2) obj.location(2)+obj.dimensions(2) obj.location(2)];
         end
+        
+        %% GetArea Function
+        % Returns the area covered by the cell.
+        %
+        % area = obj.GetArea()
+        %   area:   the area covered by the cell
+        %   obj:    the cell handle
+        function area = GetArea(obj)
+            area = obj.dimensions(1)*obj.dimensions(2);
+        end
     end
 end
