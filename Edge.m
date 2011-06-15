@@ -64,5 +64,21 @@ classdef Edge < handle
         function out = GetEuclideanLength(obj)
             out = sqrt(sum((obj.origin.cell.location-obj.destination.cell.location).^2));
         end
+        
+        %% GetEdgeTypeAttributeValue Function
+        % Accesses the edte type attribute value of a specific name.
+        %
+        % val = obj.GetEdgeTypeAttributeValue(attributeName)
+        %   val:            the edge type attribute value
+        %   obj:            the edge object handle
+        %   attributeName:  the name of the attribute, string
+        function val = GetEdgeTypeAttributeValue(obj,attributeName)
+            if sum(strcmpi({obj.type.attributes.name},attributeName))==1
+                val = obj.type.attributes( ...
+                    strcmpi({obj.type.attributes.name},attributeName)).value;
+            else
+                val = [];
+            end
+        end
     end
 end
