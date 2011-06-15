@@ -47,9 +47,8 @@ classdef QuickestPath < SystemBehavior
             
             lengths = zeros(length(system.edges),1);
             for i=1:length(system.edges)
-                if ~isempty(system.edges(i).type.attributes) && ...
-                        sum(strcmpi({system.edges(i).type.attributes.name},'speed'))==1
-                    speed = system.edges(i).type.attributes(strcmpi({system.edges(i).type.attributes.name},'speed')).value;
+                speed = system.edges(i).GetEdgeTypeAttributeValue('speed');
+                if ~isempty(speed) && speed > 0
                     lengths(i) = system.edges(i).GetEuclideanLength()/speed;
                 else
                     lengths(i) = inf;
