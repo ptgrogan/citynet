@@ -39,7 +39,8 @@ classdef CityBehavior < Behavior
             else
             end
         end
-        
+    end
+    methods(Sealed)
         %% Evaluate Function
         % Evaluates the behavior, updates the stored copy, and returns the
         % computed value.
@@ -76,9 +77,9 @@ classdef CityBehavior < Behavior
             val = 0;
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
-                    node = systems(s).nodes(i);
-                    if sum(strcmpi({node.type.attributes.name},attributeName))==1
-                        val = val + node.type.attributes(strcmpi({node.type.attributes.name},attributeName)).value;
+                    value = city.systems(s).nodes(i).GetNodeTypeAttributeValue(attributeName);
+                    if ~isempty(value)
+                        val = val + value;
                     end
                 end
             end
@@ -96,10 +97,9 @@ classdef CityBehavior < Behavior
             val = 0;
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
-                    node = city.systems(s).nodes(i);
-                    if sum(strcmpi({node.type.attributes.name},attributeName))==1
-                        val = val + node.cell.GetArea()*node.type.attributes( ...
-                            strcmpi({node.type.attributes.name},attributeName)).value;
+                    value = city.systems(s).nodes(i).GetNodeTypeAttributeValue(attributeName);
+                    if ~isempty(value)
+                        val = val + city.systems(s).nodes(i).cell.GetArea()*value;
                     end
                 end
             end

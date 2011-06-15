@@ -42,7 +42,8 @@ classdef SystemBehavior < Behavior
             else
             end
         end
-        
+    end
+    methods(Sealed)
         %% Evaluate Function
         % Evaluates the behavior, updates the stored copy, and returns the
         % computed value.
@@ -78,9 +79,9 @@ classdef SystemBehavior < Behavior
         function val = SumNodeAttributes(system,attributeName)
             val = 0;
             for i=1:length(system.nodes)
-                node = system.nodes(i);
-                if sum(strcmpi({node.type.attributes.name},attributeName))==1
-                    val = val + node.type.attributes(strcmpi({node.type.attributes.name},attributeName)).value;
+                value = system.nodes(i).GetNodeTypeAttributeValue(attributeName);
+                if ~isempty(value)
+                    val = val + value;
                 end
             end
         end
@@ -96,10 +97,9 @@ classdef SystemBehavior < Behavior
         function val = SumDensityNodeAttributes(system,attributeName)
             val = 0;
             for i=1:length(system.nodes)
-                node = system.nodes(i);
-                if sum(strcmpi({node.type.attributes.name},attributeName))==1
-                    val = val + node.cell.GetArea()*node.type.attributes( ...
-                        strcmpi({node.type.attributes.name},attributeName)).value;
+                value = system.nodes(i).GetNodeTypeAttributeValue(attributeName);
+                if ~isempty(value)
+                    val = val + system.nodes(i).cell.GetArea()*value;
                 end
             end
         end

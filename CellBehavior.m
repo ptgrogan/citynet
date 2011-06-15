@@ -39,7 +39,8 @@ classdef CellBehavior < Behavior
             else
             end
         end
-        
+    end
+    methods(Sealed)
         %% Evaluate Function
         % Evaluates the behavior, updates the stored copy, and returns the
         % computed value.
@@ -78,9 +79,11 @@ classdef CellBehavior < Behavior
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
                     node = city.systems(s).nodes(i);
-                    if node.cell==cell && ...
-                            sum(strcmpi({node.type.attributes.name},attributeName))==1
-                        val = val + node.type.attributes(strcmpi({node.type.attributes.name},attributeName)).value;
+                    if node.cell==cell
+                        value = node.GetNodeTypeAttributeValue(attributeName);
+                        if ~isempty(value)
+                            val = val + value;
+                        end
                     end
                 end
             end
@@ -100,10 +103,11 @@ classdef CellBehavior < Behavior
             for s=1:length(city.systems)
                 for i=1:length(city.systems(s).nodes)
                     node = city.systems(s).nodes(i);
-                    if node.cell==cell && ...
-                            sum(strcmpi({node.type.attributes.name},attributeName))==1
-                        val = val + node.cell.GetArea()*node.type.attributes( ...
-                            strcmpi({node.type.attributes.name},attributeName)).value;
+                    if node.cell==cell
+                        value = node.GetNodeTypeAttributeValue(attributeName);
+                        if ~isempty(value)
+                            val = val + node.cell.GetArea()*value;
+                        end
                     end
                 end
             end
