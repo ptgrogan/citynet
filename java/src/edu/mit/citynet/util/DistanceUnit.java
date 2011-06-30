@@ -43,26 +43,44 @@ public enum DistanceUnit {
 	 *
 	 * @return the singlular name
 	 */
-	public String getSinglularName() { return _singularName; }
+	public String getSinglularName() { 
+		return _singularName;
+	}
 	
 	/**
 	 * Gets the plural name.
 	 *
 	 * @return the plural name
 	 */
-	public String getPluralName() { return _pluralName; }
+	public String getPluralName() { 
+		return _pluralName;
+	}
 	
 	/**
 	 * Gets the abbreviation.
 	 *
 	 * @return the abbreviation
 	 */
-	public String getAbbreviation() { return _abbreviation; }
+	public String getAbbreviation() { 
+		return _abbreviation;
+	}
 	
 	/**
 	 * Gets the number of units per kilometer.
 	 *
 	 * @return the number of units per kilometer
 	 */
-	public double getNumberPerKilometer() { return _numberPerKilometer; }
+	public double getNumberPerKilometer() { 
+		return _numberPerKilometer;
+	}
+	
+	/**
+	 * Gets the conversion factor to specified distance unit.
+	 *
+	 * @param distanceUnit the distance unit
+	 * @return the conversion factor
+	 */
+	public double getConversionFactorTo(DistanceUnit distanceUnit) {
+		return distanceUnit.getNumberPerKilometer()/getNumberPerKilometer();
+	}
 }
