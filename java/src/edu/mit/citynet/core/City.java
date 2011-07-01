@@ -14,21 +14,21 @@ import javax.imageio.ImageIO;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class City {
-	private String _name;
-	private double _latitude, _longitude;
-	private double _rotation;
-	private URL _imageURL;
-	private transient Image _image;
-	private double[] _imageVertices;
-	//private Set<Cell> _cells;
-	//private Set<CellRegion> _cellRegions;
-	//private Set<System> _systems;
+	private String name;
+	private double latitude, longitude;
+	private double rotation;
+	private URL imageURL;
+	private transient Image image;
+	private double[] imageVertices;
+	//private Set<Cell> cells;
+	//private Set<CellRegion> cellRegions;
+	//private Set<System> systems;
 	
 	/**
 	 * Instantiates a new City.Net city.
 	 */
 	public City() {
-		_imageVertices = new double[2];
+		imageVertices = new double[2];
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class City {
 	 * @return the name
 	 */
 	public String getName() { 
-		return _name;
+		return name;
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class City {
 	 * @param name the new name
 	 */
 	public void setName(String name) { 
-		_name = name;
+		this.name = name;
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class City {
 	 * @return the latitude
 	 */
 	public double getLatitude() {
-		return _latitude;
+		return latitude;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class City {
 			throw new IllegalArgumentException("Latitude must be between " +
 					"-90 and 90 degrees.");
 		}
-		_latitude = latitude;
+		this.latitude = latitude;
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class City {
 	 * @return the longitude
 	 */
 	public double getLongitude() {
-		return _longitude;
+		return longitude;
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class City {
 			throw new IllegalArgumentException("Longitude must be between " +
 					"-180 and 180 degrees.");
 		}
-		_longitude = longitude;
+		this.longitude = longitude;
 	}
 	
 	/**
@@ -102,7 +102,7 @@ public class City {
 	 * @return the rotation
 	 */
 	public double getRotation() {
-		return _rotation;
+		return rotation;
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class City {
 			throw new IllegalArgumentException("Rotation must be between " +
 					"0 and 180 degrees.");
 		}
-		_rotation = rotation;
+		this.rotation = rotation;
 	}
 	
 	/**
@@ -126,9 +126,9 @@ public class City {
 	 * @param imageURL the new image URL
 	 */
 	public void setImageURL(URL imageURL) {
-		_imageURL = imageURL;
+		imageURL = imageURL;
 		try {
-			_image = ImageIO.read(_imageURL);
+			image = ImageIO.read(imageURL);
 		} catch (IOException ex) {
 			throw new IllegalArgumentException("Invalid URL");
 		}
@@ -140,7 +140,7 @@ public class City {
 	 * @return the image URL
 	 */
 	public URL getImageURL() {
-		return _imageURL;
+		return imageURL;
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class City {
 	 * @return the image
 	 */
 	public Image getImage() {
-		return _image;
+		return image;
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class City {
 	 * @return the image vertices
 	 */
 	public double[] getImageVertices() {
-		return _imageVertices;
+		return imageVertices;
 	}
 	
 	/**
@@ -167,6 +167,6 @@ public class City {
 	 * @param imageVertices the new image vertices
 	 */
 	public void setImageVertices(double[] imageVertices) {
-		_imageVertices = imageVertices;
+		this.imageVertices = imageVertices;
 	}
 }

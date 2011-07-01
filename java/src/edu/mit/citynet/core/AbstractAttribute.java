@@ -8,8 +8,8 @@ package edu.mit.citynet.core;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public abstract class AbstractAttribute {
-	private String _name, _description, _units, _bounds;
-	private double _value;
+	private String name, description, units, bounds;
+	private double value;
 
 	/**
 	 * Gets the name.
@@ -17,7 +17,7 @@ public abstract class AbstractAttribute {
 	 * @return the name
 	 */
 	public String getName() {
-		return _name;
+		return name;
 	}
 
 	/**
@@ -26,7 +26,7 @@ public abstract class AbstractAttribute {
 	 * @param name the new name
 	 */
 	public void setName(String name) {
-		_name = name;
+		this.name = name;
 	}
 
 	/**
@@ -35,7 +35,7 @@ public abstract class AbstractAttribute {
 	 * @return the description
 	 */
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 
 	/**
@@ -44,7 +44,7 @@ public abstract class AbstractAttribute {
 	 * @param description the new description
 	 */
 	public void setDescription(String description) {
-		_description = description;
+		this.description = description;
 	}
 
 	/**
@@ -53,7 +53,7 @@ public abstract class AbstractAttribute {
 	 * @return the units
 	 */
 	public String getUnits() {
-		return _units;
+		return units;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public abstract class AbstractAttribute {
 	 * @param units the new units
 	 */
 	public void setUnits(String units) {
-		_units = units;
+		this.units = units;
 	}
 
 	/**
@@ -71,7 +71,7 @@ public abstract class AbstractAttribute {
 	 * @return the bounds
 	 */
 	public String getBounds() {
-		return _bounds;
+		return bounds;
 	}
 
 	/**
@@ -80,7 +80,7 @@ public abstract class AbstractAttribute {
 	 * @param bounds the new bounds
 	 */
 	public void setBounds(String bounds) {
-		_bounds = bounds;
+		this.bounds = bounds;
 	}
 
 	/**
@@ -89,7 +89,7 @@ public abstract class AbstractAttribute {
 	 * @return the value
 	 */
 	public double getValue() {
-		return _value;
+		return value;
 	}
 
 	/**
@@ -98,6 +98,6 @@ public abstract class AbstractAttribute {
 	 * @param value the new value
 	 */
 	public void setValue(double value) {
-		_value = value;
+		this.value = value;
 	}
 }

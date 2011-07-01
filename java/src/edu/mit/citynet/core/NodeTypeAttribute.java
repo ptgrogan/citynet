@@ -7,7 +7,7 @@ package edu.mit.citynet.core;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class NodeTypeAttribute extends AbstractAttribute {
-	private int _id;
+	private int id;
 	
 	/**
 	 * Gets the id.
@@ -15,7 +15,7 @@ public class NodeTypeAttribute extends AbstractAttribute {
 	 * @return the id
 	 */
 	public int getId() {
-		return _id;
+		return id;
 	}
 	
 	/**
@@ -24,6 +24,6 @@ public class NodeTypeAttribute extends AbstractAttribute {
 	 * @param id the new id
 	 */
 	public void setId(int id) {
-		_id = id;
+		this.id = id;
 	}
 }

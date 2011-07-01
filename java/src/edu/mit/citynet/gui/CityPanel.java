@@ -14,7 +14,7 @@ import edu.mit.citynet.core.City;
 
 public class CityPanel extends JPanel {
 	private static final long serialVersionUID = -8626443292880784870L;
-	private City _city;
+	private City city;
 	JTextField nameText;
 	
 	/**
@@ -24,7 +24,7 @@ public class CityPanel extends JPanel {
 		if (city==null) {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
-		_city = city;
+		this.city = city;
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 		GridBagConstraints c = new GridBagConstraints();
@@ -52,7 +52,7 @@ public class CityPanel extends JPanel {
 	
 	private void saveCityNameCommand() {
 		System.out.println("Save City Name Command");
-		_city.setName(nameText.getText());
+		city.setName(nameText.getText());
 	}
 	
 	/* (non-Javadoc)
@@ -61,7 +61,7 @@ public class CityPanel extends JPanel {
 	public void repaint() {
 		super.repaint();
 		if (nameText != null) {
-			nameText.setText(_city.getName());
+			nameText.setText(city.getName());
 		}
 	}
 	
@@ -71,6 +71,6 @@ public class CityPanel extends JPanel {
 	 * @return the city
 	 */
 	public City getCity() {
-		return _city;
+		return city;
 	}
 }

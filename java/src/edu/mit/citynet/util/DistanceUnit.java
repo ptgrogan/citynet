@@ -20,8 +20,8 @@ public enum DistanceUnit {
 	/** Metric system: kilometer. */
 	KILOMETERS("kilometer","kilometers","km",1d);
 
-	private String _singularName, _pluralName, _abbreviation;
-	private double _numberPerKilometer;
+	private String singularName, pluralName, abbreviation;
+	private double numberPerKilometer;
 	
 	/**
 	 * Instantiates a new distance units.
@@ -31,11 +31,12 @@ public enum DistanceUnit {
 	 * @param abbreviation the abbreviation
 	 * @param numberPerKilometer the number of units per kilometer
 	 */
-	private DistanceUnit(String singularName, String pluralName, String abbreviation, double numberPerKilometer) {
-		_singularName = singularName;
-		_pluralName = pluralName;
-		_abbreviation = abbreviation;
-		_numberPerKilometer = numberPerKilometer;
+	private DistanceUnit(String singularName, String pluralName, 
+			String abbreviation, double numberPerKilometer) {
+		this.singularName = singularName;
+		this.pluralName = pluralName;
+		this.abbreviation = abbreviation;
+		this.numberPerKilometer = numberPerKilometer;
 	}
 	
 	/**
@@ -44,7 +45,7 @@ public enum DistanceUnit {
 	 * @return the singlular name
 	 */
 	public String getSinglularName() { 
-		return _singularName;
+		return singularName;
 	}
 	
 	/**
@@ -53,7 +54,7 @@ public enum DistanceUnit {
 	 * @return the plural name
 	 */
 	public String getPluralName() { 
-		return _pluralName;
+		return pluralName;
 	}
 	
 	/**
@@ -62,7 +63,7 @@ public enum DistanceUnit {
 	 * @return the abbreviation
 	 */
 	public String getAbbreviation() { 
-		return _abbreviation;
+		return abbreviation;
 	}
 	
 	/**
@@ -71,7 +72,7 @@ public enum DistanceUnit {
 	 * @return the number of units per kilometer
 	 */
 	public double getNumberPerKilometer() { 
-		return _numberPerKilometer;
+		return numberPerKilometer;
 	}
 	
 	/**

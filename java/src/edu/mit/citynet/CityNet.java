@@ -27,8 +27,8 @@ import edu.mit.citynet.util.DistanceUnit;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class CityNet {
-	private DistanceUnit _distanceUnit;
-	private City _city;
+	private DistanceUnit distanceUnit;
+	private City city;
 	private AtomicInteger nextNodeTypeId,nextNodeTypeAttributeId,
 		nextEdgeTypeId,nextEdgeTypeAttributeId,nextCellId,nextCellRegionId,
 		nextLayerId,nextSystemId,nextNodeId,nextNodeRegionId,nextEdgeId,
@@ -49,8 +49,7 @@ public class CityNet {
 		nextEdgeRegionId = new AtomicInteger();
 	}
 	private static class SingletonHolder { 
-		public static final CityNet INSTANCE
-			= new CityNet();
+		public static final CityNet INSTANCE = new CityNet();
 	}
 	
 	/**
@@ -68,7 +67,7 @@ public class CityNet {
 	 * @return the distance unit
 	 */
 	public DistanceUnit getDistanceUnit() {
-		return _distanceUnit;
+		return distanceUnit;
 	}
 	
 	/**
@@ -77,7 +76,7 @@ public class CityNet {
 	 * @param distanceUnit the new distance unit
 	 */
 	public void setDistanceUnit(DistanceUnit distanceUnit) { 
-		_distanceUnit = distanceUnit;
+		this.distanceUnit = distanceUnit;
 	}
 	
 	/**
@@ -86,7 +85,7 @@ public class CityNet {
 	 * @return the city
 	 */
 	public City getCity() { 
-		return _city;
+		return city;
 	}
 	
 	/**
@@ -95,7 +94,7 @@ public class CityNet {
 	 * @param city the new city
 	 */
 	public void setCity(City city) { 
-		_city = city;
+		this.city = city;
 	}
 	
 	/**
