@@ -1,6 +1,5 @@
 package edu.mit.citynet.gui;
 
-import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -20,6 +19,7 @@ import edu.mit.citynet.core.City;
  */
 public class CityNetFrame extends JFrame {
 	private static final long serialVersionUID = -4707459231955143750L;
+	CityNetMenuBar menuBar;
 	JPanel backgroundPanel;
 	CityPanel cityPanel;
 	
@@ -28,7 +28,8 @@ public class CityNetFrame extends JFrame {
 	 */
 	public CityNetFrame() {
 		super("City.Net");
-		setBackground(Color.WHITE);
+		menuBar = new CityNetMenuBar();
+		setJMenuBar(menuBar);
 		backgroundPanel = new BackgroundPanel();
 		setContentPane(backgroundPanel);
 		addKeyListener(new KeyAdapter() {

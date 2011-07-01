@@ -1,9 +1,14 @@
 package edu.mit.citynet.gui;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -12,15 +17,36 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+/**
+ * BackgroundPanel class.
+ * 
+ * A simple background to display when no city is being edited in the GUI.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class BackgroundPanel extends JPanel {
 	private static final long serialVersionUID = 4630026509701808585L;
 	private Image logo;
 	
+	/**
+	 * Instantiates a new background panel.
+	 * 
+	 * Reads the City.Net logo and filters it to appear slightly transparent.
+	 */
 	public BackgroundPanel() {
 		try {
-			logo = ImageIO.read(getClass().getClassLoader().getResource(
+			BufferedImage rawLogo = ImageIO.read(
+					getClass().getClassLoader().getResource(
 					"resources" + System.getProperty("file.separator") + 
 					"citynetLogo.png"));
+			ImageFilter filter = new RGBImageFilter() {
+				@Override
+				public int filterRGB(int x, int y, int rgb) {
+					return 0x66ffffff & rgb; // make slightly transparent
+				}
+			};
+			ImageProducer ip = new FilteredImageSource(rawLogo.getSource(), filter);
+			logo = Toolkit.getDefaultToolkit().createImage(ip);
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(this, 
 					"An unhandled exception of type " + 
@@ -29,7 +55,6 @@ public class BackgroundPanel extends JPanel {
 					"check the stack trace for more information.");
 			e1.printStackTrace();
 		}
-		setBackground(Color.WHITE);
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
