@@ -1,8 +1,9 @@
 package edu.mit.citynet.gui;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -24,7 +25,6 @@ public class CityPanel extends JPanel {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
 		_city = city;
-		setBackground(Color.LIGHT_GRAY);
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 		GridBagConstraints c = new GridBagConstraints();
@@ -35,6 +35,11 @@ public class CityPanel extends JPanel {
 		add(new JLabel("City Name: "), c);
 		c.gridx++;
 		nameText = new JTextField(20);
+		nameText.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				saveCityNameCommand();
+			}
+		});
 		add(nameText, c);
 		c.gridx = 0;
 		c.gridy++;
@@ -42,9 +47,12 @@ public class CityPanel extends JPanel {
 		c.weightx = 1;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
-		JPanel spacerPanel = new JPanel();
-		spacerPanel.setOpaque(false);
-		add(spacerPanel, c);
+		add(new JPanel(), c);
+	}
+	
+	private void saveCityNameCommand() {
+		System.out.println("Save City Name Command");
+		_city.setName(nameText.getText());
 	}
 	
 	/* (non-Javadoc)
