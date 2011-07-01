@@ -35,7 +35,7 @@ public class CityNetMenuBar extends JMenuBar {
         	}
         });
         fileMenu.add(newCityItem);
-        closeCityItem = new JMenuItem("Close Scenario", KeyEvent.VK_C);
+        closeCityItem = new JMenuItem("Close City", KeyEvent.VK_C);
         closeCityItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_W, ActionEvent.CTRL_MASK));
         closeCityItem.addActionListener(new ActionListener() {
