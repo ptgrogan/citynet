@@ -50,6 +50,16 @@ public class CityNetFrame extends JFrame {
 		validate();
 	}
 	
+	public void openCityCommand(City city) {
+		System.out.println("Open City Command");
+		if(cityPanel != null) {
+			closeCityCommand();
+		}
+		cityPanel = new CityPanel(city);
+		setContentPane(cityPanel);
+		validate();
+	}
+	
 	public void closeCityCommand() {
 		System.out.println("Close City Command");
 		cityPanel = null;

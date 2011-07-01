@@ -1,6 +1,7 @@
 package edu.mit.citynet;
 
 import java.awt.Dimension;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JOptionPane;
@@ -9,6 +10,7 @@ import javax.swing.UIManager;
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
 import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
 
@@ -222,6 +224,17 @@ public class CityNet {
 					f.setSize(new Dimension(600,400));
 					f.setLocationRelativeTo(null);
 					f.setVisible(true);
+					/* example hard-coded city
+					City testCity = new City();
+					testCity.setName("Boston");
+					testCity.setLatitude(45.32);
+					CitySystem system = new CitySystem();
+					system.setName("Transporatation");
+					HashSet<CitySystem> systems = new HashSet<CitySystem>();
+					systems.add(system);
+					testCity.setSystems(systems);
+					f.openCityCommand(testCity);
+					*/
             	} catch(Exception e) {
             		JOptionPane.showMessageDialog(null, 
             				"A fatal exception of type " + 
