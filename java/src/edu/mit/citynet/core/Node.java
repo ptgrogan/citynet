@@ -1,0 +1,100 @@
+package edu.mit.citynet.core;
+
+/**
+ * The Node class is used to define contents of a particular city cell and 
+ * layer within a system.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
+public class Node {
+	private int id;
+	private Cell cell;
+	private Layer layer;
+	private NodeType nodeType;
+	
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+	
+	/**
+	 * Sets the id.
+	 *
+	 * @param id the new id
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	/**
+	 * Gets the cell.
+	 *
+	 * @return the cell
+	 */
+	public Cell getCell() {
+		return cell;
+	}
+	
+	/**
+	 * Sets the cell.
+	 *
+	 * @param cell the new cell
+	 */
+	public void setCell(Cell cell) {
+		this.cell = cell;
+	}
+	
+	/**
+	 * Gets the layer.
+	 *
+	 * @return the layer
+	 */
+	public Layer getLayer() {
+		return layer;
+	}
+	
+	/**
+	 * Sets the layer.
+	 *
+	 * @param layer the new layer
+	 */
+	public void setLayer(Layer layer) {
+		this.layer = layer;
+	}
+	
+	/**
+	 * Gets the node type.
+	 *
+	 * @return the node type
+	 */
+	public NodeType getNodeType() {
+		return nodeType;
+	}
+	
+	/**
+	 * Sets the node type.
+	 *
+	 * @param nodeType the new node type
+	 */
+	public void setNodeType(NodeType nodeType) {
+		this.nodeType = nodeType;
+	}
+	
+	/**
+	 * Gets the node type attribute value.
+	 *
+	 * @param attributeName the attribute name
+	 * @return the node type attribute value
+	 */
+	public Double getNodeTypeAttributeValue(String attributeName) {
+		for(NodeTypeAttribute attribute : nodeType.getAttributes()) {
+			if(attribute.getName().equals(attributeName))
+				return attribute.getValue();
+		}
+		return null;
+	}
+}
