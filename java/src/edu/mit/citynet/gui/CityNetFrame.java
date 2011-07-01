@@ -1,7 +1,5 @@
 package edu.mit.citynet.gui;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -32,26 +30,15 @@ public class CityNetFrame extends JFrame {
 		setJMenuBar(menuBar);
 		backgroundPanel = new BackgroundPanel();
 		setContentPane(backgroundPanel);
-		addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode()==KeyEvent.VK_N && e.isControlDown()) {
-					newCityCommand();
-				} else if(e.getKeyCode()==KeyEvent.VK_W && e.isControlDown()) {
-					closeCityCommand();
-				} else if(e.getKeyCode()==KeyEvent.VK_Q && e.isControlDown()) {
-					quitCommand();
-				}
-			}
-		});
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				quitCommand();
+				exitCommand();
 			}
 		});
 	}
 	
-	private void newCityCommand() {
+	public void newCityCommand() {
 		System.out.println("New City Command");
 		if(cityPanel != null) {
 			closeCityCommand();
@@ -63,15 +50,15 @@ public class CityNetFrame extends JFrame {
 		validate();
 	}
 	
-	private void closeCityCommand() {
+	public void closeCityCommand() {
 		System.out.println("Close City Command");
 		cityPanel = null;
 		setContentPane(backgroundPanel);
 		validate();
 	}
 	
-	private void quitCommand() {
-		System.out.println("Quit Command");
+	public void exitCommand() {
+		System.out.println("Exit Command");
 		if(cityPanel != null) {
 			closeCityCommand();
 		}

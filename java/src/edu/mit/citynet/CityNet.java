@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
-
+import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
@@ -216,7 +216,8 @@ public class CityNet {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	try {
-					UIManager.setLookAndFeel(new InfoNodeLookAndFeel());
+					UIManager.setLookAndFeel(new InfoNodeLookAndFeel(
+							InfoNodeLookAndFeelThemes.getSoftGrayTheme()));
 					System.out.println("Launching City.Net...");
 					CityNetFrame f = new CityNetFrame();
 					f.setSize(new Dimension(600,400));

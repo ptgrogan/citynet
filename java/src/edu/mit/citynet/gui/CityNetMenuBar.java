@@ -29,7 +29,9 @@ public class CityNetMenuBar extends JMenuBar {
                 KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 	    newCityItem.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// new city command
+        		if(getTopLevelAncestor() instanceof CityNetFrame) {
+        			((CityNetFrame)getTopLevelAncestor()).newCityCommand();
+        		}
         	}
         });
         fileMenu.add(newCityItem);
@@ -38,7 +40,9 @@ public class CityNetMenuBar extends JMenuBar {
                 KeyEvent.VK_W, ActionEvent.CTRL_MASK));
         closeCityItem.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// close city command
+        		if(getTopLevelAncestor() instanceof CityNetFrame) {
+        			((CityNetFrame)getTopLevelAncestor()).closeCityCommand();
+        		}
         	}
         });
         fileMenu.add(closeCityItem);
@@ -47,11 +51,12 @@ public class CityNetMenuBar extends JMenuBar {
                 KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
         exitItem.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// exit command
+        		if(getTopLevelAncestor() instanceof CityNetFrame) {
+        			((CityNetFrame)getTopLevelAncestor()).exitCommand();
+        		}
         	}
         });
         fileMenu.add(exitItem);
 	    add(fileMenu);
 	}
-	
 }
