@@ -3,6 +3,8 @@ package edu.mit.citynet.core;
 import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -20,17 +22,57 @@ public class City {
 	private URL imageURL;
 	private transient Image image;
 	private double[] imageVertices;
-	//private Set<Cell> cells;
-	//private Set<CellRegion> cellRegions;
-	//private Set<System> systems;
+
+	private Set<Cell> cells;
+	private Set<CellRegion> cellRegions;
+	private Set<CitySystem> systems;
 	
 	/**
 	 * Instantiates a new City.Net city.
 	 */
 	public City() {
 		imageVertices = new double[2];
+		cells = new HashSet<Cell>();
+		//cellRegions = new HashSet<CellRegion>();
+		systems = new HashSet<CitySystem>();
 	}
 	
+	/**
+	 * Gets a copy of the cells.
+	 *
+	 * @return the cells
+	 */
+	public Set<Cell> getCells() {
+		return new HashSet<Cell>(cells);
+	}
+	
+	/**
+	 * Sets the cells.
+	 *
+	 * @param cells the new cells
+	 */
+	public void setCells(Set<Cell> cells) {
+		this.cells = cells;
+	}
+
+	/**
+	 * Gets a copy of the systems.
+	 *
+	 * @return the systems
+	 */
+	public Set<CitySystem> getSystems() {
+		return new HashSet<CitySystem>(systems);
+	}
+
+	/**
+	 * Sets the systems.
+	 *
+	 * @param systems the new systems
+	 */
+	public void setSystems(Set<CitySystem> systems) {
+		this.systems = systems;
+	}
+
 	/**
 	 * Gets the name.
 	 *
@@ -126,7 +168,7 @@ public class City {
 	 * @param imageURL the new image URL
 	 */
 	public void setImageURL(URL imageURL) {
-		imageURL = imageURL;
+		this.imageURL = imageURL;
 		try {
 			image = ImageIO.read(imageURL);
 		} catch (IOException ex) {
@@ -168,5 +210,23 @@ public class City {
 	 */
 	public void setImageVertices(double[] imageVertices) {
 		this.imageVertices = imageVertices;
+	}
+
+	/**
+	 * Sets the cell regions.
+	 *
+	 * @param cellRegions the new cell regions
+	 */
+	public void setCellRegions(Set<CellRegion> cellRegions) {
+		this.cellRegions = cellRegions;
+	}
+
+	/**
+	 * Gets a copy of the cell regions.
+	 *
+	 * @return the cell regions
+	 */
+	public Set<CellRegion> getCellRegions() {
+		return new HashSet<CellRegion>(cellRegions);
 	}
 }
