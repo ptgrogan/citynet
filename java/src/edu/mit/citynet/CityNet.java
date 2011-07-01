@@ -3,6 +3,11 @@ package edu.mit.citynet;
 import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import net.infonode.gui.laf.InfoNodeLookAndFeel;
+
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
@@ -207,10 +212,25 @@ public class CityNet {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println("Launching City.Net...");
-		CityNetFrame f = new CityNetFrame();
-		f.setSize(new Dimension(600,400));
-		f.setLocationRelativeTo(null);
-		f.setVisible(true);
+		// use a separate thread for the GUI
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            	try {
+					UIManager.setLookAndFeel(new InfoNodeLookAndFeel());
+					System.out.println("Launching City.Net...");
+					CityNetFrame f = new CityNetFrame();
+					f.setSize(new Dimension(600,400));
+					f.setLocationRelativeTo(null);
+					f.setVisible(true);
+            	} catch(Exception e) {
+            		JOptionPane.showMessageDialog(null, 
+            				"A fatal exception of type " + 
+            				e.getClass().getSimpleName() + "occurred while " + 
+            				"launching City.Net. Please consult the stack " + 
+            				"trace for more information.");
+					e.printStackTrace();
+				}
+            }
+		});
 	}
 }

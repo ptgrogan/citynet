@@ -52,7 +52,12 @@ public class CityNetFrame extends JFrame {
 	
 	private void newCityCommand() {
 		System.out.println("New City Command");
-		cityPanel = new CityPanel(new City());
+		if(cityPanel != null) {
+			closeCityCommand();
+		}
+		City city = new City();
+		city.setName("New City");
+		cityPanel = new CityPanel(city);
 		setContentPane(cityPanel);
 		validate();
 	}
