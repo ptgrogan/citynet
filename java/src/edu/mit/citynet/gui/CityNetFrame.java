@@ -20,7 +20,7 @@ import edu.mit.citynet.core.City;
  */
 public class CityNetFrame extends JFrame {
 	private static final long serialVersionUID = -4707459231955143750L;
-	JPanel defaultPanel;
+	JPanel backgroundPanel;
 	CityPanel cityPanel;
 	
 	/**
@@ -28,9 +28,9 @@ public class CityNetFrame extends JFrame {
 	 */
 	public CityNetFrame() {
 		super("City.Net");
-		defaultPanel = new JPanel();
-		defaultPanel.setBackground(new Color(0x9999aa));
-		setContentPane(defaultPanel);
+		setBackground(Color.WHITE);
+		backgroundPanel = new BackgroundPanel();
+		setContentPane(backgroundPanel);
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_N && e.isControlDown()) {
@@ -65,7 +65,7 @@ public class CityNetFrame extends JFrame {
 	private void closeCityCommand() {
 		System.out.println("Close City Command");
 		cityPanel = null;
-		setContentPane(defaultPanel);
+		setContentPane(backgroundPanel);
 		validate();
 	}
 	

@@ -226,7 +226,7 @@ public class CityNet {
             		JOptionPane.showMessageDialog(null, 
             				"A fatal exception of type " + 
             				e.getClass().getSimpleName() + "occurred while " + 
-            				"launching City.Net. Please consult the stack " + 
+            				"launching City.Net.\nPlease consult the stack " + 
             				"trace for more information.");
 					e.printStackTrace();
 				}
