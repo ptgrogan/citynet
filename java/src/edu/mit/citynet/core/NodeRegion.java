@@ -70,7 +70,7 @@ public class NodeRegion extends AbstractRegion {
 			}
 			break;
 		case UNDEFINED:
-			throw new RuntimeException("Unknown or undefined node region type.");
+			throw new IllegalStateException("Unknown or undefined node region type.");
 		}
 	}
 	

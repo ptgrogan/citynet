@@ -158,7 +158,7 @@ public class EdgeRegion extends AbstractRegion {
 			}
 			break;
 		case UNDEFINED:
-			throw new RuntimeException("Unknown or undefined edge region type.");
+			throw new IllegalStateException("Unknown or undefined edge region type.");
 		}
 	}
 	
