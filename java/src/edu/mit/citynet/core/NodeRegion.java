@@ -1,7 +1,10 @@
 package edu.mit.citynet.core;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+
+import edu.mit.citynet.CityNet;
 
 /**
  * The NodeRegion class describes nodes that will be generated at cells over a 
@@ -38,9 +41,51 @@ public class NodeRegion extends AbstractRegion {
 	 * @param system the system
 	 * @return the set of generated nodes
 	 */
-	public Set<Node> generateNodes(System system) {
-		//TODO
-		return new HashSet<Node>();
+	public void generateNodes(CitySystem system) {
+		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+		switch(nodeRegionType) {
+		case POLYGON:
+			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
+				if(containsPolygon(cell.getPolygon(), 0.5)) {
+					createNode(system,cell);
+				}
+			}
+			break;
+		case POLYLINE:
+			LineString line = gf.createLineString(getPolygon().getCoordinates());
+			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
+				if(cell.intersectsLine(line)) {
+					createNode(system,cell);
+				}
+			}
+			break;
+		case POLYPOINT:
+			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
+				for(Coordinate coord : getPolygon().getCoordinates()) {
+					if(cell.containsPoint(gf.createPoint(coord))) {
+						createNode(system,cell);
+						break;
+					}
+				}
+			}
+			break;
+		case UNDEFINED:
+			throw new RuntimeException("Unknown or undefined node region type.");
+		}
+	}
+	
+	private void createNode(CitySystem system, Cell cell) {
+		for(Node n : system.getNodes()) {
+			if(n.getCell().equals(cell) && n.getLayer().equals(layer)) {
+				return; // node exists at same location
+			}
+		}
+		Node node = new Node();
+		node.setId(CityNet.getInstance().getNextNodeId());
+		node.setCell(cell);
+		node.setLayer(layer);
+		node.setNodeType(nodeType);
+		system.addNode(node);
 	}
 	
 	/**
