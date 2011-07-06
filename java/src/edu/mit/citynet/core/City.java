@@ -55,6 +55,16 @@ public class City {
 	public void setCells(Set<Cell> cells) {
 		this.cells = cells;
 	}
+	
+	/**
+	 * Adds the cell.
+	 *
+	 * @param cell the cell
+	 * @return true, if successful
+	 */
+	public boolean addCell(Cell cell) {
+		return cells.add(cell);
+	}
 
 	/**
 	 * Gets a copy of the systems.

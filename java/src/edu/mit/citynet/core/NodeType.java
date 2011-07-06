@@ -104,6 +104,15 @@ public class NodeType {
 	public Set<NodeTypeAttribute> getAttributes() {
 		return new HashSet<NodeTypeAttribute>(attributes);
 	}
+	
+	/**
+	 * Sets the attributes.
+	 *
+	 * @param attributes the new attributes
+	 */
+	public void setAttributes(Set<NodeTypeAttribute> attributes) {
+		this.attributes = attributes;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

@@ -105,6 +105,15 @@ public class EdgeType {
 		return new HashSet<EdgeTypeAttribute>(attributes);
 	}
 	
+	/**
+	 * Sets the attributes.
+	 *
+	 * @param attributes the new attributes
+	 */
+	public void setAttributes(Set<EdgeTypeAttribute> attributes) {
+		this.attributes = attributes;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

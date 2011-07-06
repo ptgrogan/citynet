@@ -36,6 +36,15 @@ public class Cell {
 	}
 	
 	/**
+	 * Sets the polygon.
+	 *
+	 * @param polygon the new polygon
+	 */
+	public void setPolygon(Polygon polygon) {
+		this.polygon = polygon;
+	}
+	
+	/**
 	 * Determines whether the cell contains a point.
 	 *
 	 * @param point the point

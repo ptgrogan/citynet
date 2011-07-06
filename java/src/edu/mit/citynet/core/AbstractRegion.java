@@ -44,6 +44,15 @@ public abstract class AbstractRegion {
 	}
 	
 	/**
+	 * Sets the polygon.
+	 *
+	 * @param polygon the new polygon
+	 */
+	public void setPolygon(Polygon polygon) {
+		this.polygon = polygon;
+	}
+	
+	/**
 	 * Determines whether the region contains a polygon, measured by if 
 	 * minimum overlap fraction between the two is achieved.
 	 *
