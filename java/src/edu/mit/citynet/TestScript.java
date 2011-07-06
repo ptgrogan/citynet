@@ -3,6 +3,7 @@ package edu.mit.citynet;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
@@ -12,8 +13,7 @@ import edu.mit.citynet.io.SpreadsheetTemplate;
 
 public class TestScript {
 	public static void main(String[] args) {
-
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	try {
 					UIManager.setLookAndFeel(new InfoNodeLookAndFeel(

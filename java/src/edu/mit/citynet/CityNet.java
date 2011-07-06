@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
@@ -279,7 +280,7 @@ public class CityNet {
 	 */
 	public static void main(String[] args) {
 		// use a separate thread for the GUI
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	try {
 					UIManager.setLookAndFeel(new InfoNodeLookAndFeel(
