@@ -35,6 +35,15 @@ public abstract class AbstractRegion {
 	}
 	
 	/**
+	 * Gets the polygon.
+	 *
+	 * @return the polygon
+	 */
+	public Polygon getPolygon() {
+		return polygon;
+	}
+	
+	/**
 	 * Determines whether the region contains a polygon, measured by if 
 	 * minimum overlap fraction between the two is achieved.
 	 *

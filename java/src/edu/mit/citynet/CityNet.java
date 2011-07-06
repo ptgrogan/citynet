@@ -1,7 +1,6 @@
 package edu.mit.citynet;
 
 import java.awt.Dimension;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JOptionPane;
@@ -9,8 +8,10 @@ import javax.swing.UIManager;
 
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
 import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import edu.mit.citynet.core.City;
-import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
 
@@ -35,6 +36,7 @@ public class CityNet {
 		nextEdgeTypeId,nextEdgeTypeAttributeId,nextCellId,nextCellRegionId,
 		nextLayerId,nextSystemId,nextNodeId,nextNodeRegionId,nextEdgeId,
 		nextEdgeRegionId;
+	private GeometryFactory geometryFactory;
 	
 	private CityNet() { 
 		nextNodeTypeId = new AtomicInteger();
@@ -49,6 +51,7 @@ public class CityNet {
 		nextNodeRegionId = new AtomicInteger();
 		nextEdgeId = new AtomicInteger();
 		nextEdgeRegionId = new AtomicInteger();
+		geometryFactory = new GeometryFactory();
 	}
 	private static class SingletonHolder { 
 		public static final CityNet INSTANCE = new CityNet();
@@ -61,6 +64,13 @@ public class CityNet {
 	 */
 	public static CityNet getInstance() {
 		return SingletonHolder.INSTANCE;
+	}
+	
+	/**
+	 * Geometry factory.
+	 */
+	public GeometryFactory getGeometryFactory() {
+		return geometryFactory;
 	}
 	
 	/**

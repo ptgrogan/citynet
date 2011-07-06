@@ -1,8 +1,12 @@
 package edu.mit.citynet.core;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+
+import edu.mit.citynet.CityNet;
 
 /**
  * The EdgeRegion class specifies a spatial area over which edges should be
@@ -42,9 +46,130 @@ public class EdgeRegion extends AbstractRegion {
 		layers = new Vector<Layer>();
 	}
 	
-	public Set<Edge> generateEdges(System system) {
-		//TODO
-		return new HashSet<Edge>();
+	/**
+	 * Generate edges.
+	 *
+	 * @param system the system
+	 */
+	public void generateEdges(CitySystem system) {
+		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+		Coordinate[] coords = getPolygon().getCoordinates();
+		Vector<Node> nodes = null;
+		switch(edgeRegionType) {
+		case POLYLINE:
+			nodes = new Vector<Node>();
+			// TODO: processes nodes in uncertain order
+			for(int i=0;i<layers.size()-1;i++) {
+				for(Node node : system.getNodes()) {
+					LineString line = gf.createLineString(
+							new Coordinate[]{coords[i],coords[i+1]});
+					if(node.getLayer().equals(layers.get(i)) 
+							&& node.getCell().intersectsLine(line)) {
+						nodes.addElement(node);
+					}
+				}
+			}
+			for(int i=0;i<nodes.size()-1;i++) {
+				if(!nodes.get(i).equals(nodes.get(i+1))) {
+					createEdge(system,nodes.get(i),nodes.get(i+1));
+				}
+			}
+			break;
+		case POLYPOINT:
+			nodes = new Vector<Node>();
+			for(int i=0;i<layers.size();i++) {
+				for(Node node : system.getNodes()) {
+					if(node.getLayer().equals(layers.get(i))
+							&& node.getCell().containsPoint(gf.createPoint(coords[i]))) {
+						nodes.addElement(node);
+					}
+				}
+			}
+			for(int i=0;i<nodes.size()-1;i++) {
+				if(!nodes.get(i).equals(nodes.get(i+1))) {
+					createEdge(system,nodes.get(i),nodes.get(i+1));
+				}
+			}
+			break;
+		case POLYGON_ORTHOGONAL:
+			nodes = new Vector<Node>();
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layers.get(0))
+						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
+					nodes.add(node);
+				}
+			}
+			for(int i=0;i<nodes.size();i++) {
+				for(int j=i+1;j<nodes.size();j++) {
+					Node origin = nodes.get(i);
+					Node destination = nodes.get(j);
+					int numCommonCoords = 0;
+					for(Coordinate c1 : origin.getCell().getPolygon().getCoordinates()) {
+						for(Coordinate c2 : destination.getCell().getPolygon().getCoordinates()) {
+							if(c1.equals(c2)) numCommonCoords++;
+						}
+					}
+					if(!origin.equals(destination) && numCommonCoords==2) {
+						createEdge(system,origin,destination);
+					}
+				}
+			}
+			break;
+		case POLYGON_ADJACENT:
+			nodes = new Vector<Node>();
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layers.get(0))
+						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
+					nodes.add(node);
+				}
+			}
+			for(int i=0;i<nodes.size();i++) {
+				for(int j=i+1;j<nodes.size();j++) {
+					Node origin = nodes.get(i);
+					Node destination = nodes.get(j);
+					int numCommonCoords = 0;
+					for(Coordinate c1 : origin.getCell().getPolygon().getCoordinates()) {
+						for(Coordinate c2 : destination.getCell().getPolygon().getCoordinates()) {
+							if(c1.equals(c2)) numCommonCoords++;
+						}
+					}
+					if(!origin.equals(destination) && numCommonCoords>=2) {
+						createEdge(system,origin,destination);
+					}
+				}
+			}
+			break;
+		case POLYGON_CONNECTED:
+			nodes = new Vector<Node>();
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layers.get(0))
+						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
+					nodes.add(node);
+				}
+			}
+			for(int i=0;i<nodes.size();i++) {
+				for(int j=i+1;j<nodes.size();j++) {
+					Node origin = nodes.get(i);
+					Node destination = nodes.get(j);
+					if(!origin.equals(destination)) {
+						createEdge(system,origin,destination);
+					}
+				}
+			}
+			break;
+		case UNDEFINED:
+			throw new RuntimeException("Unknown or undefined edge region type.");
+		}
+	}
+	
+	private void createEdge(CitySystem system, Node origin, Node destination) {
+		Edge edge = new Edge();
+		edge.setId(CityNet.getInstance().getNextEdgeId());
+		edge.setOrigin(origin);
+		edge.setDestination(destination);
+		edge.setDirected(directed);
+		edge.setEdgeType(edgeType);
+		system.addEdge(edge);
 	}
 
 	/**
