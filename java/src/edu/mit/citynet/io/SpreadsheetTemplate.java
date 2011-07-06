@@ -101,20 +101,4 @@ public class SpreadsheetTemplate {
 	public void writeTemplate() {
 		// TODO
 	}
-	
-	public static void main(String[] args) {
-		SpreadsheetTemplate t = new SpreadsheetTemplate();
-		t.setFilePath("synthesisExample.xls");
-		try {
-			t.readTemplate();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(CityNet.getInstance().getCity().getName());
-		System.out.println(CityNet.getInstance().getCity().getLatitude());
-		System.out.println(CityNet.getInstance().getCity().getLongitude());
-		System.out.println(CityNet.getInstance().getCity().getRotation());
-		System.out.println(CityNet.getInstance().getCity().getImageFilePath());
-		System.out.println(CityNet.getInstance().getCity().getImagePolygon());
-	}
 }

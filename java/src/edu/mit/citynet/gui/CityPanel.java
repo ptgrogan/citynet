@@ -11,11 +11,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.viz.CityVizPanel;
 
 public class CityPanel extends JPanel {
 	private static final long serialVersionUID = -8626443292880784870L;
 	private City city;
 	JTextField nameText;
+	CityVizPanel cityVizPanel;
 	
 	/**
 	 * Instantiates a new city panel.
@@ -47,7 +49,9 @@ public class CityPanel extends JPanel {
 		c.weightx = 1;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
-		add(new JPanel(), c);
+		cityVizPanel = new CityVizPanel();
+		cityVizPanel.setCity(city);
+		add(cityVizPanel, c);
 	}
 	
 	private void saveCityNameCommand() {
