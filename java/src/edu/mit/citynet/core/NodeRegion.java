@@ -52,6 +52,7 @@ public class NodeRegion extends AbstractRegion {
 			}
 			break;
 		case POLYLINE:
+			// TODO check for duplicate coordinates (first, last)
 			LineString line = gf.createLineString(getPolygon().getCoordinates());
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				if(cell.intersectsLine(line)) {
@@ -60,6 +61,7 @@ public class NodeRegion extends AbstractRegion {
 			}
 			break;
 		case POLYPOINT:
+			// TODO check for duplicate coordinates (first, last)
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				for(Coordinate coord : getPolygon().getCoordinates()) {
 					if(cell.containsPoint(gf.createPoint(coord))) {
