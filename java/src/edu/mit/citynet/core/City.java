@@ -1,12 +1,14 @@
 package edu.mit.citynet.core;
 
 import java.awt.Image;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+
+import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * City class.
@@ -19,9 +21,9 @@ public class City {
 	private String name;
 	private double latitude, longitude;
 	private double rotation;
-	private URL imageURL;
+	private String imageFilePath;
 	private transient Image image;
-	private double[] imageVertices;
+	private Polygon imagePolygon;
 
 	private Set<Cell> cells;
 	private Set<CellRegion> cellRegions;
@@ -31,9 +33,8 @@ public class City {
 	 * Instantiates a new City.Net city.
 	 */
 	public City() {
-		imageVertices = new double[2];
 		cells = new HashSet<Cell>();
-		//cellRegions = new HashSet<CellRegion>();
+		cellRegions = new HashSet<CellRegion>();
 		systems = new HashSet<CitySystem>();
 	}
 	
@@ -163,26 +164,26 @@ public class City {
 	}
 	
 	/**
-	 * Sets the image URL.
+	 * Sets the image file path.
 	 *
-	 * @param imageURL the new image URL
+	 * @param imageFilePath the new image file path
 	 */
-	public void setImageURL(URL imageURL) {
-		this.imageURL = imageURL;
+	public void setImageFilePath(String imageFilePath) {
+		this.imageFilePath = imageFilePath;
 		try {
-			image = ImageIO.read(imageURL);
+			image = ImageIO.read(new FileInputStream(imageFilePath));
 		} catch (IOException ex) {
-			throw new IllegalArgumentException("Invalid URL");
+			throw new IllegalArgumentException("Invalid image file path.");
 		}
 	}
 	
 	/**
-	 * Gets the image URL.
+	 * Gets the image file path.
 	 *
-	 * @return the image URL
+	 * @return the image file path
 	 */
-	public URL getImageURL() {
-		return imageURL;
+	public String getImageFilePath() {
+		return imageFilePath;
 	}
 	
 	/**
@@ -195,21 +196,21 @@ public class City {
 	}
 	
 	/**
-	 * Gets the image vertices.
+	 * Gets the image polygon.
 	 *
-	 * @return the image vertices
+	 * @return the image polygon
 	 */
-	public double[] getImageVertices() {
-		return imageVertices;
+	public Polygon getImagePolygon() {
+		return imagePolygon;
 	}
 	
 	/**
-	 * Sets the image vertices.
+	 * Sets the image polygon.
 	 *
-	 * @param imageVertices the new image vertices
+	 * @param imageVertices the new image polygon
 	 */
-	public void setImageVertices(double[] imageVertices) {
-		this.imageVertices = imageVertices;
+	public void setImagePolygon(Polygon imagePolygon) {
+		this.imagePolygon = imagePolygon;
 	}
 
 	/**

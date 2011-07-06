@@ -11,7 +11,19 @@ import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import edu.mit.citynet.core.Cell;
+import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.core.Edge;
+import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.EdgeType;
+import edu.mit.citynet.core.EdgeTypeAttribute;
+import edu.mit.citynet.core.Layer;
+import edu.mit.citynet.core.Node;
+import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.core.NodeTypeAttribute;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
 
@@ -215,6 +227,49 @@ public class CityNet {
 	 */
 	public int getNextEdgeRegionId() { 
 		return nextEdgeRegionId.incrementAndGet();
+	}
+	
+	/**
+	 * Update ids, used after loading a city from a template.
+	 */
+	public void updateIds() {
+		if(city == null) return;
+		for(Cell cell : city.getCells()) {
+			nextCellId.set(Math.max(nextCellId.get(), cell.getId()+1));
+		}
+		for(CellRegion cellRegion : city.getCellRegions()) {
+			nextCellRegionId.set(Math.max(nextCellRegionId.get(), cellRegion.getId()+1));
+		}
+		for(CitySystem system : city.getSystems()) {
+			nextSystemId.set(Math.max(nextSystemId.get(), system.getId()+1));
+			for(NodeType nodeType : system.getNodeTypes()) {
+				nextNodeTypeId.set(Math.max(nextNodeTypeId.get(), nodeType.getId()+1));
+				for(NodeTypeAttribute nodeTypeAttrib : nodeType.getAttributes()) {
+					nextNodeTypeAttributeId.set(Math.max(nextNodeTypeAttributeId.get(), nodeTypeAttrib.getId()+1));
+				}
+			}
+			for(EdgeType edgeType : system.getEdgeTypes()) {
+				nextEdgeTypeId.set(Math.max(nextEdgeTypeId.get(), edgeType.getId()+1));
+				for(EdgeTypeAttribute edgeTypeAttrib : edgeType.getAttributes()) {
+					nextEdgeTypeAttributeId.set(Math.max(nextEdgeTypeAttributeId.get(), edgeTypeAttrib.getId()+1));
+				}
+			}
+			for(Layer layer : system.getLayers()) {
+				nextLayerId.set(Math.max(nextLayerId.get(), layer.getId()+1));
+			}
+			for(Node node : system.getNodes()) {
+				nextNodeId.set(Math.max(nextNodeId.get(), node.getId()+1));
+			}
+			for(Edge edge : system.getEdges()) {
+				nextEdgeId.set(Math.max(nextEdgeId.get(), edge.getId()+1));
+			}
+			for(NodeRegion nodeRegion : system.getNodeRegions()) {
+				nextNodeRegionId.set(Math.max(nextNodeRegionId.get(), nodeRegion.getId()+1));
+			}
+			for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
+				nextEdgeRegionId.set(Math.max(nextEdgeRegionId.get(), edgeRegion.getId()+1));
+			}
+		}
 	}
 	
 	/**
