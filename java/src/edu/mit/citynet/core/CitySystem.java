@@ -58,6 +58,16 @@ public class CitySystem {
 	public Set<Edge> getEdges() {
 		return new HashSet<Edge>(edges);
 	}
+	
+	/**
+	 * Adds the edge.
+	 *
+	 * @param edge the edge
+	 * @return true, if successful
+	 */
+	public boolean addEdge(Edge edge) {
+		return edges.add(edge);
+	}
 
 	/**
 	 * Gets a copy of the edge types.
@@ -111,6 +121,16 @@ public class CitySystem {
 	 */
 	public Set<Node> getNodes() {
 		return new HashSet<Node>(nodes);
+	}
+	
+	/**
+	 * Adds the node.
+	 *
+	 * @param node the node
+	 * @return true, if successful
+	 */
+	public boolean addNode(Node node) {
+		return nodes.add(node);
 	}
 
 	/**

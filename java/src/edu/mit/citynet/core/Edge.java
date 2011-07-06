@@ -130,4 +130,13 @@ public class Edge {
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof Edge) {
+			return id==((Edge)object).getId();
+		} else return false;
+	}
 }

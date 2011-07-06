@@ -26,4 +26,13 @@ public class EdgeTypeAttribute extends AbstractAttribute {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof EdgeTypeAttribute) {
+			return id==((EdgeTypeAttribute)object).getId();
+		} else return false;
+	}
 }

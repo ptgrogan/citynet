@@ -104,4 +104,13 @@ public class NodeType {
 	public Set<NodeTypeAttribute> getAttributes() {
 		return new HashSet<NodeTypeAttribute>(attributes);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof NodeType) {
+			return id==((NodeType)object).getId();
+		} else return false;
+	}
 }

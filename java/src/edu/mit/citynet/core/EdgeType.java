@@ -104,4 +104,13 @@ public class EdgeType {
 	public Set<EdgeTypeAttribute> getAttributes() {
 		return new HashSet<EdgeTypeAttribute>(attributes);
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof EdgeType) {
+			return id==((EdgeType)object).getId();
+		} else return false;
+	}
 }

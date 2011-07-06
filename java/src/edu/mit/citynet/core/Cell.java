@@ -65,4 +65,13 @@ public class Cell {
 	public double getArea() {
 		return polygon.getArea();
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof Cell) {
+			return id==((Cell)object).getId();
+		} else return false;
+	}
 }

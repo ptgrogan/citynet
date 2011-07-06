@@ -97,4 +97,14 @@ public class Node {
 		}
 		return null;
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof Node) {
+			return id==((Node)object).getId();
+		} else return false;
+	}
 }
