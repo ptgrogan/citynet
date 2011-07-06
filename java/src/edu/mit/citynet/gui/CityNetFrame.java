@@ -58,6 +58,7 @@ public class CityNetFrame extends JFrame {
 		cityPanel = new CityPanel(city);
 		setContentPane(cityPanel);
 		validate();
+		pack();
 	}
 	
 	public void closeCityCommand() {

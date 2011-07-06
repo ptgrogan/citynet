@@ -32,7 +32,11 @@ public class CityVizPanel extends JPanel {
 		if(city != null) {
 			if(city.getImage() != null) {
 				imageLabel.setIcon(new ImageIcon(city.getImage()));
+			} else {
+				imageLabel.setIcon(null);
 			}
+		} else {
+			imageLabel.setIcon(null);
 		}
 	}
 }
