@@ -16,25 +16,24 @@ public class CityVizPanel extends JPanel {
 	/**
 	 * Instantiates a new city viz panel.
 	 */
-	public CityVizPanel() {
+	public CityVizPanel(City city) {
+		if (city==null) {
+			throw new IllegalArgumentException("City cannot be null.");
+		}
+		this.city = city;
 		imageLabel = new JLabel();
 		imageLabel.setPreferredSize(new Dimension(250,250));
 		add(imageLabel);
 	}
 	
-	/**
-	 * Sets the city.
-	 *
-	 * @param city the new city
+	/* (non-Javadoc)
+	 * @see java.awt.Component#repaint()
 	 */
-	public void setCity(City city) {
-		this.city = city;
-		if(city != null) {
-			if(city.getImage() != null) {
-				imageLabel.setIcon(new ImageIcon(city.getImage()));
-			} else {
-				imageLabel.setIcon(null);
-			}
+	public void repaint() {
+		super.repaint();
+		if(imageLabel == null) return;
+		if(city != null && city.getImage() != null) {
+			imageLabel.setIcon(new ImageIcon(city.getImage()));
 		} else {
 			imageLabel.setIcon(null);
 		}

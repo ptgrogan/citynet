@@ -49,8 +49,7 @@ public class CityPanel extends JPanel {
 		c.weightx = 1;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
-		cityVizPanel = new CityVizPanel();
-		cityVizPanel.setCity(city);
+		cityVizPanel = new CityVizPanel(city);
 		add(cityVizPanel, c);
 	}
 	
