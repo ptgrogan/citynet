@@ -23,6 +23,7 @@ public class MapLayer extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		if(image == null) return;
 		double scale = Math.min(((double)getWidth())/image.getWidth(null), 
 				((double)getHeight())/image.getHeight(null));
 		int pX = (int)(getWidth()-scale*image.getWidth(null))/2;
