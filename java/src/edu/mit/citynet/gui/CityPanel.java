@@ -2,6 +2,7 @@ package edu.mit.citynet.gui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -34,6 +35,8 @@ public class CityPanel extends JPanel {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weighty = 0;
+		c.fill = GridBagConstraints.BOTH;
+		c.insets = new Insets(2,2,2,2);
 		add(new JLabel("City Name: "), c);
 		c.gridx++;
 		nameText = new JTextField(20);

@@ -2,16 +2,14 @@ package edu.mit.citynet.viz;
 
 import java.awt.Dimension;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JLayeredPane;
 
 import edu.mit.citynet.core.City;
 
-public class CityVizPanel extends JPanel {
+public class CityVizPanel extends JLayeredPane {
 	private static final long serialVersionUID = 3994034732879260199L;
 	private City city;
-	private JLabel imageLabel;
+	private MapLayer mapPanel;
 	
 	/**
 	 * Instantiates a new city viz panel.
@@ -21,21 +19,17 @@ public class CityVizPanel extends JPanel {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
 		this.city = city;
-		imageLabel = new JLabel();
-		imageLabel.setPreferredSize(new Dimension(250,250));
-		add(imageLabel);
+		setPreferredSize(new Dimension(250,250));
+		mapPanel = new MapLayer(city.getImage());
+		add(mapPanel, new Integer(1));
 	}
 	
 	/* (non-Javadoc)
-	 * @see java.awt.Component#repaint()
+	 * @see java.awt.Component#setBounds(int, int, int, int)
 	 */
-	public void repaint() {
-		super.repaint();
-		if(imageLabel == null) return;
-		if(city != null && city.getImage() != null) {
-			imageLabel.setIcon(new ImageIcon(city.getImage()));
-		} else {
-			imageLabel.setIcon(null);
-		}
+	public void setBounds(int x, int y, int width, int height) {
+		// this function is used to synchronize the size of the layers
+		super.setBounds(x,y,width,height);
+		mapPanel.setBounds(0,0,width,height);
 	}
 }
