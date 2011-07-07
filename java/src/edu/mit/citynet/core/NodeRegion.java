@@ -52,7 +52,7 @@ public class NodeRegion extends AbstractRegion {
 			}
 			break;
 		case POLYLINE:
-			LineString line = gf.createLineString(getCoordinates());
+			LineString line = gf.createLineString(getCoordinateList().toCoordinateArray());
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				if(cell.intersectsLine(line)) {
 					createNode(system,cell);
@@ -61,7 +61,7 @@ public class NodeRegion extends AbstractRegion {
 			break;
 		case POLYPOINT:
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
-				for(Coordinate coord : getCoordinates()) {
+				for(Coordinate coord : getCoordinateList().toCoordinateArray()) {
 					if(cell.containsPoint(gf.createPoint(coord))) {
 						createNode(system,cell);
 						break;

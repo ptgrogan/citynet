@@ -3,6 +3,7 @@ package edu.mit.citynet.core;
 import java.util.Vector;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
@@ -53,16 +54,18 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public void generateEdges(CitySystem system) {
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
-		Coordinate[] coords = getCoordinates();
 		Vector<Node> nodes = null;
+		CoordinateList coords = getCoordinateList();
 		switch(edgeRegionType) {
 		case POLYLINE:
 			nodes = new Vector<Node>();
-			// TODO: processes nodes in uncertain order
+			// TODO: processes nodes in uncertain order, may impact 
+			// connectivity of resulting edges
 			for(int i=0;i<layers.size()-1;i++) {
 				for(Node node : system.getNodes()) {
 					LineString line = gf.createLineString(
-							new Coordinate[]{coords[i],coords[i+1]});
+							new Coordinate[]{coords.getCoordinate(i),
+									coords.getCoordinate(i+1)});
 					if(node.getLayer().equals(layers.get(i)) 
 							&& node.getCell().intersectsLine(line)) {
 						nodes.addElement(node);
@@ -80,7 +83,8 @@ public class EdgeRegion extends AbstractRegion {
 			for(int i=0;i<layers.size();i++) {
 				for(Node node : system.getNodes()) {
 					if(node.getLayer().equals(layers.get(i))
-							&& node.getCell().containsPoint(gf.createPoint(coords[i]))) {
+							&& node.getCell().containsPoint(gf.createPoint(
+									coords.getCoordinate(i)))) {
 						nodes.addElement(node);
 					}
 				}

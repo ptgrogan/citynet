@@ -1,8 +1,6 @@
 package edu.mit.citynet.core;
 
-import java.util.Arrays;
-
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -17,14 +15,24 @@ import edu.mit.citynet.CityNet;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public abstract class AbstractRegion {
-	private Coordinate[] coordinates;
+	private CoordinateList coordinateList;
 	
-	public Coordinate[] getCoordinates() {
-		return coordinates;
+	/**
+	 * Gets the coordinate list.
+	 *
+	 * @return the coordinate list
+	 */
+	public CoordinateList getCoordinateList() {
+		return (CoordinateList)coordinateList.clone();
 	}
 	
-	public void setCoordinates(Coordinate[] coordinates) {
-		this.coordinates = coordinates;
+	/**
+	 * Sets the coordinate list.
+	 *
+	 * @param coordinateList the new coordinate list
+	 */
+	public void setCoordinateList(CoordinateList coordinateList) {
+		this.coordinateList = coordinateList;
 	}
 	
 	/**
@@ -33,7 +41,7 @@ public abstract class AbstractRegion {
 	 * @return the area
 	 */
 	public double getArea() {
-		if(coordinates.length>2) {
+		if(coordinateList.size()>2) {
 			return getPolygon().getArea();
 		} else return 0;
 	}
@@ -44,11 +52,11 @@ public abstract class AbstractRegion {
 	 * @return the polygon
 	 */
 	public Polygon getPolygon() {
-		if(coordinates.length>2) {
+		if(coordinateList.size()>2) {
 			GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
-			Coordinate[] coordinates = Arrays.copyOf(this.coordinates, this.coordinates.length+1);
-			coordinates[this.coordinates.length] = (Coordinate)coordinates[0].clone();
-			return gf.createPolygon(gf.createLinearRing(coordinates), null);
+			CoordinateList ringCoordinates = getCoordinateList();
+			ringCoordinates.closeRing();
+			return gf.createPolygon(gf.createLinearRing(ringCoordinates.toCoordinateArray()), null);
 		} else {
 			throw new IllegalStateException("Cannot create a polygon with fewer than 3 points.");
 		}
@@ -61,7 +69,7 @@ public abstract class AbstractRegion {
 	 * @return true, if the region contains the point
 	 */
 	public boolean containsPoint(Point point) {
-		if(coordinates.length>2) {
+		if(coordinateList.size()>2) {
 			return getPolygon().contains(point);
 		} else return false;
 	}
@@ -76,7 +84,7 @@ public abstract class AbstractRegion {
 	 * the specified polygon
 	 */
 	public boolean containsPolygon(Polygon polygon, double overlapFraction) {
-		if(coordinates.length>2) {
+		if(coordinateList.size()>2) {
 			double intersectionArea = getPolygon().intersection(polygon).getArea();
 			if(intersectionArea/getArea() > overlapFraction) return true;
 			else return false;

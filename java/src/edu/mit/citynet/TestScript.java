@@ -47,7 +47,7 @@ public class TestScript {
 		System.out.println("City Cell Regions...");
 		for(CellRegion cellRegion : city.getCellRegions()) {
 			System.out.println("Cell Region ID: " + cellRegion.getId() + 
-					", Coordinates: " + cellRegion.getCoordinates() + 
+					", Coordinates: " + cellRegion.getCoordinateList() + 
 					", Rows: " + cellRegion.getNumberRows() + 
 					", Columns: " + cellRegion.getNumberColumns() +
 					", Description: " + cellRegion.getDescription());
@@ -116,14 +116,14 @@ public class TestScript {
 				System.out.println("Node Region ID: " + nodeRegion.getId() + 
 						", Layer ID: " + nodeRegion.getLayer().getId() +
 						", Node Type ID: " + nodeRegion.getNodeType().getId() +
-						", Coordinates: " + nodeRegion.getCoordinates());
+						", Coordinates: " + nodeRegion.getCoordinateList());
 			}
 			System.out.println("Edge Regions in " + system.getName() + " System...");
 			for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
 				System.out.println("Edge Region ID: " + edgeRegion.getId() + 
 						", Layer IDs: " + edgeRegion.getLayers() +
 						", Edge Type ID: " + edgeRegion.getEdgeType().getId() +
-						", Coordinates: " + edgeRegion.getCoordinates() + 
+						", Coordinates: " + edgeRegion.getCoordinateList() + 
 						", Directed: " + edgeRegion.isDirected());
 			}
 		}
