@@ -3,7 +3,6 @@ package edu.mit.citynet.io;
 import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

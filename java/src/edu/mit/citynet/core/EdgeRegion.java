@@ -1,5 +1,7 @@
 package edu.mit.citynet.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -9,6 +11,7 @@ import com.vividsolutions.jts.geom.LineString;
 
 import edu.mit.citynet.CityNet;
 
+// TODO: Auto-generated Javadoc
 /**
  * The EdgeRegion class specifies a spatial area over which edges should be
  * generated. There are several types of regions, including:
@@ -30,21 +33,45 @@ public class EdgeRegion extends AbstractRegion {
 	 * can be specified, each with differing node generation behaviors.
 	 */
 	public enum EdgeRegionType {
-		UNDEFINED,POLYGON_ORTHOGONAL,POLYGON_ADJACENT,POLYGON_CONNECTED,
-		POLYLINE,POLYPOINT;
+		
+		/** The UNDEFINED. */
+		UNDEFINED,
+/** The POLYGO n_ orthogonal. */
+POLYGON_ORTHOGONAL,
+/** The POLYGO n_ adjacent. */
+POLYGON_ADJACENT,
+/** The POLYGO n_ connected. */
+POLYGON_CONNECTED,
+		
+		/** The POLYLINE. */
+		POLYLINE,
+/** The POLYPOINT. */
+POLYPOINT;
 	}
+	
+	/** The id. */
 	private int id;
+	
+	/** The edge region type. */
 	private EdgeRegionType edgeRegionType;
-	private Vector<Layer> layers;
+	
+	/** The layers. */
+	private List<Layer> layers;
+	
+	/** The edge type. */
 	private EdgeType edgeType;
+	
+	/** The directed. */
 	private boolean directed;
+	
+	/** The description. */
 	private String description;
 	
 	/**
 	 * Instantiates a new edge region.
 	 */
 	public EdgeRegion() {
-		layers = new Vector<Layer>();
+		layers = new ArrayList<Layer>();
 	}
 	
 	/**
@@ -166,6 +193,13 @@ public class EdgeRegion extends AbstractRegion {
 		}
 	}
 	
+	/**
+	 * Creates the edge.
+	 *
+	 * @param system the system
+	 * @param origin the origin
+	 * @param destination the destination
+	 */
 	private void createEdge(CitySystem system, Node origin, Node destination) {
 		Edge edge = new Edge();
 		edge.setId(CityNet.getInstance().getNextEdgeId());
@@ -271,7 +305,7 @@ public class EdgeRegion extends AbstractRegion {
 	 *
 	 * @return the layers
 	 */
-	public Vector<Layer> getLayers() {
+	public List<Layer> getLayers() {
 		return layers;
 	}
 
@@ -280,7 +314,23 @@ public class EdgeRegion extends AbstractRegion {
 	 *
 	 * @param layers the new layers
 	 */
-	public void setLayers(Vector<Layer> layers) {
+	public void setLayers(List<Layer> layers) {
 		this.layers = layers;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof EdgeRegion) {
+			return id==((EdgeRegion)object).getId();
+		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "EdgeRegion" + id;
 	}
 }

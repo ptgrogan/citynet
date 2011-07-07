@@ -231,4 +231,20 @@ public class CitySystem {
 	public void setNodeTypes(Set<NodeType> nodeTypes) {
 		this.nodeTypes = nodeTypes;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof CitySystem) {
+			return id==((CitySystem)object).getId();
+		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "System" + id;
+	}
 }

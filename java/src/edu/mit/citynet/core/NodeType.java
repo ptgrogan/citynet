@@ -122,4 +122,11 @@ public class NodeType {
 			return id==((NodeType)object).getId();
 		} else return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NodeType" + id;
+	}
 }

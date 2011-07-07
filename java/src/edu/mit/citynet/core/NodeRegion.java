@@ -177,4 +177,20 @@ public class NodeRegion extends AbstractRegion {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {
+		if(object instanceof NodeRegion) {
+			return id==((NodeRegion)object).getId();
+		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NodeRegion" + id;
+	}
 }

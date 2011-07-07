@@ -82,7 +82,6 @@ public class Layer {
 	public void setDisplayHeight(double displayHeight) {
 		this.displayHeight = displayHeight;
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -91,6 +90,13 @@ public class Layer {
 		if(object instanceof Layer) {
 			return id==((Layer)object).getId();
 		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "Layer" + id;
 	}
 	
 }

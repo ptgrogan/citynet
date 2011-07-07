@@ -83,4 +83,11 @@ public class Cell {
 			return id==((Cell)object).getId();
 		} else return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "Cell" + id;
+	}
 }

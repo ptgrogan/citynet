@@ -1,5 +1,6 @@
 package edu.mit.citynet.core;
 
+// TODO: Auto-generated Javadoc
 /**
  * The NodeTypeAttribute class is used to describe an aspect of a particular 
  * NodeType. Each NodeTypeAttribute is given a name and numeric value.
@@ -7,6 +8,8 @@ package edu.mit.citynet.core;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class NodeTypeAttribute extends AbstractAttribute {
+	
+	/** The id. */
 	private int id;
 	
 	/**
@@ -26,7 +29,6 @@ public class NodeTypeAttribute extends AbstractAttribute {
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -35,5 +37,12 @@ public class NodeTypeAttribute extends AbstractAttribute {
 		if(object instanceof NodeTypeAttribute) {
 			return id==((NodeTypeAttribute)object).getId();
 		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "NodeTypeAttribute" + id;
 	}
 }

@@ -122,4 +122,11 @@ public class EdgeType {
 			return id==((EdgeType)object).getId();
 		} else return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "EdgeType" + id;
+	}
 }

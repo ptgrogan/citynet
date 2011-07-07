@@ -1,5 +1,6 @@
 package edu.mit.citynet.core;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Node class is used to define contents of a particular city cell and 
  * layer within a system.
@@ -7,9 +8,17 @@ package edu.mit.citynet.core;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class Node {
+	
+	/** The id. */
 	private int id;
+	
+	/** The cell. */
 	private Cell cell;
+	
+	/** The layer. */
 	private Layer layer;
+	
+	/** The node type. */
 	private NodeType nodeType;
 	
 	/**
@@ -97,7 +106,6 @@ public class Node {
 		}
 		return null;
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -106,5 +114,12 @@ public class Node {
 		if(object instanceof Node) {
 			return id==((Node)object).getId();
 		} else return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "Node" + id;
 	}
 }
