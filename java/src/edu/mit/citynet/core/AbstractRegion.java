@@ -23,7 +23,7 @@ public abstract class AbstractRegion {
 	 * @return the coordinate list
 	 */
 	public CoordinateList getCoordinateList() {
-		return (CoordinateList)coordinateList.clone();
+		return new CoordinateList(coordinateList.toCoordinateArray());
 	}
 	
 	/**

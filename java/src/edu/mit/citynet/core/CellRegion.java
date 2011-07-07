@@ -5,7 +5,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import edu.mit.citynet.CityNet;
 
-// TODO: Auto-generated Javadoc
 /**
  * The CellRegion class specifies a spatial area over which cells should be 
  * generated (meshed). There are several options to define the type and 
@@ -15,17 +14,9 @@ import edu.mit.citynet.CityNet;
  * relying on tedious individual cell definitions.
  */
 public class CellRegion extends AbstractRegion {
-	
-	/** The id. */
 	private int id;
-	
-	/** The number rows. */
 	private int numberRows;
-	
-	/** The number columns. */
 	private int numberColumns;
-	
-	/** The description. */
 	private String description;
 	
 	/**
