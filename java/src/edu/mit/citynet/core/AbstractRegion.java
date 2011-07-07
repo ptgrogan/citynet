@@ -1,7 +1,13 @@
 package edu.mit.citynet.core;
 
+import java.util.Arrays;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+
+import edu.mit.citynet.CityNet;
 
 /**
  * The AbstractRegion class provides the abstracted methods for geometry-type 
@@ -11,7 +17,15 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public abstract class AbstractRegion {
-	private Polygon polygon;
+	private Coordinate[] coordinates;
+	
+	public Coordinate[] getCoordinates() {
+		return coordinates;
+	}
+	
+	public void setCoordinates(Coordinate[] coordinates) {
+		this.coordinates = coordinates;
+	}
 	
 	/**
 	 * Gets the area of the region.
@@ -19,8 +33,25 @@ public abstract class AbstractRegion {
 	 * @return the area
 	 */
 	public double getArea() {
-		if (polygon != null) return polygon.getArea();
-		else return 0;
+		if(coordinates.length>2) {
+			return getPolygon().getArea();
+		} else return 0;
+	}
+	
+	/**
+	 * Gets the polygon.
+	 *
+	 * @return the polygon
+	 */
+	public Polygon getPolygon() {
+		if(coordinates.length>2) {
+			GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+			Coordinate[] coordinates = Arrays.copyOf(this.coordinates, this.coordinates.length+1);
+			coordinates[this.coordinates.length] = (Coordinate)coordinates[0].clone();
+			return gf.createPolygon(gf.createLinearRing(coordinates), null);
+		} else {
+			throw new IllegalStateException("Cannot create a polygon with fewer than 3 points.");
+		}
 	}
 	
 	/**
@@ -30,26 +61,9 @@ public abstract class AbstractRegion {
 	 * @return true, if the region contains the point
 	 */
 	public boolean containsPoint(Point point) {
-		if (polygon != null) return polygon.contains(point);
-		else return false;
-	}
-	
-	/**
-	 * Gets the polygon.
-	 *
-	 * @return the polygon
-	 */
-	public Polygon getPolygon() {
-		return polygon;
-	}
-	
-	/**
-	 * Sets the polygon.
-	 *
-	 * @param polygon the new polygon
-	 */
-	public void setPolygon(Polygon polygon) {
-		this.polygon = polygon;
+		if(coordinates.length>2) {
+			return getPolygon().contains(point);
+		} else return false;
 	}
 	
 	/**
@@ -62,8 +76,8 @@ public abstract class AbstractRegion {
 	 * the specified polygon
 	 */
 	public boolean containsPolygon(Polygon polygon, double overlapFraction) {
-		if (this.polygon != null) {
-			double intersectionArea = this.polygon.intersection(polygon).getArea();
+		if(coordinates.length>2) {
+			double intersectionArea = getPolygon().intersection(polygon).getArea();
 			if(intersectionArea/getArea() > overlapFraction) return true;
 			else return false;
 		} else return false;

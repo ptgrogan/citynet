@@ -13,6 +13,7 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.Edge;
+import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.EdgeTypeAttribute;
 import edu.mit.citynet.core.Layer;
@@ -46,7 +47,7 @@ public class TestScript {
 		System.out.println("City Cell Regions...");
 		for(CellRegion cellRegion : city.getCellRegions()) {
 			System.out.println("Cell Region ID: " + cellRegion.getId() + 
-					", Polygon: " + cellRegion.getPolygon() + 
+					", Coordinates: " + cellRegion.getCoordinates() + 
 					", Rows: " + cellRegion.getNumberRows() + 
 					", Columns: " + cellRegion.getNumberColumns() +
 					", Description: " + cellRegion.getDescription());
@@ -115,7 +116,15 @@ public class TestScript {
 				System.out.println("Node Region ID: " + nodeRegion.getId() + 
 						", Layer ID: " + nodeRegion.getLayer().getId() +
 						", Node Type ID: " + nodeRegion.getNodeType().getId() +
-						", Polygon: " + nodeRegion.getPolygon());
+						", Coordinates: " + nodeRegion.getCoordinates());
+			}
+			System.out.println("Edge Regions in " + system.getName() + " System...");
+			for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
+				System.out.println("Edge Region ID: " + edgeRegion.getId() + 
+						", Layer IDs: " + edgeRegion.getLayers() +
+						", Edge Type ID: " + edgeRegion.getEdgeType().getId() +
+						", Coordinates: " + edgeRegion.getCoordinates() + 
+						", Directed: " + edgeRegion.isDirected());
 			}
 		}
 		SwingUtilities.invokeLater(new Runnable() {

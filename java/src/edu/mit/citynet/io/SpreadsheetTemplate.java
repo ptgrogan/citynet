@@ -3,6 +3,7 @@ package edu.mit.citynet.io;
 import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,7 +16,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
 
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.Cell;
@@ -158,7 +158,11 @@ public class SpreadsheetTemplate {
 			if(row.getRowNum()==CITY_IMAGE_VERTICES_Y)
 				verticesY = row.getCell(1).getStringCellValue();
 		}
-		city.setImagePolygon(createPolygonFromMatlabSyntax(verticesX,verticesY));
+		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+		Coordinate[] coordinates = createCoordinatesFromMatlabSyntax(verticesX,verticesY);
+		Coordinate[] ringCoords = Arrays.copyOf(coordinates, coordinates.length+1);
+		ringCoords[coordinates.length] = (Coordinate)ringCoords[0].clone();  
+		city.setImagePolygon(gf.createPolygon(gf.createLinearRing(ringCoords), null));
 		city.setSystems(readSystems(wb));
 		city.setCells(readCells(wb));
 		city.setCellRegions(readCellRegions(wb));
@@ -216,7 +220,7 @@ public class SpreadsheetTemplate {
 			cellRegion.setDescription(row.getCell(CELL_REGION_DESCRIPTION).getStringCellValue());
 			String verticesX = row.getCell(CELL_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(CELL_REGION_VERTICES_Y).getStringCellValue();
-			cellRegion.setPolygon(createPolygonFromMatlabSyntax(verticesX,verticesY));
+			cellRegion.setCoordinates(createCoordinatesFromMatlabSyntax(verticesX,verticesY));
 			cellRegions.add(cellRegion);
 		}
 		return cellRegions;
@@ -331,7 +335,7 @@ public class SpreadsheetTemplate {
 			edge.setOrigin(nodeMap.get((int)row.getCell(EDGE_ORIGIN_ID).getNumericCellValue()));
 			edge.setDestination(nodeMap.get((int)row.getCell(EDGE_DESTINATION_ID).getNumericCellValue()));
 			edge.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_EDGE_TYPE_ID).getNumericCellValue()));
-			edge.setDirected(row.getCell(EDGE_DIRECTED).getBooleanCellValue());
+			edge.setDirected(row.getCell(EDGE_DIRECTED).getNumericCellValue()==1);
 			edges.add(edge);
 		}
 		return edges;
@@ -348,7 +352,7 @@ public class SpreadsheetTemplate {
 			nodeRegion.setNodeType(nodeTypeMap.get((int)row.getCell(NODE_REGION_NODE_TYPE_ID).getNumericCellValue()));
 			String verticesX = row.getCell(NODE_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(NODE_REGION_VERTICES_Y).getStringCellValue();
-			nodeRegion.setPolygon(createPolygonFromMatlabSyntax(verticesX, verticesY));
+			nodeRegion.setCoordinates(createCoordinatesFromMatlabSyntax(verticesX, verticesY));
 			String regionType = row.getCell(NODE_REGION_TYPE).getStringCellValue();
 			if(regionType.toLowerCase().equals("polygon")) {
 				nodeRegion.setNodeRegionType(NodeRegion.NodeRegionType.POLYGON);
@@ -381,7 +385,7 @@ public class SpreadsheetTemplate {
 			edgeRegion.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_REGION_EDGE_TYPE_ID).getNumericCellValue()));
 			String verticesX = row.getCell(EDGE_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(EDGE_REGION_VERTICES_Y).getStringCellValue();
-			edgeRegion.setPolygon(createPolygonFromMatlabSyntax(verticesX, verticesY));
+			edgeRegion.setCoordinates(createCoordinatesFromMatlabSyntax(verticesX, verticesY));
 			String regionType = row.getCell(EDGE_REGION_TYPE).getStringCellValue();
 			if(regionType.toLowerCase().equals("orthogonal")) {
 				edgeRegion.setEdgeRegionType(EdgeRegion.EdgeRegionType.POLYGON_ORTHOGONAL);
@@ -397,7 +401,7 @@ public class SpreadsheetTemplate {
 			} else {
 				edgeRegion.setEdgeRegionType(EdgeRegion.EdgeRegionType.UNDEFINED);
 			}
-			edgeRegion.setDirected(row.getCell(EDGE_REGION_DIRECTED).getBooleanCellValue());
+			edgeRegion.setDirected(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1);
 			edgeRegion.setDescription(row.getCell(EDGE_REGION_DESCRIPTION).getStringCellValue());
 			edgeRegions.add(edgeRegion);
 		}
@@ -406,24 +410,22 @@ public class SpreadsheetTemplate {
 	
 	/**
 	 * Creates the polygon from MATLAB syntax. Assumes vertices are formatted
-	 * with square brackets and space delimeters such as: [0 0.4 0.5 0] and
+	 * with square brackets and space delimiters such as: [0 0.4 0.5 0] and
 	 * there are equal number of vertices in both x- and y-coordinates.
 	 *
 	 * @param verticesX the vertices x
 	 * @param verticesY the vertices y
 	 * @return the polygon
 	 */
-	private Polygon createPolygonFromMatlabSyntax(String verticesX, String verticesY) {
+	private Coordinate[] createCoordinatesFromMatlabSyntax(String verticesX, String verticesY) {
 		String[] vX = verticesX.substring(1,verticesX.length()-1).split(" ");
 		String[] vY = verticesY.substring(1,verticesY.length()-1).split(" ");
-		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
-		Coordinate[] coordinates = new Coordinate[vX.length+1];
+		Coordinate[] coordinates = new Coordinate[vX.length];
 		for(int i=0; i<vX.length; i++) {
 			coordinates[i] = new Coordinate(
 					Double.parseDouble(vX[i]),Double.parseDouble(vY[i]));
 		}
-		coordinates[vX.length] = coordinates[0]; // close for linear ring
-		return gf.createPolygon(gf.createLinearRing(coordinates),null);
+		return coordinates;
 	}
 	
 	/**

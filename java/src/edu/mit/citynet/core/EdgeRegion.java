@@ -53,7 +53,7 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public void generateEdges(CitySystem system) {
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
-		Coordinate[] coords = getPolygon().getCoordinates();
+		Coordinate[] coords = getCoordinates();
 		Vector<Node> nodes = null;
 		switch(edgeRegionType) {
 		case POLYLINE:
