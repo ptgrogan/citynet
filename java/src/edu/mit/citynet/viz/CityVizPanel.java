@@ -146,14 +146,14 @@ public class CityVizPanel extends JPanel {
 		public int getColumnCount() {
 			return 2;
 		}
-
+		
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			if(columnIndex==0) {
 				if(selected == null) return true;
 				else if(nodeRegions.get(rowIndex).equals(selected)) return true;
 				else return false;
 			} else {
-				return nodeRegions.get(rowIndex);
+				return nodeRegions.get(rowIndex).getDescription();
 			}
 		}
 		
@@ -169,9 +169,9 @@ public class CityVizPanel extends JPanel {
 		
 		public void setValueAt(Object value, int row, int col) {
 	    	if(col==0) {
-	    		if(selected != null && selected.equals(getValueAt(row,1)))
+	    		if(selected != null && selected.equals(nodeRegions.get(row)))
 	    			selected = null;
-	    		else selected = (NodeRegion)getValueAt(row,1);
+	    		else selected = nodeRegions.get(row);
 	    	}
 	    	fireTableDataChanged();
 		}
