@@ -123,14 +123,29 @@ public class CityVizPanel extends JPanel {
 		return ij;
 	}
 	
+	/**
+	 * The NodeRegionTableModel class establishes a custom table model for use
+	 * with the node regions table. The model allows the selection of up to one
+	 * node region from the list of all regions.
+	 */
 	private class NodeRegionTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 5386287393549485163L;
 		private List<NodeRegion> nodeRegions;
 		private NodeRegion selected;
 		
+		/**
+		 * Instantiates a new node region table model.
+		 */
 		public NodeRegionTableModel() {
 			super();
 			nodeRegions = new ArrayList<NodeRegion>();
 		}
+		
+		/**
+		 * Sets the node regions.
+		 *
+		 * @param city the new node regions
+		 */
 		public void setNodeRegions(City city) {
 			nodeRegions.clear();
 			selected = null;
@@ -139,14 +154,33 @@ public class CityVizPanel extends JPanel {
 			}
 			fireTableDataChanged();
 		}
+		
+		/**
+		 * Gets the selected node region.
+		 *
+		 * @return the selected node region
+		 */
+		public NodeRegion getSelectedNodeRegion() {
+			return selected;
+		}
+		
+		/* (non-Javadoc)
+		 * @see javax.swing.table.TableModel#getRowCount()
+		 */
 		public int getRowCount() {
 			return nodeRegions.size();
 		}
 
+		/* (non-Javadoc)
+		 * @see javax.swing.table.TableModel#getColumnCount()
+		 */
 		public int getColumnCount() {
 			return 2;
 		}
 		
+		/* (non-Javadoc)
+		 * @see javax.swing.table.TableModel#getValueAt(int, int)
+		 */
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			if(columnIndex==0) {
 				if(selected == null) return true;
@@ -157,16 +191,25 @@ public class CityVizPanel extends JPanel {
 			}
 		}
 		
+		/* (non-Javadoc)
+		 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+		 */
 		public boolean isCellEditable(int row, int col) {
 	    	if(col==0) return true;
 	    	else return false;
 	    }
 		
+		/* (non-Javadoc)
+		 * @see javax.swing.table.AbstractTableModel#getColumnClass(int)
+		 */
 		public Class<?> getColumnClass(int col) {
 			if(col==0) return Boolean.class;
 			else return Object.class;
 	    }
 		
+		/* (non-Javadoc)
+		 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+		 */
 		public void setValueAt(Object value, int row, int col) {
 	    	if(col==0) {
 	    		if(selected != null && selected.equals(nodeRegions.get(row)))
@@ -174,10 +217,6 @@ public class CityVizPanel extends JPanel {
 	    		else selected = nodeRegions.get(row);
 	    	}
 	    	fireTableDataChanged();
-		}
-		
-		public NodeRegion getSelectedNodeRegion() {
-			return selected;
 		}
 	}
 }
