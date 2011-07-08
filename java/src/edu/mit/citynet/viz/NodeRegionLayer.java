@@ -35,6 +35,7 @@ public class NodeRegionLayer extends JPanel {
 	 */
 	public void setNodeRegion(NodeRegion nodeRegion) {
 		this.nodeRegion = nodeRegion;
+		repaint();
 	}
 	
 	/* (non-Javadoc)
@@ -73,12 +74,12 @@ public class NodeRegionLayer extends JPanel {
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 					g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYLINE) {
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					g2d.drawPolyline(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYPOINT) {
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-					for(int i=1; i<xPoints.length; i++) {
-						g2d.drawOval(xPoints[i]-1, yPoints[i]-1, 2, 2);
+					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+					for(int i=0; i<xPoints.length; i++) {
+						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
 					}
 				}
 			}

@@ -4,23 +4,37 @@
 package edu.mit.citynet.viz;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.core.NodeRegion;
 
 /**
  * The Class CityVizPanel.
  */
-public class CityVizPanel extends JLayeredPane {
+public class CityVizPanel extends JPanel {
 	private static final long serialVersionUID = 3994034732879260199L;
 	
 	private City city;
+	private JLayeredPane layeredPane;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
 	private NodeRegionLayer nodeRegionLayer;
+	private NodeRegionTableModel nodeRegionTableModel;
 	
 	/**
 	 * Instantiates a new city viz panel.
@@ -32,24 +46,44 @@ public class CityVizPanel extends JLayeredPane {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
 		this.city = city;
-		setPreferredSize(new Dimension(250,250));
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 1;
+		c.weighty = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.BOTH;
+		nodeRegionTableModel = new NodeRegionTableModel();
+		nodeRegionTableModel.setNodeRegions(city);
+		nodeRegionTableModel.addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				nodeRegionLayer.setNodeRegion(nodeRegionTableModel.getSelectedNodeRegion());
+			}
+		});
+		JTable nodeRegionTable = new JTable(nodeRegionTableModel);
+		nodeRegionTable.setTableHeader(null);
+		nodeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
+		nodeRegionTable.setPreferredScrollableViewportSize(new Dimension(100,100));
+		add(new JScrollPane(nodeRegionTable),c);
+		c.gridx++;
+		layeredPane = new JLayeredPane() {
+			private static final long serialVersionUID = 8436113671918844606L;
+			public void setBounds(int x, int y, int width, int height) {
+				super.setBounds(x,y,width,height);
+				mapLayer.setBounds(0,0,width,height);
+				cellRegionLayer.setBounds(0,0,width,height);
+				nodeRegionLayer.setBounds(0,0,width,height);
+			}
+		};
+		layeredPane.setPreferredSize(new Dimension(250,250));
+		add(layeredPane,c);
 		mapLayer = new MapLayer(city.getImage());
-		add(mapLayer, new Integer(1));
+		layeredPane.add(mapLayer, new Integer(1));
 		cellRegionLayer = new CellRegionLayer(this,null);
-		add(cellRegionLayer, new Integer(2));
+		layeredPane.add(cellRegionLayer, new Integer(2));
 		nodeRegionLayer = new NodeRegionLayer(this,null);
-		add(nodeRegionLayer, new Integer(3));
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.awt.Component#setBounds(int, int, int, int)
-	 */
-	public void setBounds(int x, int y, int width, int height) {
-		// this function is used to synchronize the size of the layers
-		super.setBounds(x,y,width,height);
-		mapLayer.setBounds(0,0,width,height);
-		cellRegionLayer.setBounds(0,0,width,height);
-		nodeRegionLayer.setBounds(0,0,width,height);
+		layeredPane.add(nodeRegionLayer, new Integer(3));
 	}
 	
 	/**
@@ -70,10 +104,10 @@ public class CityVizPanel extends JLayeredPane {
 	 */
 	public int[] xy2ij(double x, double y) {
 		int[] ij = new int[2];
-		double scale = Math.min(((double)getWidth())/city.getImage().getWidth(null), 
-				((double)getHeight())/city.getImage().getHeight(null));
-		int pX = (int)(getWidth()-scale*city.getImage().getWidth(null))/2;
-		int pY = (int)(getHeight()-scale*city.getImage().getHeight(null))/2;
+		double scale = Math.min(((double)layeredPane.getWidth())/city.getImage().getWidth(null), 
+				((double)layeredPane.getHeight())/city.getImage().getHeight(null));
+		int pX = (int)(layeredPane.getWidth()-scale*city.getImage().getWidth(null))/2;
+		int pY = (int)(layeredPane.getHeight()-scale*city.getImage().getHeight(null))/2;
 		Coordinate[] imageCoords = city.getImagePolygon().getCoordinates();
 		double bx1 = Math.min(imageCoords[0].x,Math.min(imageCoords[1].x,
 				Math.min(imageCoords[2].x,imageCoords[3].x)));
@@ -87,5 +121,63 @@ public class CityVizPanel extends JLayeredPane {
 		ij[0] = pX + (int)(scale*(x-bx1)/(bx2-bx1)*city.getImage().getWidth(null));
 		ij[1] = pY + (int)(scale*(y-by1)/(by2-by1)*city.getImage().getHeight(null));
 		return ij;
+	}
+	
+	private class NodeRegionTableModel extends AbstractTableModel {
+		private List<NodeRegion> nodeRegions;
+		private NodeRegion selected;
+		
+		public NodeRegionTableModel() {
+			super();
+			nodeRegions = new ArrayList<NodeRegion>();
+		}
+		public void setNodeRegions(City city) {
+			nodeRegions.clear();
+			selected = null;
+			for(CitySystem system : city.getSystems()) {
+				nodeRegions.addAll(system.getNodeRegions());
+			}
+			fireTableDataChanged();
+		}
+		public int getRowCount() {
+			return nodeRegions.size();
+		}
+
+		public int getColumnCount() {
+			return 2;
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if(columnIndex==0) {
+				if(selected == null) return true;
+				else if(nodeRegions.get(rowIndex).equals(selected)) return true;
+				else return false;
+			} else {
+				return nodeRegions.get(rowIndex);
+			}
+		}
+		
+		public boolean isCellEditable(int row, int col) {
+	    	if(col==0) return true;
+	    	else return false;
+	    }
+		
+		public Class<?> getColumnClass(int col) {
+			if(col==0) return Boolean.class;
+			else return Object.class;
+	    }
+		
+		public void setValueAt(Object value, int row, int col) {
+	    	if(col==0) {
+	    		if(selected != null && selected.equals(getValueAt(row,1)))
+	    			selected = null;
+	    		else selected = (NodeRegion)getValueAt(row,1);
+	    	}
+	    	fireTableDataChanged();
+		}
+		
+		public NodeRegion getSelectedNodeRegion() {
+			return selected;
+		}
 	}
 }

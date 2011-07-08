@@ -114,6 +114,7 @@ public class TestScript {
 			System.out.println("Node Regions in " + system.getName() + " System...");
 			for(NodeRegion nodeRegion : system.getNodeRegions()) {
 				System.out.println("Node Region ID: " + nodeRegion.getId() + 
+						", Node Region Type: " + nodeRegion.getNodeRegionType() +
 						", Layer ID: " + nodeRegion.getLayer().getId() +
 						", Node Type ID: " + nodeRegion.getNodeType().getId() +
 						", Coordinates: " + nodeRegion.getCoordinateList());
@@ -121,6 +122,7 @@ public class TestScript {
 			System.out.println("Edge Regions in " + system.getName() + " System...");
 			for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
 				System.out.println("Edge Region ID: " + edgeRegion.getId() + 
+						", Edge Region Type: " + edgeRegion.getEdgeRegionType() +
 						", Layer IDs: " + edgeRegion.getLayers() +
 						", Edge Type ID: " + edgeRegion.getEdgeType().getId() +
 						", Coordinates: " + edgeRegion.getCoordinateList() + 
