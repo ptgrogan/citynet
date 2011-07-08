@@ -1,6 +1,3 @@
-/*
- * 
- */
 package edu.mit.citynet.viz;
 
 import java.awt.Dimension;
@@ -24,7 +21,10 @@ import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.NodeRegion;
 
 /**
- * The Class CityVizPanel.
+ * The CityVizPanel class produces a standard city-wide visualization of the 
+ * different synthesis components (e.g. cell/node/edge regions).
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class CityVizPanel extends JPanel {
 	private static final long serialVersionUID = 3994034732879260199L;
