@@ -9,9 +9,11 @@ import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.viz.CityVizPanel;
 
 public class CityPanel extends JPanel {
@@ -52,8 +54,14 @@ public class CityPanel extends JPanel {
 		c.weightx = 1;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
+		JTabbedPane tabbedPane = new JTabbedPane();
 		cityVizPanel = new CityVizPanel(city);
-		add(cityVizPanel, c);
+		tabbedPane.add(cityVizPanel, "City");
+		for(CitySystem system : city.getSystems()) {
+			SystemPanel systemPanel = new SystemPanel(system);
+			tabbedPane.add(systemPanel, system.getName());
+		}
+		add(tabbedPane, c);
 	}
 	
 	private void saveCityNameCommand() {
