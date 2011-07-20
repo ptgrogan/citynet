@@ -19,6 +19,7 @@ import edu.mit.citynet.viz.SystemVizPanel;
 public class SystemPanel extends JPanel {
 	private static final long serialVersionUID = 7969091470964127984L;
 	
+	private CityPanel cityPanel;
 	private CitySystem system;
 	private JTextArea descriptionText;
 	private SystemVizPanel systemVizPanel;
@@ -28,7 +29,8 @@ public class SystemPanel extends JPanel {
 	 *
 	 * @param system the system
 	 */
-	public SystemPanel(CitySystem system) {
+	public SystemPanel(CityPanel cityPanel, CitySystem system) {
+		this.cityPanel = cityPanel;
 		this.system = system;
 		setLayout(new GridBagLayout());
 		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -46,17 +48,28 @@ public class SystemPanel extends JPanel {
 		descriptionText.setLineWrap(true);
 		descriptionText.setWrapStyleWord(true);
 		descriptionText.setFont(new Font("Sans-Serif", Font.PLAIN, 11));
+		descriptionText.setMargin(new Insets(1,2,1,2));
 		descriptionText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				saveSystemDescriptionCommand();
 			}
 		});
 		add(new JScrollPane(descriptionText), c);
-		systemVizPanel = new SystemVizPanel(system);
+		systemVizPanel = new SystemVizPanel(cityPanel, system);
 		c.gridx = 0;
 		c.gridy++;
 		c.weighty = 1;
+		c.gridwidth = 2;
 		add(systemVizPanel,c);
+	}
+	
+	/**
+	 * Gets the city panel.
+	 *
+	 * @return the city panel
+	 */
+	public CityPanel getCityPanel() {
+		return cityPanel;
 	}
 
 	private void saveSystemDescriptionCommand() {

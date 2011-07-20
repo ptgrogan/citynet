@@ -4,38 +4,24 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JPanel;
 
-import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.NodeRegion;
 
 public class NodeRegionLayer extends JPanel {
 	private static final long serialVersionUID = -5721250566037759894L;
-	private CityVizPanel cityVizPanel;
-	private NodeRegion nodeRegion;
+	private VizLayeredPane vizPane;
 	
 	/**
 	 * Instantiates a new cell region layer.
 	 *
 	 * @param city the city
 	 */
-	public NodeRegionLayer(CityVizPanel cityVizPanel, NodeRegion nodeRegion) {
-		this.cityVizPanel = cityVizPanel;
-		this.nodeRegion = nodeRegion;
+	public NodeRegionLayer(VizLayeredPane vizPane) {
+		this.vizPane = vizPane;
 		setOpaque(false);
-	}
-	
-	/**
-	 * Sets the node region.
-	 *
-	 * @param nodeRegion the new node region
-	 */
-	public void setNodeRegion(NodeRegion nodeRegion) {
-		this.nodeRegion = nodeRegion;
-		repaint();
 	}
 	
 	/* (non-Javadoc)
@@ -43,17 +29,11 @@ public class NodeRegionLayer extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(cityVizPanel.getCity().getImage() == null 
-				|| cityVizPanel.getCity().getImagePolygon() == null) return;
+		if(vizPane.getCity().getImage() == null 
+				|| vizPane.getCity().getImagePolygon() == null
+				|| vizPane.getSystem() == null) return;
 		
-		Set<NodeRegion> nodeRegions = new HashSet<NodeRegion>();
-		if(nodeRegion!=null) {
-			nodeRegions.add(nodeRegion);
-		} else {
-			for(CitySystem system : cityVizPanel.getCity().getSystems()) {
-				nodeRegions.addAll(system.getNodeRegions());
-			}
-		}
+		Set<NodeRegion> nodeRegions = vizPane.getVizPanel().getSelectedNodeRegions();
 		
 		for(NodeRegion nodeRegion : nodeRegions) {
 			int[] xPoints = new int[nodeRegion.getCoordinateList().size()];
@@ -61,7 +41,7 @@ public class NodeRegionLayer extends JPanel {
 			for(int i=0; i<nodeRegion.getCoordinateList().size(); i++) {
 				double x = nodeRegion.getCoordinateList().getCoordinate(i).x;
 				double y = nodeRegion.getCoordinateList().getCoordinate(i).y;
-				int[] ij = cityVizPanel.xy2ij(x,y);
+				int[] ij = vizPane.xy2ij(x,y);
 				xPoints[i] = ij[0];
 				yPoints[i] = ij[1];
 			}

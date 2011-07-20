@@ -55,10 +55,10 @@ public class CityPanel extends JPanel {
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.BOTH;
 		JTabbedPane tabbedPane = new JTabbedPane();
-		cityVizPanel = new CityVizPanel(city);
+		cityVizPanel = new CityVizPanel(this);
 		tabbedPane.add(cityVizPanel, "City");
 		for(CitySystem system : city.getSystems()) {
-			SystemPanel systemPanel = new SystemPanel(system);
+			SystemPanel systemPanel = new SystemPanel(this, system);
 			tabbedPane.add(systemPanel, system.getName());
 		}
 		add(tabbedPane, c);
