@@ -5,7 +5,10 @@
 % 14-June, 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
-classdef NumberResidentsCell < CellBehavior
+classdef NumberResidentsCell < Behavior
+    properties
+        cell;   % the cell handle in which to evaluate the behavior
+    end
     methods
         %% NumberResidentsCell Constructor
         % Instantiates a new NumberResidentsCell object.
@@ -13,7 +16,7 @@ classdef NumberResidentsCell < CellBehavior
         % obj = NumberResidentsCell()
         %   obj:            the new NumberResidentsCell object
         function obj = NumberResidentsCell()
-            obj = obj@CellBehavior('Number Residents', ...
+            obj = obj@Behavior('Number Residents', ...
                 ['Counts the number of residents based on nodal area ' ...
                 'and residentDensity attributes.'], ...
                 '-','[0,inf)');
@@ -28,9 +31,20 @@ classdef NumberResidentsCell < CellBehavior
         % val = obj.EvaluateImpl(cell)
         %   val:    the evaluated value
         %   obj:    the NumberResidentsCell object handle
-        %   cell:   the cell in which this behavior is evaluated
-        function val = EvaluateImpl(obj,cell)
-            val = obj.SumDensityNodeAttributes(cell,'residentDensity');
+        function val = EvaluateImpl(obj)
+            val = 0;
+            city = CityNet.instance().city;
+            for s=1:length(city.systems)
+                for i=1:length(city.systems(s).nodes)
+                    node = city.systems(s).nodes(i);
+                    if node.cell==obj.cell
+                        resDen = node.GetNodeTypeAttributeValue('residentDensity');
+                        if ~isempty(resDen)
+                            val = val + node.cell.GetArea()*resDen;
+                        end
+                    end
+                end
+            end
         end
     end
 end

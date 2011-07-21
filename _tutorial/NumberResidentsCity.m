@@ -5,7 +5,7 @@
 % 14-June, 2011
 % Paul Grogan, ptgrogan@mit.edu
 %%
-classdef NumberResidentsCity < CityBehavior
+classdef NumberResidentsCity < Behavior
     methods
         %% NumberResidentsCity Constructor
         % Instantiates a new NumberResidentsCity object.
@@ -13,7 +13,7 @@ classdef NumberResidentsCity < CityBehavior
         % obj = NumberResidentsCity()
         %   obj:            the new NumberResidentsCity object
         function obj = NumberResidentsCity()
-            obj = obj@CityBehavior('Number Residents', ...
+            obj = obj@Behavior('Number Residents', ...
                 ['Counts the number of residents based on nodal area ' ...
                 'and residentDensity attributes.'], ...
                 '-','[0,inf)');
@@ -28,9 +28,17 @@ classdef NumberResidentsCity < CityBehavior
         % val = obj.EvaluateImpl(city)
         %   val:    the evaluated value
         %   obj:    the NumberResidentsCity object handle
-        %   city:   the city in which this behavior is evaluated
-        function val = EvaluateImpl(obj,city)
-            val = obj.SumDensityNodeAttributes(city,'residentDensity');
+        function val = EvaluateImpl(obj)
+            val = 0;
+            city = CityNet.instance().city;
+            for s=1:length(city.systems)
+                for i=1:length(city.systems(s).nodes)
+                    resDen = city.systems(s).nodes(i).GetNodeTypeAttributeValue('residentDensity');
+                    if ~isempty(resDen)
+                        val = val + city.systems(s).nodes(i).cell.GetArea()*resDen;
+                    end
+                end
+            end
         end
     end
 end

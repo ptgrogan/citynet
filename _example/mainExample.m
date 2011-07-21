@@ -34,6 +34,6 @@ cityNet.RenderSystem(3);
 
 %% shortest path calculation
 
-b = QuickestPath([0.25 0.0 1],[1.3 2.1 1]);
-b.Evaluate(cityNet.city.systems(3));
+b = QuickestPath(cityNet.city.systems(3),[0.25 0.0 1],[1.3 2.1 1]);
+b.Evaluate();
 cityNet.RenderSystemPath(3,b.path);

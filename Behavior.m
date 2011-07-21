@@ -40,13 +40,26 @@ classdef Behavior < handle
             end
         end
     end
-    methods(Abstract)
+    methods(Sealed)
         %% Evaluate Function
-        % Evaluates the behavior and returns the computed value.
+        % Evaluates the behavior, updates the stored copy, and returns the
+        % computed value.
         %
-        % val = obj.Evaluate()
-        %   obj:    the behavior to evaluate
+        % val = obj.Evaluate(city)
         %   val:    the evaluated value
-        val = Evaluate(obj)
+        %   obj:    the behavior to evaluate
+        function val = Evaluate(obj)
+            val = obj.EvaluateImpl();
+            obj.value = val;
+        end
+    end
+    methods(Abstract,Access=protected)
+        %% EvaluateImpl Function
+        % Implementation that evaluates the behavior and returns the value.
+        %
+        % val = obj.Evaluate(city)
+        %   val:    the evaluated value
+        %   obj:    the behavior to evaluate
+        val = EvaluateImpl(obj)
     end
 end
