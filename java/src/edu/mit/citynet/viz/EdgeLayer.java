@@ -3,6 +3,10 @@ package edu.mit.citynet.viz;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -35,34 +39,37 @@ public class EdgeLayer extends JPanel {
 		Set<Edge> edges = vizPane.getSystem().getEdges();
 		
 		for(Edge edge : edges) {
-			int[] xPoints = new int[2];
-			int[] yPoints = new int[2];
 			double x1 = edge.getOrigin().getCell().getPolygon().getCentroid().getCoordinate().x;
 			double y1 = edge.getOrigin().getCell().getPolygon().getCentroid().getCoordinate().y;
 			int[] ij1 = vizPane.xy2ij(x1, y1);
-			xPoints[0] = ij1[0];
-			yPoints[0] = ij1[1];
+			Point origin = new Point(ij1[0],ij1[1]);
 			double x2 = edge.getDestination().getCell().getPolygon().getCentroid().getCoordinate().x;
 			double y2 = edge.getDestination().getCell().getPolygon().getCentroid().getCoordinate().y;
 			int[] ij2 = vizPane.xy2ij(x2, y2);
-			xPoints[1] = ij2[0];
-			yPoints[1] = ij2[1];
+			Point destination = new Point(ij2[0],ij2[1]);
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
 				g2d.setStroke(new BasicStroke(2f));
 				g2d.setColor(edge.getEdgeType().getColor());
-				g2d.drawLine(xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
-				/*Polygon arrowHead = new Polygon();
-				arrowHead.addPoint(0,5);
-				arrowHead.addPoint(-5,-5);
-				arrowHead.addPoint(5,-5);
-				AffineTransform tx = new AffineTransform();
-				tx.setToIdentity();
-				tx.translate(xPoints[1], yPoints[1]);
-				tx.rotate(Math.atan2(yPoints[1]-yPoints[0],xPoints[1]-xPoints[0]));
-				g2d.setTransform(tx);
-				g2d.fill(arrowHead);*/
+				g2d.drawLine(origin.x, origin.y, destination.x, destination.y);
+				g2d.fill(createArrowShape(origin,destination));
+				if(!edge.isDirected()) g2d.fill(createArrowShape(destination,origin));
 			}
 		}
+	}
+	
+	public static Shape createArrowShape(Point fromPt, Point toPt) {
+	    Polygon arrowHead = new Polygon();
+	    arrowHead.addPoint(0,0);
+	    arrowHead.addPoint(-4,-9);
+	    arrowHead.addPoint(4,-9);
+
+	    AffineTransform tx = new AffineTransform();
+	    tx.setToIdentity();
+	    double angle = Math.atan2(toPt.y-fromPt.y, toPt.x-fromPt.x);
+	    tx.translate(toPt.x, toPt.y);
+	    tx.rotate((angle-Math.PI/2d));  
+
+	    return tx.createTransformedShape(arrowHead);
 	}
 }
