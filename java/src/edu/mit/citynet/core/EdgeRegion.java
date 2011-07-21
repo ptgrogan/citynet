@@ -34,37 +34,19 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public enum EdgeRegionType {
 		
-		/** The UNDEFINED. */
 		UNDEFINED,
-/** The POLYGO n_ orthogonal. */
-POLYGON_ORTHOGONAL,
-/** The POLYGO n_ adjacent. */
-POLYGON_ADJACENT,
-/** The POLYGO n_ connected. */
-POLYGON_CONNECTED,
-		
-		/** The POLYLINE. */
+		POLYGON_ORTHOGONAL,
+		POLYGON_ADJACENT,
+		POLYGON_CONNECTED,
 		POLYLINE,
-/** The POLYPOINT. */
-POLYPOINT;
+		POLYPOINT;
 	}
 	
-	/** The id. */
 	private int id;
-	
-	/** The edge region type. */
 	private EdgeRegionType edgeRegionType;
-	
-	/** The layers. */
 	private List<Layer> layers;
-	
-	/** The edge type. */
 	private EdgeType edgeType;
-	
-	/** The directed. */
 	private boolean directed;
-	
-	/** The description. */
 	private String description;
 	
 	/**

@@ -21,6 +21,7 @@ public class VizLayeredPane extends JLayeredPane {
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
 	private NodeRegionLayer nodeRegionLayer;
+	private EdgeRegionLayer edgeRegionLayer;
 	private City city;
 	private CitySystem system;
 	
@@ -43,6 +44,8 @@ public class VizLayeredPane extends JLayeredPane {
 		add(cellRegionLayer, new Integer(2));
 		nodeRegionLayer = new NodeRegionLayer(this);
 		add(nodeRegionLayer, new Integer(3));
+		edgeRegionLayer = new EdgeRegionLayer(this);
+		add(edgeRegionLayer, new Integer(4));
 	}
 	
 	/* (non-Javadoc)
@@ -53,6 +56,7 @@ public class VizLayeredPane extends JLayeredPane {
 		mapLayer.setBounds(0,0,width,height);
 		cellRegionLayer.setBounds(0,0,width,height);
 		nodeRegionLayer.setBounds(0,0,width,height);
+		edgeRegionLayer.setBounds(0,0,width,height);
 	}
 	
 	/**
