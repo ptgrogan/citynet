@@ -18,7 +18,6 @@ import javax.swing.event.TableModelListener;
 
 import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
-import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
@@ -33,7 +32,6 @@ public class CityVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = 3994034732879260199L;
 	
 	private CityPanel cityPanel;
-	private CitySystem system;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<CellRegion> cellRegionTableModel;
 	
@@ -94,8 +92,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.gridx++;
 		c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
-		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), system);
-		layeredPane.setPreferredSize(new Dimension(250,250));
+		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), null);
 		add(layeredPane,c);
 	}
 	
@@ -113,7 +110,8 @@ public class CityVizPanel extends AbstractVizPanel {
 	 */
 	private void generateCellsCommand() {
 		System.out.println("Generate Cells Command");
-		clearCellsCommand();
+		if(!cityPanel.getCity().getCells().isEmpty())
+			clearCellsCommand();
 		for(CellRegion r : cellRegionTableModel.getSelectedRegions()) {
 			r.generateCells();
 		}
