@@ -97,6 +97,8 @@ public class SystemPanel extends JPanel {
 
 	public void clearNodesCommand() {
 		System.out.println("Clear Nodes Command");
+		if(!system.getEdges().isEmpty())
+			clearEdgesCommand();
 		system.setNodes(new HashSet<Node>());
 		systemVizPanel.repaint();
 	}

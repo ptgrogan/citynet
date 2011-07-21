@@ -35,7 +35,6 @@ public class EdgeLayer extends JPanel {
 		Set<Edge> edges = vizPane.getSystem().getEdges();
 		
 		for(Edge edge : edges) {
-			System.out.println(edge + " " + edge.getOrigin() + " " + edge.getDestination());
 			int[] xPoints = new int[2];
 			int[] yPoints = new int[2];
 			double x1 = edge.getOrigin().getCell().getPolygon().getCentroid().getCoordinate().x;
