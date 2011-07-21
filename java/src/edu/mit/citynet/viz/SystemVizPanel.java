@@ -18,29 +18,25 @@ import javax.swing.event.TableModelListener;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
-import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
+import edu.mit.citynet.gui.SystemPanel;
 
 public class SystemVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = -3650203268180181634L;
 	
-	private CityPanel cityPanel;
+	private SystemPanel systemPanel;
 	private CitySystem system;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
 	private RegionTableModel<EdgeRegion> edgeRegionTableModel;
 	
-	public SystemVizPanel(CityPanel cityPanel, CitySystem system) {
-		if (cityPanel==null) {
-			throw new IllegalArgumentException("City Panel cannot be null.");
+	public SystemVizPanel(final SystemPanel systemPanel, CitySystem system) {
+		if (systemPanel==null) {
+			throw new IllegalArgumentException("System Panel cannot be null.");
 		}
-		if (system==null) {
-			throw new IllegalArgumentException("System cannot be null.");
-		}
-		this.cityPanel = cityPanel;
+		this.systemPanel = systemPanel;
 		this.system = system;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -72,14 +68,14 @@ public class SystemVizPanel extends AbstractVizPanel {
 		JButton generateNodesButton = new JButton("Generate");
 		generateNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				generateNodesCommand();
+				systemPanel.generateNodesCommand(nodeRegionTableModel.getSelectedRegions());
 			}
 		});
 		nodeButtonPanel.add(generateNodesButton);
 		JButton clearNodesButton = new JButton("Clear");
 		clearNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clearNodesCommand();
+				systemPanel.clearNodesCommand();
 			}
 		});
 		nodeButtonPanel.add(clearNodesButton);
@@ -109,14 +105,14 @@ public class SystemVizPanel extends AbstractVizPanel {
 		JButton generateEdgesButton = new JButton("Generate");
 		generateEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				generateEdgesCommand();
+				systemPanel.generateEdgesCommand(edgeRegionTableModel.getSelectedRegions());
 			}
 		});
 		edgeButtonPanel.add(generateEdgesButton);
 		JButton clearEdgesButton = new JButton("Clear");
 		clearEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clearEdgesCommand();
+				systemPanel.clearEdgesCommand();
 			}
 		});
 		edgeButtonPanel.add(clearEdgesButton);
@@ -126,40 +122,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.gridx++;
 		c.gridy = 0;
 		c.gridheight = 4;
-		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), system);
+		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
 		add(layeredPane,c);
-	}
-	
-	private void clearNodesCommand() {
-		System.out.println("Clear Nodes Command");
-		system.setNodes(new HashSet<Node>());
-		layeredPane.repaint();
-	}
-	
-	private void generateNodesCommand() {
-		System.out.println("Generate Nodes Command");
-		if(!system.getNodes().isEmpty())
-			clearNodesCommand();
-		for(NodeRegion r : nodeRegionTableModel.getSelectedRegions()) {
-			r.generateNodes(system);
-		}
-		layeredPane.repaint();
-	}
-	
-	private void clearEdgesCommand() {
-		System.out.println("Clear Edges Command");
-		system.setEdges(new HashSet<Edge>());
-		layeredPane.repaint();
-	}
-	
-	private void generateEdgesCommand() {
-		System.out.println("Generate Edges Command");
-		if(!system.getEdges().isEmpty())
-			clearEdgesCommand();
-		for(EdgeRegion r : edgeRegionTableModel.getSelectedRegions()) {
-			r.generateEdges(system);
-		}
-		layeredPane.repaint();
 	}
 	
 	/**
@@ -168,7 +132,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 * @return the city panel
 	 */
 	public CityPanel getCityPanel() {
-		return cityPanel;
+		return systemPanel.getCityPanel();
 	}
 	
 	/**

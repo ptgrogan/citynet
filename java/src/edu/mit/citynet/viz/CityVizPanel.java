@@ -16,7 +16,6 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
@@ -40,7 +39,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	 *
 	 * @param city the city
 	 */
-	public CityVizPanel(CityPanel cityPanel) {
+	public CityVizPanel(final CityPanel cityPanel) {
 		if (cityPanel==null) {
 			throw new IllegalArgumentException("City Panel cannot be null.");
 		}
@@ -75,14 +74,14 @@ public class CityVizPanel extends AbstractVizPanel {
 		JButton generateCellsButton = new JButton("Generate");
 		generateCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				generateCellsCommand();
+				cityPanel.generateCellsCommand(cellRegionTableModel.getSelectedRegions());
 			}
 		});
 		buttonPanel.add(generateCellsButton);
 		JButton clearCellsButton = new JButton("Clear");
 		clearCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				clearCellsCommand();
+				cityPanel.clearCellsCommand();
 			}
 		});
 		buttonPanel.add(clearCellsButton);
@@ -94,28 +93,6 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.fill = GridBagConstraints.BOTH;
 		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), null);
 		add(layeredPane,c);
-	}
-	
-	/**
-	 * Clear cells command.
-	 */
-	private void clearCellsCommand() {
-		System.out.println("Clear Cells Command");
-		cityPanel.getCity().setCells(new HashSet<Cell>());
-		layeredPane.repaint();
-	}
-	
-	/**
-	 * Generate cells command.
-	 */
-	private void generateCellsCommand() {
-		System.out.println("Generate Cells Command");
-		if(!cityPanel.getCity().getCells().isEmpty())
-			clearCellsCommand();
-		for(CellRegion r : cellRegionTableModel.getSelectedRegions()) {
-			r.generateCells();
-		}
-		layeredPane.repaint();
 	}
 	
 	/**
