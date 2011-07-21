@@ -8,10 +8,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 import edu.mit.citynet.CityNet;
 
-// TODO: Auto-generated Javadoc
 /**
  * The EdgeRegion class specifies a spatial area over which edges should be
  * generated. There are several types of regions, including:
@@ -116,13 +116,9 @@ public class EdgeRegion extends AbstractRegion {
 				for(int j=i+1;j<nodes.size();j++) {
 					Node origin = nodes.get(i);
 					Node destination = nodes.get(j);
-					int numCommonCoords = 0;
-					for(Coordinate c1 : origin.getCell().getPolygon().getCoordinates()) {
-						for(Coordinate c2 : destination.getCell().getPolygon().getCoordinates()) {
-							if(c1.equals(c2)) numCommonCoords++;
-						}
-					}
-					if(!origin.equals(destination) && numCommonCoords==2) {
+					if(origin.getCell().getPolygon().intersection(
+							destination.getCell().getPolygon()) 
+							instanceof LineString) {
 						createEdge(system,origin,destination);
 					}
 				}
@@ -140,13 +136,12 @@ public class EdgeRegion extends AbstractRegion {
 				for(int j=i+1;j<nodes.size();j++) {
 					Node origin = nodes.get(i);
 					Node destination = nodes.get(j);
-					int numCommonCoords = 0;
-					for(Coordinate c1 : origin.getCell().getPolygon().getCoordinates()) {
-						for(Coordinate c2 : destination.getCell().getPolygon().getCoordinates()) {
-							if(c1.equals(c2)) numCommonCoords++;
-						}
-					}
-					if(!origin.equals(destination) && numCommonCoords>=2) {
+					if(origin.getCell().getPolygon().intersection(
+							destination.getCell().getPolygon()) 
+							instanceof LineString || 
+							origin.getCell().getPolygon().intersection(
+									destination.getCell().getPolygon()) 
+									instanceof Point) {
 						createEdge(system,origin,destination);
 					}
 				}
