@@ -86,7 +86,7 @@ public abstract class AbstractRegion {
 	public boolean containsPolygon(Polygon polygon, double overlapFraction) {
 		if(coordinateList.size()>2) {
 			double intersectionArea = getPolygon().intersection(polygon).getArea();
-			if(intersectionArea/getArea() > overlapFraction) return true;
+			if(intersectionArea/Math.min(getPolygon().getArea(),polygon.getArea()) > overlapFraction) return true;
 			else return false;
 		} else return false;
 	}
