@@ -1,6 +1,5 @@
 package edu.mit.citynet.viz;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,8 +49,6 @@ public class CellLayer extends JPanel {
 				g2d.setStroke(new BasicStroke(0.5f));
 				g2d.setColor(Color.BLACK);
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-				g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 			}
 		}
 	}
