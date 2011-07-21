@@ -6,7 +6,9 @@ import java.awt.GridBagLayout;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
 
@@ -56,9 +58,23 @@ public class CityVizPanel extends AbstractVizPanel {
 	}
 	
 	/* (non-Javadoc)
+	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
+	 */
+	public Set<CellRegion> getSelectedCellRegions() {
+		return new HashSet<CellRegion>(cityPanel.getCity().getCellRegions());
+	}
+	
+	/* (non-Javadoc)
 	 * @see edu.mit.citynet.viz2.AbstractVizPanel#getSelectedNodeRegions()
 	 */
 	public Set<NodeRegion> getSelectedNodeRegions() {
 		return new HashSet<NodeRegion>();
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
+	 */
+	public Set<EdgeRegion> getSelectedEdgeRegions() {
+		return new HashSet<EdgeRegion>();
 	}
 }
