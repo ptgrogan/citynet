@@ -1,10 +1,13 @@
 package edu.mit.citynet.gui;
 
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -39,6 +42,22 @@ public class CityNetFrame extends JFrame {
 		backgroundPanel = new BackgroundPanel();
 		setContentPane(backgroundPanel);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		// try to specify multiple icon sizes (used for windows 7 task bar)
+	    try {
+	        java.lang.reflect.Method method = Class.forName("java.awt.Window").getDeclaredMethod("setIconImages", java.util.List.class);
+			ArrayList<Image> images = new ArrayList<Image>();
+			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
+			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_32.png")));
+	        method.invoke(this,images);
+	    } catch( Exception e ) {
+	    	// otherwise assign small icon only
+	        try {
+				setIconImage(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "The City.Net icon could not be loaded.");
+				e.printStackTrace();
+			}
+	    }
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				exitCommand();
