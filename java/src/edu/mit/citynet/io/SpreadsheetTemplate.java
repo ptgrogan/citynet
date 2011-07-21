@@ -124,14 +124,12 @@ public class SpreadsheetTemplate {
 	/**
 	 * Read template.
 	 */
-	public void readTemplate() throws IOException {
-		CityNet cityNet = CityNet.getInstance();
+	public City readTemplate() throws IOException {
 		FileInputStream fis = new FileInputStream(filePath);
 		Workbook wb = new HSSFWorkbook(fis);
 		wb.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
 		fis.close();
-		cityNet.setCity(readCity(wb));
-		cityNet.updateIds();
+		return readCity(wb);
 	}
 	
 	/**

@@ -19,7 +19,7 @@ import javax.swing.KeyStroke;
 public class CityNetMenuBar extends JMenuBar {
 	private static final long serialVersionUID = -6018553717087352056L;
 	JMenu fileMenu;
-	JMenuItem newCityItem, closeCityItem, exitItem;
+	JMenuItem newCityItem, openCityItem, closeCityItem, exitItem;
 	
 	public CityNetMenuBar() {
 	    fileMenu = new JMenu("File");
@@ -35,6 +35,17 @@ public class CityNetMenuBar extends JMenuBar {
         	}
         });
         fileMenu.add(newCityItem);
+        openCityItem = new JMenuItem("Open City", KeyEvent.VK_O);
+        openCityItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        openCityItem.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		if(getTopLevelAncestor() instanceof CityNetFrame) {
+        			((CityNetFrame)getTopLevelAncestor()).openCityCommand();
+        		}
+        	}
+        });
+        fileMenu.add(openCityItem);
         closeCityItem = new JMenuItem("Close City", KeyEvent.VK_C);
         closeCityItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_W, ActionEvent.CTRL_MASK));

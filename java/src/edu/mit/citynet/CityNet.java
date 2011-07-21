@@ -120,6 +120,7 @@ public class CityNet {
 	 */
 	public void setCity(City city) { 
 		this.city = city;
+		updateIds();
 	}
 	
 	/**
@@ -234,6 +235,18 @@ public class CityNet {
 	 * Update ids, used after loading a city from a template.
 	 */
 	public void updateIds() {
+		nextCellId.set(1);
+		nextCellRegionId.set(1);
+		nextSystemId.set(1);
+		nextNodeTypeId.set(1);
+		nextNodeTypeAttributeId.set(1);
+		nextEdgeTypeId.set(1);
+		nextEdgeTypeAttributeId.set(1);
+		nextLayerId.set(1);
+		nextNodeId.set(1);
+		nextEdgeId.set(1);
+		nextNodeRegionId.set(1);
+		nextEdgeRegionId.set(1);
 		if(city == null) return;
 		for(Cell cell : city.getCells()) {
 			nextCellId.set(Math.max(nextCellId.get(), cell.getId()+1));
@@ -290,17 +303,6 @@ public class CityNet {
 					f.setSize(new Dimension(600,400));
 					f.setLocationRelativeTo(null);
 					f.setVisible(true);
-					/* example hard-coded city
-					City testCity = new City();
-					testCity.setName("Boston");
-					testCity.setLatitude(45.32);
-					CitySystem system = new CitySystem();
-					system.setName("Transporatation");
-					HashSet<CitySystem> systems = new HashSet<CitySystem>();
-					systems.add(system);
-					testCity.setSystems(systems);
-					f.openCityCommand(testCity);
-					*/
             	} catch(Exception e) {
             		JOptionPane.showMessageDialog(null, 
             				"A fatal exception of type " + 
