@@ -6,6 +6,11 @@ import java.awt.GridBagLayout;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
@@ -24,6 +29,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	private CityPanel cityPanel;
 	private CitySystem system;
 	private VizLayeredPane layeredPane;
+	private RegionTableModel<CellRegion> cellRegionTableModel;
 	
 	/**
 	 * Instantiates a new city viz panel.
@@ -43,6 +49,21 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.BOTH;
+		cellRegionTableModel = new RegionTableModel<CellRegion>();
+		cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+		cellRegionTableModel.addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				layeredPane.repaint();
+			}
+		});
+		JTable cellRegionTable = new JTable(cellRegionTableModel);
+		cellRegionTable.getTableHeader().setReorderingAllowed(false);
+		cellRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
+		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
+		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
+		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(100,100));
+		add(new JScrollPane(cellRegionTable),c);
+		c.gridx++;
 		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), system);
 		layeredPane.setPreferredSize(new Dimension(250,250));
 		add(layeredPane,c);
@@ -61,7 +82,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
 	 */
 	public Set<CellRegion> getSelectedCellRegions() {
-		return new HashSet<CellRegion>(cityPanel.getCity().getCellRegions());
+		return new HashSet<CellRegion>(cellRegionTableModel.getSelectedRegions());
 	}
 	
 	/* (non-Javadoc)

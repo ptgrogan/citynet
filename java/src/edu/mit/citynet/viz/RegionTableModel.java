@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
+import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 
@@ -73,6 +74,8 @@ public class RegionTableModel<t> extends AbstractTableModel {
 				return ((NodeRegion)regions.get(rowIndex)).getDescription();
 			else if(regions.get(rowIndex) instanceof EdgeRegion)
 				return ((EdgeRegion)regions.get(rowIndex)).getDescription();
+			else if(regions.get(rowIndex) instanceof CellRegion)
+				return ((CellRegion)regions.get(rowIndex)).getDescription();
 			else
 				return regions.get(rowIndex);
 		}

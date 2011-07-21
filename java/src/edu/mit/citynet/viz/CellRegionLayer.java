@@ -18,7 +18,7 @@ public class CellRegionLayer extends JPanel {
 	/**
 	 * Instantiates a new cell region layer.
 	 *
-	 * @param city the city
+	 * @param vizPane the viz pane
 	 */
 	public CellRegionLayer(VizLayeredPane vizPane) {
 		this.vizPane = vizPane;
@@ -33,7 +33,7 @@ public class CellRegionLayer extends JPanel {
 		if(vizPane.getCity().getImage() == null 
 				|| vizPane.getCity().getImagePolygon() == null) return;
 		
-		Set<CellRegion> cellRegions = vizPane.getCity().getCellRegions();
+		Set<CellRegion> cellRegions = vizPane.getVizPanel().getSelectedCellRegions();
 		
 		for(CellRegion cellRegion : cellRegions) {
 			int[] xPoints = new int[cellRegion.getCoordinateList().size()];
