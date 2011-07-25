@@ -9,7 +9,6 @@
 clear classes
 close all
 clc
-addpath(['..' filesep '..']);
 
 %% define synthesis properties
 
@@ -57,3 +56,10 @@ subplot(3,2,5)
 cityNet.RenderLayer(4);
 subplot(3,2,6)
 cityNet.RenderLayer(5);
+
+% test behaviors
+energyBehavior = zeros(length(cityNet.city.cells),1);
+for i=1:length(cityNet.city.cells)
+    b = PVStationEnergy(cityNet.city.cells(i),cityNet.city.systems(2));
+    energyBehavior(i) = b.Evaluate();
+end
