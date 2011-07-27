@@ -23,6 +23,13 @@ import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
 import edu.mit.citynet.gui.SystemPanel;
 
+/**
+ * The SystemVizPanel class provides a system-level visualization of cells, 
+ * node regions and nodes, and edge regions and edges. The node region and
+ * edge region visibility can be toggled using two tables.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class SystemVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = -3650203268180181634L;
 	
@@ -32,6 +39,12 @@ public class SystemVizPanel extends AbstractVizPanel {
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
 	private RegionTableModel<EdgeRegion> edgeRegionTableModel;
 	
+	/**
+	 * Instantiates a new system viz panel.
+	 *
+	 * @param systemPanel the system panel
+	 * @param system the system
+	 */
 	public SystemVizPanel(final SystemPanel systemPanel, CitySystem system) {
 		if (systemPanel==null) {
 			throw new IllegalArgumentException("System Panel cannot be null.");

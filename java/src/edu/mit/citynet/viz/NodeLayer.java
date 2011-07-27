@@ -10,6 +10,13 @@ import javax.swing.JPanel;
 
 import edu.mit.citynet.core.Node;
 
+/**
+ * The NodeLayer class is a transparent JPanel used to display nodes in a 
+ * layered pane used for visualization. It draws each node on the existing 
+ * city image.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class NodeLayer extends JPanel {
 	private static final long serialVersionUID = -5721250566037759894L;
 	private VizLayeredPane vizPane;
@@ -41,12 +48,15 @@ public class NodeLayer extends JPanel {
 			for(int i=0; i<node.getCell().getPolygon().getCoordinates().length; i++) {
 				double x = node.getCell().getPolygon().getCoordinates()[i].x;
 				double y = node.getCell().getPolygon().getCoordinates()[i].y;
+				// ocnvert distance units to pixels
 				int[] ij = vizPane.xy2ij(x,y);
 				xPoints[i] = ij[0];
 				yPoints[i] = ij[1];
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				// draw a semi-transparent square with the node type color
+				// and an outline of the same color
 				g2d.setStroke(new BasicStroke(2f));
 				g2d.setColor(node.getNodeType().getColor());
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);

@@ -22,8 +22,8 @@ import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
 
 /**
- * The CityVizPanel class produces a standard city-wide visualization of the 
- * different synthesis components (e.g. cell/node/edge regions).
+ * The CityVizPanel class provides a city-level visualization of cells and
+ * cell regions. The cell region visibility can be toggled using a tables.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
@@ -37,7 +37,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	/**
 	 * Instantiates a new city viz panel.
 	 *
-	 * @param city the city
+	 * @param cityPanel the city panel
 	 */
 	public CityVizPanel(final CityPanel cityPanel) {
 		if (cityPanel==null) {
@@ -108,6 +108,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
 	 */
 	public Set<CellRegion> getSelectedCellRegions() {
+		// display all cell regions selected in table
 		return new HashSet<CellRegion>(cellRegionTableModel.getSelectedRegions());
 	}
 	
@@ -115,6 +116,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	 * @see edu.mit.citynet.viz2.AbstractVizPanel#getSelectedNodeRegions()
 	 */
 	public Set<NodeRegion> getSelectedNodeRegions() {
+		// presently do not display any node regions
 		return new HashSet<NodeRegion>();
 	}
 	
@@ -122,6 +124,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
 	 */
 	public Set<EdgeRegion> getSelectedEdgeRegions() {
+		// presently do not display any edge regions
 		return new HashSet<EdgeRegion>();
 	}
 }

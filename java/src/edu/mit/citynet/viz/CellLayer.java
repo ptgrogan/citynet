@@ -10,6 +10,13 @@ import javax.swing.JPanel;
 
 import edu.mit.citynet.core.Cell;
 
+/**
+ * The CellLayer class is a transparent JPanel used to display cells in 
+ * a layered pane used for visualization. It draws each cell to overlay
+ * on the existing city image.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class CellLayer extends JPanel {
 	private static final long serialVersionUID = -5721250566037759894L;
 	private VizLayeredPane vizPane;
@@ -40,11 +47,13 @@ public class CellLayer extends JPanel {
 			for(int i=0; i<cell.getPolygon().getCoordinates().length; i++) {
 				double x = cell.getPolygon().getCoordinates()[i].x;
 				double y = cell.getPolygon().getCoordinates()[i].y;
+				// convert distance units to pixels
 				int[] ij = vizPane.xy2ij(x,y);
 				xPoints[i] = ij[0];
 				yPoints[i] = ij[1];
 			}
 			if(g instanceof Graphics2D) {
+				// draw transparent square with thin solid black outline
 				Graphics2D g2d = (Graphics2D)g;
 				g2d.setStroke(new BasicStroke(0.5f));
 				g2d.setColor(Color.BLACK);

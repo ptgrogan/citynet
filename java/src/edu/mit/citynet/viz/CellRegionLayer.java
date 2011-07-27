@@ -11,6 +11,13 @@ import javax.swing.JPanel;
 
 import edu.mit.citynet.core.CellRegion;
 
+/**
+ * The CellRegionLayer class is a transparent JPanel used to display cell
+ * regions in a layered pane used for visualization. It draws each selected
+ * cell region on the existing city image.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class CellRegionLayer extends JPanel {
 	private static final long serialVersionUID = -5721250566037759894L;
 	private VizLayeredPane vizPane;
@@ -41,12 +48,14 @@ public class CellRegionLayer extends JPanel {
 			for(int i=0; i<cellRegion.getCoordinateList().size(); i++) {
 				double x = cellRegion.getCoordinateList().getCoordinate(i).x;
 				double y = cellRegion.getCoordinateList().getCoordinate(i).y;
+				// convert distance units to pixels
 				int[] ij = vizPane.xy2ij(x,y);
 				xPoints[i] = ij[0];
 				yPoints[i] = ij[1];
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				// draw a semi-tranparent black square with a black outline
 				g2d.setStroke(new BasicStroke(2f));
 				g2d.setColor(Color.BLACK);
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);

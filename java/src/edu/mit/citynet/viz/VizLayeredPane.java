@@ -13,7 +13,11 @@ import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
 
 /**
- * The Class VizLayeredPane.
+ * The VizLayeredPane class produces a multi-layered visualization of different
+ * components within a city. Its layers include: a background map, cell regions,
+ * cells, node regions, nodes, edge regions, and edges.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
@@ -31,7 +35,9 @@ public class VizLayeredPane extends JLayeredPane {
 	/**
 	 * Instantiates a new viz layered pane.
 	 *
-	 * @param source the source
+	 * @param vizPanel the viz panel
+	 * @param city the city
+	 * @param system the system
 	 */
 	public VizLayeredPane(AbstractVizPanel vizPanel, City city, CitySystem system) {
 		if (city==null) {
@@ -41,7 +47,7 @@ public class VizLayeredPane extends JLayeredPane {
 		this.city = city;
 		this.system = system;
 		setPreferredSize(new Dimension(250,250));
-		mapLayer = new MapLayer(city.getImage());
+		mapLayer = new MapLayer(this);
 		add(mapLayer, new Integer(1));
 		cellRegionLayer = new CellRegionLayer(this);
 		add(cellRegionLayer, new Integer(2));
@@ -99,7 +105,9 @@ public class VizLayeredPane extends JLayeredPane {
 	}
 	
 	/**
-	 * Converts x-y coordinates to i-j coordinates.
+	 * Converts x-y (distance) coordinates to i-j (pixel) coordinates. Uses 
+	 * the known size of the image to set the boundaries of the display.
+	 * Will always scale square (e.g. same scale applied in x- and y-axes).
 	 *
 	 * @param x the x
 	 * @param y the y

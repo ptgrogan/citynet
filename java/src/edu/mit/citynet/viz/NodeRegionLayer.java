@@ -10,6 +10,13 @@ import javax.swing.JPanel;
 
 import edu.mit.citynet.core.NodeRegion;
 
+/**
+ * The NodeRegionLayer class is a transparent JPanel used to display node
+ * regions in a layered pane used for visualization. It draws each selected
+ * node region on the existing city image.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class NodeRegionLayer extends JPanel {
 	private static final long serialVersionUID = -5721250566037759894L;
 	private VizLayeredPane vizPane;
@@ -41,6 +48,7 @@ public class NodeRegionLayer extends JPanel {
 			for(int i=0; i<nodeRegion.getCoordinateList().size(); i++) {
 				double x = nodeRegion.getCoordinateList().getCoordinate(i).x;
 				double y = nodeRegion.getCoordinateList().getCoordinate(i).y;
+				// convert distance units to pixels
 				int[] ij = vizPane.xy2ij(x,y);
 				xPoints[i] = ij[0];
 				yPoints[i] = ij[1];
@@ -50,13 +58,17 @@ public class NodeRegionLayer extends JPanel {
 				g2d.setStroke(new BasicStroke(2f));
 				g2d.setColor(nodeRegion.getNodeType().getColor());
 				if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYGON) {
+					// draw a semi-transparent polygon with the node type color 
+					// with a solid outline of the same color
 					g2d.drawPolygon(xPoints, yPoints, xPoints.length);
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 					g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYLINE) {
+					// draw a polyline outline with the node type color 
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					g2d.drawPolyline(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYPOINT) {
+					// draw an opaque circle with the node type color
 					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					for(int i=0; i<xPoints.length; i++) {
 						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);

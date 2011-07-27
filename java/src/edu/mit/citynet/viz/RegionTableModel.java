@@ -11,6 +11,15 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 
+/**
+ * The RegionTableModel class provides a generic table model for use in node,
+ * edge, and cell regions. It contains a list of all the available regions
+ * and a subset of the regions that are selected (checked) for display.
+ *
+ * @param <t> the generic type
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class RegionTableModel<t> extends AbstractTableModel {
 	private static final long serialVersionUID = -1151237693598337559L;
 	
@@ -70,6 +79,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 			return selectedRegions.contains(regions.get(rowIndex));
 		} else {
 			// TODO: this is a hack-y way to display the region description
+			// ...should be a superclass property/method
 			if(regions.get(rowIndex) instanceof NodeRegion)
 				return ((NodeRegion)regions.get(rowIndex)).getDescription();
 			else if(regions.get(rowIndex) instanceof EdgeRegion)
