@@ -175,9 +175,9 @@ public class SpreadsheetTemplate {
 		coords.closeRing(); 
 		city.setImagePolygon(gf.createPolygon(
 				gf.createLinearRing(coords.toCoordinateArray()), null));
-		city.setSystems(readSystems(wb));
-		city.setCells(readCells(wb));
 		city.setCellRegions(readCellRegions(wb));
+		city.setCells(readCells(wb));
+		city.setSystems(readSystems(wb));
 		return city;
 	}
 	
@@ -198,10 +198,10 @@ public class SpreadsheetTemplate {
 			system.setLayers(readLayers(wb,system.getId()));
 			system.setNodeTypes(readNodeTypes(wb,system.getId()));
 			system.setEdgeTypes(readEdgeTypes(wb,system.getId()));
-			system.setNodes(readNodes(wb,system.getId()));
-			system.setEdges(readEdges(wb,system.getId()));
 			system.setNodeRegions(readNodeRegions(wb,system.getId()));
 			system.setEdgeRegions(readEdgeRegions(wb,system.getId()));
+			system.setNodes(readNodes(wb,system.getId()));
+			system.setEdges(readEdges(wb,system.getId()));
 			systems.add(system);
 		}
 		return systems;
@@ -404,6 +404,7 @@ public class SpreadsheetTemplate {
 			node.setLayer(layerMap.get((int)row.getCell(NODE_LAYER_ID).getNumericCellValue()));
 			node.setNodeType(nodeTypeMap.get((int)row.getCell(NODE_NODE_TYPE_ID).getNumericCellValue()));
 			nodes.add(node);
+			nodeMap.put(node.getId(), node);
 		}
 		return nodes;
 	}
