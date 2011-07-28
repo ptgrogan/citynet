@@ -33,6 +33,7 @@ public class City {
 	 * Instantiates a new City.Net city.
 	 */
 	public City() {
+		name = "New City";
 		cells = new HashSet<Cell>();
 		cellRegions = new HashSet<CellRegion>();
 		systems = new HashSet<CitySystem>();
