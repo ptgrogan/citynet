@@ -5,7 +5,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -62,7 +66,14 @@ public class CityTestPanel extends CityPanel {
 		cityVizPanel = new CityVizPanel(this);
 		tabbedPane.addTab("City", cityVizPanel);
 		systemPanels = new HashSet<SystemPanel>();
-		for(CitySystem system : city.getSystems()) {
+		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
+		Collections.sort(systems, new Comparator<CitySystem>() {
+			@Override
+			public int compare(CitySystem system1, CitySystem system2) {
+				return system1.getName().compareTo(system2.getName());
+			}
+		});
+		for(CitySystem system : systems) {
 			SystemTestPanel systemPanel = new SystemTestPanel(this, system);
 			systemPanels.add(systemPanel);
 			tabbedPane.addTab(system.getName(), systemPanel);
