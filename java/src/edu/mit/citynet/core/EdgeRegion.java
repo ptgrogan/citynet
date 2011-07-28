@@ -76,7 +76,7 @@ public class EdgeRegion extends AbstractRegion {
 		 */
 		public static EdgeRegionType getEdgeRegionType(String name) {
 			for(EdgeRegionType t : EdgeRegionType.values()) {
-				if(t.getName().toLowerCase().equals(name)) return t;
+				if(t.getName().toLowerCase().equals(name.toLowerCase())) return t;
 			}
 			return UNDEFINED;
 		}

@@ -60,7 +60,7 @@ public class NodeRegion extends AbstractRegion {
 		 */
 		public static NodeRegionType getNodeRegionType(String name) {
 			for(NodeRegionType t : NodeRegionType.values()) {
-				if(t.getName().toLowerCase().equals(name)) return t;
+				if(t.getName().toLowerCase().equals(name.toLowerCase())) return t;
 			}
 			return UNDEFINED;
 		}
