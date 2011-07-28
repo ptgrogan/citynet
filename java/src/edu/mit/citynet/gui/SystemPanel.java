@@ -30,6 +30,9 @@ public abstract class SystemPanel extends JPanel {
 	 * @param system the system
 	 */
 	public SystemPanel(CityPanel cityPanel, CitySystem system) {
+		if (system==null) {
+			throw new IllegalArgumentException("System cannot be null.");
+		}
 		this.cityPanel = cityPanel;
 		this.system = system;
 	}
