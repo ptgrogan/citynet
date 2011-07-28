@@ -2,7 +2,7 @@ package edu.mit.citynet.viz;
 
 import java.util.Set;
 
-import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
@@ -15,7 +15,7 @@ import edu.mit.citynet.core.NodeRegion;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public abstract class AbstractVizPanel extends JPanel {
+public abstract class AbstractVizPanel extends JSplitPane {
 	private static final long serialVersionUID = 3664632230067588258L;
 
 	/**

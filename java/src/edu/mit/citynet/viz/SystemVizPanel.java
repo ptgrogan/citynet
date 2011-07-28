@@ -1,5 +1,6 @@
 package edu.mit.citynet.viz;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -57,7 +58,9 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 * Initializes the panel.
 	 */
 	private void initializePanel() {
-		setLayout(new GridBagLayout());
+		setResizeWeight(0);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
@@ -77,8 +80,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 		nodeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		nodeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		nodeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Node Region");
-		nodeRegionTable.setPreferredScrollableViewportSize(new Dimension(100,100));
-		add(new JScrollPane(nodeRegionTable),c);
+		nodeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
+		leftPanel.add(new JScrollPane(nodeRegionTable),c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
@@ -100,7 +103,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 			}
 		});
 		nodeButtonPanel.add(clearNodesButton);
-		add(nodeButtonPanel, c);
+		leftPanel.add(nodeButtonPanel, c);
 		c.gridy++;
 		c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
@@ -116,8 +119,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 		edgeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		edgeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		edgeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Edge Region");
-		edgeRegionTable.setPreferredScrollableViewportSize(new Dimension(100,100));
-		add(new JScrollPane(edgeRegionTable),c);
+		edgeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
+		leftPanel.add(new JScrollPane(edgeRegionTable),c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
@@ -139,14 +142,12 @@ public class SystemVizPanel extends AbstractVizPanel {
 			}
 		});
 		edgeButtonPanel.add(clearEdgesButton);
-		add(edgeButtonPanel, c);
-		c.weighty = 1;
-		c.fill = GridBagConstraints.BOTH;
-		c.gridx++;
-		c.gridy = 0;
-		c.gridheight = 4;
+		leftPanel.add(edgeButtonPanel, c);
+		setLeftComponent(leftPanel);
+		JPanel rightPanel = new JPanel();
 		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
-		add(layeredPane,c);
+		rightPanel.add(layeredPane,BorderLayout.CENTER);
+		setRightComponent(rightPanel);
 	}
 	
 	/* (non-Javadoc)

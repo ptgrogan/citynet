@@ -1,5 +1,6 @@
 package edu.mit.citynet.viz;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -51,11 +52,13 @@ public class CityVizPanel extends AbstractVizPanel {
 	 * Initializes the panel.
 	 */
 	private void initializePanel() {
-		setLayout(new GridBagLayout());
+		setResizeWeight(0);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx = 1;
+		c.weightx = 0.5;
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.BOTH;
@@ -71,8 +74,8 @@ public class CityVizPanel extends AbstractVizPanel {
 		cellRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
-		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(100,100));
-		add(new JScrollPane(cellRegionTable),c);
+		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(200,400));
+		leftPanel.add(new JScrollPane(cellRegionTable),c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
@@ -95,14 +98,12 @@ public class CityVizPanel extends AbstractVizPanel {
 			}
 		});
 		buttonPanel.add(clearCellsButton);
-		add(buttonPanel, c);
-		c.gridy = 0;
-		c.gridheight = 2;
-		c.gridx++;
-		c.weighty = 1;
-		c.fill = GridBagConstraints.BOTH;
+		leftPanel.add(buttonPanel, c);
+		setLeftComponent(leftPanel);
+		JPanel rightPanel = new JPanel();
 		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), null);
-		add(layeredPane,c);
+		rightPanel.add(layeredPane,BorderLayout.CENTER);
+		setRightComponent(rightPanel);
 	}
 	
 	/**
