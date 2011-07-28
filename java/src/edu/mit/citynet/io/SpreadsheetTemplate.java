@@ -5,8 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -741,12 +745,36 @@ public class SpreadsheetTemplate {
 		s.getRow(CITY_IMAGE_VERTICES_X).getCell(1).setCellValue(vertices[0]);
 		s.getRow(CITY_IMAGE_VERTICES_Y).getCell(1).setCellValue(vertices[1]);
 		
-		for(CellRegion cellRegion : city.getCellRegions()) {
+		List<CellRegion> cellRegions = new ArrayList<CellRegion>();
+		cellRegions.addAll(city.getCellRegions());
+		Collections.sort(cellRegions, new Comparator<CellRegion>() {
+			@Override
+			public int compare(CellRegion region1, CellRegion region2) {
+				return region1.getId()-region2.getId();
+			}
+		});
+		for(CellRegion cellRegion : cellRegions) {
 			writeCellRegion(cellRegion, wb);
 		}
-		for(Cell cell : city.getCells()) {
+		List<Cell> cells = new ArrayList<Cell>();
+		cells.addAll(city.getCells());
+		Collections.sort(cells, new Comparator<Cell>() {
+			@Override
+			public int compare(Cell cell1, Cell cell2) {
+				return cell1.getId()-cell2.getId();
+			}
+		});
+		for(Cell cell : cells) {
 			writeCell(cell, wb);
 		}
+		List<CitySystem> systems = new ArrayList<CitySystem>();
+		systems.addAll(city.getSystems());
+		Collections.sort(systems, new Comparator<CitySystem>() {
+			@Override
+			public int compare(CitySystem system1, CitySystem system2) {
+				return system1.getId()-system2.getId();
+			}
+		});
 		for(CitySystem system : city.getSystems()) {
 			writeSystem(system, wb);
 		}
