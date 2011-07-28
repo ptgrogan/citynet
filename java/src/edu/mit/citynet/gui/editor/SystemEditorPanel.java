@@ -1,6 +1,8 @@
-package edu.mit.citynet.gui;
+package edu.mit.citynet.gui.editor;
 
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.gui.CityPanel;
+import edu.mit.citynet.gui.SystemPanel;
 
 /**
  * The SystemPanelEditor provides editing capabilities for a system.

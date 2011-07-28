@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileFilter;
 
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.gui.test.CityTestPanel;
 import edu.mit.citynet.io.SpreadsheetTemplate;
 
 /**

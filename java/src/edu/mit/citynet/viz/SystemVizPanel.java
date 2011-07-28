@@ -20,7 +20,7 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
-import edu.mit.citynet.gui.SystemTestPanel;
+import edu.mit.citynet.gui.test.SystemTestPanel;
 
 /**
  * The SystemVizPanel class provides a system-level visualization of cells, 

@@ -1,4 +1,4 @@
-package edu.mit.citynet.gui;
+package edu.mit.citynet.gui.test;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,6 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.gui.SystemPanel;
 import edu.mit.citynet.viz.SystemVizPanel;
 
 /**

@@ -1,4 +1,4 @@
-package edu.mit.citynet.gui;
+package edu.mit.citynet.gui.test;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,6 +14,8 @@ import javax.swing.JTextField;
 
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.gui.CityPanel;
+import edu.mit.citynet.gui.SystemPanel;
 import edu.mit.citynet.viz.CityVizPanel;
 
 public class CityTestPanel extends CityPanel {

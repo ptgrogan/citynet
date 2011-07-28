@@ -1,6 +1,7 @@
-package edu.mit.citynet.gui;
+package edu.mit.citynet.gui.editor;
 
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.gui.CityPanel;
 
 /**
  * The CityPanelEditor provides editing capabilities for a city.
