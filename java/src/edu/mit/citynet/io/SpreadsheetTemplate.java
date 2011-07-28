@@ -745,8 +745,7 @@ public class SpreadsheetTemplate {
 		s.getRow(CITY_IMAGE_VERTICES_X).getCell(1).setCellValue(vertices[0]);
 		s.getRow(CITY_IMAGE_VERTICES_Y).getCell(1).setCellValue(vertices[1]);
 		
-		List<CellRegion> cellRegions = new ArrayList<CellRegion>();
-		cellRegions.addAll(city.getCellRegions());
+		List<CellRegion> cellRegions = new ArrayList<CellRegion>(city.getCellRegions());
 		Collections.sort(cellRegions, new Comparator<CellRegion>() {
 			@Override
 			public int compare(CellRegion region1, CellRegion region2) {
@@ -756,8 +755,7 @@ public class SpreadsheetTemplate {
 		for(CellRegion cellRegion : cellRegions) {
 			writeCellRegion(cellRegion, wb);
 		}
-		List<Cell> cells = new ArrayList<Cell>();
-		cells.addAll(city.getCells());
+		List<Cell> cells = new ArrayList<Cell>(city.getCells());
 		Collections.sort(cells, new Comparator<Cell>() {
 			@Override
 			public int compare(Cell cell1, Cell cell2) {
@@ -767,8 +765,7 @@ public class SpreadsheetTemplate {
 		for(Cell cell : cells) {
 			writeCell(cell, wb);
 		}
-		List<CitySystem> systems = new ArrayList<CitySystem>();
-		systems.addAll(city.getSystems());
+		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
 		Collections.sort(systems, new Comparator<CitySystem>() {
 			@Override
 			public int compare(CitySystem system1, CitySystem system2) {
