@@ -20,10 +20,10 @@ import javax.swing.KeyStroke;
 public class CityNetMenuBar extends JMenuBar {
 	private static final long serialVersionUID = -6018553717087352056L;
 
-	CityNetFrame frame;
-	JMenu fileMenu;
-	JMenuItem newCityItem, openCityItem, closeCityItem, saveCityAsItem, 
-		saveCityItem, exitItem;
+	private CityNetFrame frame;
+	private JMenu fileMenu;
+	private JMenuItem newCityItem, openCityItem, closeCityItem, 
+		saveCityAsItem, saveCityItem, exitItem;
 	
 	/**
 	 * Instantiates a new city net menu bar.

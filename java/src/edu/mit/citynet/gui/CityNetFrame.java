@@ -28,10 +28,10 @@ import edu.mit.citynet.io.SpreadsheetTemplate;
  */
 public class CityNetFrame extends JFrame {
 	private static final long serialVersionUID = -4707459231955143750L;
-	CityNetMenuBar menuBar;
-	JPanel backgroundPanel;
-	CityPanel cityPanel;
-	JFileChooser fileChooser;
+	private CityNetMenuBar menuBar;
+	private JPanel backgroundPanel;
+	private CityPanel cityPanel;
+	private JFileChooser fileChooser;
 	private SpreadsheetTemplate template;
 	
 	/**

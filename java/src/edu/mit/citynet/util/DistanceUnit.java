@@ -40,9 +40,9 @@ public enum DistanceUnit {
 	}
 	
 	/**
-	 * Gets the singlular name.
+	 * Gets the singular name.
 	 *
-	 * @return the singlular name
+	 * @return the singular name
 	 */
 	public String getSinglularName() { 
 		return singularName;
