@@ -1,7 +1,6 @@
 package edu.mit.citynet.gui;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -55,9 +54,7 @@ public class BackgroundPanel extends JPanel {
 					"check the stack trace for more information.");
 			e1.printStackTrace();
 		}
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		add(new JLabel(new ImageIcon(logo)), c);
+		setLayout(new BorderLayout());
+		add(new JLabel(new ImageIcon(logo)), BorderLayout.CENTER);
 	}
 }

@@ -59,6 +59,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 */
 	private void initializePanel() {
 		setResizeWeight(0);
+		setDividerLocation(200);
+		setOneTouchExpandable(true);
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -144,7 +146,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		edgeButtonPanel.add(clearEdgesButton);
 		leftPanel.add(edgeButtonPanel, c);
 		setLeftComponent(leftPanel);
-		JPanel rightPanel = new JPanel();
+		JPanel rightPanel = new JPanel(new BorderLayout());
 		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
 		rightPanel.add(layeredPane,BorderLayout.CENTER);
 		setRightComponent(rightPanel);
