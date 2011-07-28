@@ -21,6 +21,7 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CityPanel;
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The CityVizPanel class provides a city-level visualization of cells and
@@ -83,16 +84,15 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.weighty = 0;
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
-		JButton generateCellsButton = new JButton("Generate");
+		JButton generateCellsButton = new JButton("Generate",CityNetIcon.CELL_REGIONS.getIcon());
 		generateCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.generateCellsCommand(cellRegionTableModel.getSelectedRegions());
 				repaint();
-				
 			}
 		});
 		buttonPanel.add(generateCellsButton);
-		JButton clearCellsButton = new JButton("Clear");
+		JButton clearCellsButton = new JButton("Clear",CityNetIcon.DELETE.getIcon());
 		clearCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.clearCellsCommand();

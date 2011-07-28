@@ -22,6 +22,7 @@ import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.test.SystemTestPanel;
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The SystemVizPanel class provides a system-level visualization of cells, 
@@ -89,7 +90,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.weighty = 0;
 		JPanel nodeButtonPanel = new JPanel();
 		nodeButtonPanel.setLayout(new BoxLayout(nodeButtonPanel,BoxLayout.LINE_AXIS));
-		JButton generateNodesButton = new JButton("Generate");
+		JButton generateNodesButton = new JButton("Generate",CityNetIcon.NODE_REGIONS.getIcon());
 		generateNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateNodesCommand(nodeRegionTableModel.getSelectedRegions());
@@ -97,7 +98,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 			}
 		});
 		nodeButtonPanel.add(generateNodesButton);
-		JButton clearNodesButton = new JButton("Clear");
+		JButton clearNodesButton = new JButton("Clear",CityNetIcon.DELETE.getIcon());
 		clearNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.clearNodesCommand();
@@ -128,7 +129,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.weighty = 0;
 		JPanel edgeButtonPanel = new JPanel();
 		edgeButtonPanel.setLayout(new BoxLayout(edgeButtonPanel,BoxLayout.LINE_AXIS));
-		JButton generateEdgesButton = new JButton("Generate");
+		JButton generateEdgesButton = new JButton("Generate",CityNetIcon.EDGE_REGIONS.getIcon());
 		generateEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateEdgesCommand(edgeRegionTableModel.getSelectedRegions());
@@ -136,7 +137,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 			}
 		});
 		edgeButtonPanel.add(generateEdgesButton);
-		JButton clearEdgesButton = new JButton("Clear");
+		JButton clearEdgesButton = new JButton("Clear",CityNetIcon.DELETE.getIcon());
 		clearEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.clearEdgesCommand();
