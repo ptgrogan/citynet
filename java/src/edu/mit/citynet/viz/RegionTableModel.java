@@ -1,6 +1,8 @@
 package edu.mit.citynet.viz;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,20 @@ public class RegionTableModel<t> extends AbstractTableModel {
 		this.regions.clear();
 		selectedRegions.clear();
 		this.regions.addAll(regions);
+		Collections.sort(this.regions, new Comparator<t>() {
+			@Override
+			public int compare(t region1, t region2) {
+				// TODO: this is a hack-y way to sort based on description
+				// ...should be a superclass property/method
+				if(region1 instanceof NodeRegion && region2 instanceof NodeRegion)
+					return ((NodeRegion)region1).getDescription().compareTo(((NodeRegion)region2).getDescription());
+				else if(region1 instanceof EdgeRegion && region2 instanceof EdgeRegion)
+					return ((EdgeRegion)region1).getDescription().compareTo(((EdgeRegion)region2).getDescription());
+				else if(region1 instanceof CellRegion && region2 instanceof CellRegion)
+					return ((CellRegion)region1).getDescription().compareTo(((CellRegion)region2).getDescription());
+				else return 0;
+			}
+		});
 		selectedRegions.addAll(regions);
 		fireTableDataChanged();
 	}
