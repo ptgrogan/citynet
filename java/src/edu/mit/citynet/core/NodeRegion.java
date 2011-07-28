@@ -20,7 +20,50 @@ public class NodeRegion extends AbstractRegion {
 	 * can be specified, each with differing node generation behaviors.
 	 */
 	public enum NodeRegionType {
-		UNDEFINED,POLYGON,POLYLINE,POLYPOINT;
+		UNDEFINED("Undefined"),
+		POLYGON("Polygon"),
+		POLYLINE("Polyline"),
+		POLYPOINT("Polypoint");
+
+		private String name;
+		
+		/**
+		 * Instantiates a new node region type.
+		 *
+		 * @param name the name
+		 */
+		private NodeRegionType(String name) {
+			this.name = name;
+		}
+		
+		/**
+		 * Gets the name.
+		 *
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		public String toString() {
+			return getName();
+		}
+		
+		/**
+		 * Gets the node region type.
+		 *
+		 * @param name the name
+		 * @return the node region type
+		 */
+		public static NodeRegionType getNodeRegionType(String name) {
+			for(NodeRegionType t : NodeRegionType.values()) {
+				if(t.getName().toLowerCase().equals(name)) return t;
+			}
+			return UNDEFINED;
+		}
 	}
 	private int id;
 	private NodeRegionType nodeRegionType;

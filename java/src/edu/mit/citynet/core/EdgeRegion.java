@@ -34,12 +34,52 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public enum EdgeRegionType {
 		
-		UNDEFINED,
-		POLYGON_ORTHOGONAL,
-		POLYGON_ADJACENT,
-		POLYGON_CONNECTED,
-		POLYLINE,
-		POLYPOINT;
+		UNDEFINED("Undefined"),
+		POLYGON_ORTHOGONAL("Orthogonal"),
+		POLYGON_ADJACENT("Adjacent"),
+		POLYGON_CONNECTED("Connected"),
+		POLYLINE("Polyline"),
+		POLYPOINT("Polypoint");
+		
+		private String name;
+		
+		/**
+		 * Instantiates a new edge region type.
+		 *
+		 * @param name the name
+		 */
+		private EdgeRegionType(String name) {
+			this.name = name;
+		}
+		
+		/**
+		 * Gets the name.
+		 *
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		public String toString() {
+			return getName();
+		}
+		
+		/**
+		 * Gets the edge region type.
+		 *
+		 * @param name the name
+		 * @return the edge region type
+		 */
+		public static EdgeRegionType getEdgeRegionType(String name) {
+			for(EdgeRegionType t : EdgeRegionType.values()) {
+				if(t.getName().toLowerCase().equals(name)) return t;
+			}
+			return UNDEFINED;
+		}
 	}
 	
 	private int id;
