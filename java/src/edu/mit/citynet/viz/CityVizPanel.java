@@ -44,6 +44,13 @@ public class CityVizPanel extends AbstractVizPanel {
 			throw new IllegalArgumentException("City Panel cannot be null.");
 		}
 		this.cityPanel = cityPanel;
+		initializePanel();
+	}
+	
+	/**
+	 * Initializes the panel.
+	 */
+	private void initializePanel() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
@@ -75,6 +82,8 @@ public class CityVizPanel extends AbstractVizPanel {
 		generateCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.generateCellsCommand(cellRegionTableModel.getSelectedRegions());
+				repaint();
+				
 			}
 		});
 		buttonPanel.add(generateCellsButton);
@@ -82,6 +91,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		clearCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.clearCellsCommand();
+				repaint();
 			}
 		});
 		buttonPanel.add(clearCellsButton);

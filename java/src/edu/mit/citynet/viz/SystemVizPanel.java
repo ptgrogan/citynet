@@ -20,8 +20,7 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
-import edu.mit.citynet.gui.CityPanel;
-import edu.mit.citynet.gui.SystemPanel;
+import edu.mit.citynet.gui.SystemTestPanel;
 
 /**
  * The SystemVizPanel class provides a system-level visualization of cells, 
@@ -33,7 +32,7 @@ import edu.mit.citynet.gui.SystemPanel;
 public class SystemVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = -3650203268180181634L;
 	
-	private SystemPanel systemPanel;
+	private SystemTestPanel systemPanel;
 	private CitySystem system;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
@@ -45,12 +44,19 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 * @param systemPanel the system panel
 	 * @param system the system
 	 */
-	public SystemVizPanel(final SystemPanel systemPanel, CitySystem system) {
+	public SystemVizPanel(SystemTestPanel systemPanel, CitySystem system) {
 		if (systemPanel==null) {
 			throw new IllegalArgumentException("System Panel cannot be null.");
 		}
 		this.systemPanel = systemPanel;
 		this.system = system;
+		initializePanel();
+	}
+	
+	/**
+	 * Initializes the panel.
+	 */
+	private void initializePanel() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
@@ -82,6 +88,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		generateNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateNodesCommand(nodeRegionTableModel.getSelectedRegions());
+				repaint();
 			}
 		});
 		nodeButtonPanel.add(generateNodesButton);
@@ -89,6 +96,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		clearNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.clearNodesCommand();
+				repaint();
 			}
 		});
 		nodeButtonPanel.add(clearNodesButton);
@@ -119,6 +127,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		generateEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateEdgesCommand(edgeRegionTableModel.getSelectedRegions());
+				repaint();
 			}
 		});
 		edgeButtonPanel.add(generateEdgesButton);
@@ -126,6 +135,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		clearEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.clearEdgesCommand();
+				repaint();
 			}
 		});
 		edgeButtonPanel.add(clearEdgesButton);
@@ -137,24 +147,6 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.gridheight = 4;
 		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
 		add(layeredPane,c);
-	}
-	
-	/**
-	 * Gets the city panel.
-	 *
-	 * @return the city panel
-	 */
-	public CityPanel getCityPanel() {
-		return systemPanel.getCityPanel();
-	}
-	
-	/**
-	 * Gets the system.
-	 *
-	 * @return the system
-	 */
-	public CitySystem getSystem() {
-		return system;
 	}
 	
 	/* (non-Javadoc)
