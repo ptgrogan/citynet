@@ -41,8 +41,15 @@ public class CityNetFrame extends JFrame {
 		super("City.Net");
 		template = new SpreadsheetTemplate();
 		menuBar = new CityNetMenuBar(this);
-		setJMenuBar(menuBar);
 		backgroundPanel = new BackgroundPanel();
+		initializeFrame();
+	}
+	
+	/**
+	 * Initializes the frame.
+	 */
+	private void initializeFrame() {
+		setJMenuBar(menuBar);
 		setContentPane(backgroundPanel);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		// try to specify multiple icon sizes (used for windows 7 task bar)
@@ -127,13 +134,8 @@ public class CityNetFrame extends JFrame {
 		if(cityPanel != null) {
 			closeCityCommand();
 		}
-		City city = new City();
 		template.setFilePath(null);
-		CityNet.getInstance().setCity(city);
-		city.setName("New City");
-		cityPanel = new CityTestPanel(city);
-		setContentPane(cityPanel);
-		validate();
+		openCityCommand(new City());
 	}
 	
 	/**
@@ -148,16 +150,26 @@ public class CityNetFrame extends JFrame {
 		if(returnVal == JFileChooser.APPROVE_OPTION) {
 			template.setFilePath(fileChooser.getSelectedFile().getAbsolutePath());
 			try {
-				City city = template.readTemplate();
-				CityNet.getInstance().setCity(city);
-				cityPanel = new CityTestPanel(city);
-				setContentPane(cityPanel);
-				validate();
-				pack();
+				openCityCommand(template.readTemplate());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Open city command.
+	 *
+	 * @param city the city
+	 */
+	private void openCityCommand(City city) {
+		CityNet.getInstance().setCity(city);
+		// toggle the commenting on the two following lines to switch between
+		// the editor and the test panels
+		cityPanel = new CityTestPanel(city);
+		//cityPanel = new CityEditorPanel(city);
+		setContentPane(cityPanel);
+		validate();
 	}
 	
 	/**
