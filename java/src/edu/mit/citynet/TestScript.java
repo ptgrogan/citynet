@@ -119,6 +119,8 @@ public class TestScript {
 							", Directed: " + edgeRegion.isDirected());
 				}
 			}
+			t.setFilePath("synthesisOutputExample.xls");
+			t.writeTemplate(city);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
