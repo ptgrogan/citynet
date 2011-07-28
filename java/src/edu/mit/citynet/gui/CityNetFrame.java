@@ -174,14 +174,16 @@ public class CityNetFrame extends JFrame {
 	
 	/**
 	 * Closes the existing city (prompts to save changes).
+	 *
+	 * @return true, if successful
 	 */
-	public void closeCityCommand() {
+	public boolean closeCityCommand() {
 		System.out.println("Close City Command");
 		int answer = JOptionPane.showOptionDialog(this, 
 				"Save changes to '" + cityPanel.getCity().getName() + "' before closing?", 
-				"Save Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+				"Save Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
 	    if(answer == JOptionPane.CANCEL_OPTION) {
-	    	return;
+	    	return false;
 	    } else if (answer == JOptionPane.YES_OPTION) {
 			saveCityCommand();
 	    }
@@ -189,6 +191,7 @@ public class CityNetFrame extends JFrame {
 		cityPanel = null;
 		setContentPane(backgroundPanel);
 		validate();
+		return true;
 	}
 	
 	/**
@@ -231,8 +234,9 @@ public class CityNetFrame extends JFrame {
 	public void exitCommand() {
 		System.out.println("Exit Command");
 		if(cityPanel != null) {
-			closeCityCommand();
+			if(closeCityCommand()) dispose();
+		} else {
+			dispose();
 		}
-		dispose();
 	}
 }
