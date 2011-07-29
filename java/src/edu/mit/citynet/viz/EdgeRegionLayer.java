@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -46,12 +47,10 @@ public class EdgeRegionLayer extends JPanel {
 			int[] xPoints = new int[edgeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[edgeRegion.getCoordinateList().size()];
 			for(int i=0; i<edgeRegion.getCoordinateList().size(); i++) {
-				double x = edgeRegion.getCoordinateList().getCoordinate(i).x;
-				double y = edgeRegion.getCoordinateList().getCoordinate(i).y;
 				// convert distance units to pixels
-				int[] ij = vizPane.xy2ij(x,y);
-				xPoints[i] = ij[0];
-				yPoints[i] = ij[1];
+				Point p = vizPane.getPoint(edgeRegion.getCoordinateList().getCoordinate(i));
+				xPoints[i] = p.x;
+				yPoints[i] = p.y;
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;

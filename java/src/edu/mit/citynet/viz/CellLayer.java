@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -45,12 +46,10 @@ public class CellLayer extends JPanel {
 			int[] xPoints = new int[cell.getPolygon().getCoordinates().length];
 			int[] yPoints = new int[cell.getPolygon().getCoordinates().length];
 			for(int i=0; i<cell.getPolygon().getCoordinates().length; i++) {
-				double x = cell.getPolygon().getCoordinates()[i].x;
-				double y = cell.getPolygon().getCoordinates()[i].y;
 				// convert distance units to pixels
-				int[] ij = vizPane.xy2ij(x,y);
-				xPoints[i] = ij[0];
-				yPoints[i] = ij[1];
+				Point p = vizPane.getPoint(cell.getPolygon().getCoordinates()[i]);
+				xPoints[i] = p.x;
+				yPoints[i] = p.y;
 			}
 			if(g instanceof Graphics2D) {
 				// draw transparent square with thin solid black outline

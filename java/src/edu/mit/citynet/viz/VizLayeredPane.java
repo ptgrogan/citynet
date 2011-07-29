@@ -3,7 +3,16 @@
  */
 package edu.mit.citynet.viz;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JLayeredPane;
 
@@ -11,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.util.CityNetCursor;
 
 /**
  * The VizLayeredPane class produces a multi-layered visualization of different
@@ -21,6 +31,7 @@ import edu.mit.citynet.core.CitySystem;
  */
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
+	private static final double MIN_SCALE = 10, MAX_SCALE = 1000;
 	private AbstractVizPanel vizPanel;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
@@ -31,6 +42,9 @@ public class VizLayeredPane extends JLayeredPane {
 	private EdgeLayer edgeLayer;
 	private City city;
 	private CitySystem system;
+	private double viewScale;
+	private Coordinate viewOrigin;
+	private Point previousDrag;
 	
 	/**
 	 * Instantiates a new viz layered pane.
@@ -46,6 +60,15 @@ public class VizLayeredPane extends JLayeredPane {
 		this.vizPanel = vizPanel;
 		this.city = city;
 		this.system = system;
+		this.viewScale = 100d;	// default: 100 px/km
+		this.viewOrigin = new Coordinate();
+		initializePanel();
+	}
+	
+	/**
+	 * Initializes the panel.
+	 */
+	private void initializePanel() {
 		setPreferredSize(new Dimension(250,250));
 		mapLayer = new MapLayer(this);
 		add(mapLayer, new Integer(1));
@@ -61,6 +84,66 @@ public class VizLayeredPane extends JLayeredPane {
 		add(edgeRegionLayer, new Integer(6));
 		edgeLayer = new EdgeLayer(this);
 		add(edgeLayer,new Integer(7));
+		addMouseListener(new MouseAdapter() {
+			public void mouseEntered(MouseEvent e) {
+				updateCursor(false);
+				requestFocusInWindow(true);
+			}
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					centerView(e.getPoint());
+				}
+			}
+			public void mousePressed(MouseEvent e) {
+				updateCursor(true);
+				previousDrag = e.getPoint();
+			}
+			public void mouseReleased(MouseEvent e) {
+				updateCursor(false);
+				previousDrag = null;
+			}
+			public void mouseExited(MouseEvent e) {
+				setCursor(Cursor.getDefaultCursor());
+			}
+		});
+		addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseDragged(MouseEvent e) {
+				panView(new Point(previousDrag.x - e.getPoint().x, 
+						previousDrag.y - e.getPoint().y));
+				updateCursor(true);
+				previousDrag = e.getPoint();
+			}
+		});
+		addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				zoomView(-e.getWheelRotation(), e.getPoint());
+			}
+		});
+		addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()==KeyEvent.VK_PAGE_DOWN) {
+					zoomView(-1, new Point(getWidth()/2, getHeight()/2));
+				} else if (e.getKeyCode()==KeyEvent.VK_PAGE_UP) {
+					zoomView(1, new Point(getWidth()/2, getHeight()/2));
+				} else if(e.getKeyCode()==KeyEvent.VK_UP) {
+					panView(new Point(0, 1));
+				} else if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+					panView(new Point(0, -1));
+				} else if(e.getKeyCode()==KeyEvent.VK_LEFT) {
+					panView(new Point(1, 0));
+				} else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
+					panView(new Point(-1, 0));
+				} else if(e.getKeyCode()==KeyEvent.VK_HOME) {
+					viewOrigin.x = 0;
+					viewOrigin.y = 0;
+					repaint();
+				} else if(e.getKeyCode()==KeyEvent.VK_ENTER){
+					viewScale = getAutoScale();
+					viewOrigin = getAutoPosition();
+					repaint();
+				}
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -68,13 +151,14 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x,y,width,height);
-		mapLayer.setBounds(0,0,width,height);
-		cellRegionLayer.setBounds(0,0,width,height);
-		cellLayer.setBounds(0,0,width,height);
-		nodeRegionLayer.setBounds(0,0,width,height);
-		nodeLayer.setBounds(0,0,width,height);
-		edgeRegionLayer.setBounds(0,0,width,height);
-		edgeLayer.setBounds(0,0,width,height);
+		// synchronize all bounding boxes
+		mapLayer.setBounds(x,y,width,height);
+		cellRegionLayer.setBounds(x,y,width,height);
+		cellLayer.setBounds(x,y,width,height);
+		nodeRegionLayer.setBounds(x,y,width,height);
+		nodeLayer.setBounds(x,y,width,height);
+		edgeRegionLayer.setBounds(x,y,width,height);
+		edgeLayer.setBounds(x,y,width,height);
 	}
 	
 	/**
@@ -105,32 +189,134 @@ public class VizLayeredPane extends JLayeredPane {
 	}
 	
 	/**
-	 * Converts x-y (distance) coordinates to i-j (pixel) coordinates. Uses 
-	 * the known size of the image to set the boundaries of the display.
-	 * Will always scale square (e.g. same scale applied in x- and y-axes).
+	 * Gets the point.
 	 *
-	 * @param x the x
-	 * @param y the y
-	 * @return the ij coordinates
+	 * @param coordinate the coordinate
+	 * @return the point
 	 */
-	public int[] xy2ij(double x, double y) {
-		int[] ij = new int[2];
-		double scale = Math.min(((double)getWidth())/city.getImage().getWidth(null), 
-				((double)getHeight())/city.getImage().getHeight(null));
-		int pX = (int)(getWidth()-scale*city.getImage().getWidth(null))/2;
-		int pY = (int)(getHeight()-scale*city.getImage().getHeight(null))/2;
-		Coordinate[] imageCoords = city.getImagePolygon().getCoordinates();
-		double bx1 = Math.min(imageCoords[0].x,Math.min(imageCoords[1].x,
-				Math.min(imageCoords[2].x,imageCoords[3].x)));
-		double by1 = Math.min(imageCoords[0].y,Math.min(imageCoords[1].y,
-				Math.min(imageCoords[2].y,imageCoords[3].y)));
-		double bx2 = Math.max(imageCoords[0].x,Math.max(imageCoords[1].x,
-				Math.max(imageCoords[2].x,imageCoords[3].x)));
-		double by2 = Math.max(imageCoords[0].y,Math.max(imageCoords[1].y,
-				Math.max(imageCoords[2].y,imageCoords[3].y)));
-		
-		ij[0] = pX + (int)(scale*(x-bx1)/(bx2-bx1)*city.getImage().getWidth(null));
-		ij[1] = pY + (int)(scale*(y-by1)/(by2-by1)*city.getImage().getHeight(null));
-		return ij;
+	public Point getPoint(Coordinate coordinate) {
+		return new Point((int)(Math.round((coordinate.x-viewOrigin.x)*getViewScale())),
+				(int)(Math.round((coordinate.y-viewOrigin.y)*getViewScale())));
+	}
+	
+	/**
+	 * Gets the coordinate.
+	 *
+	 * @param point the point
+	 * @return the coordinate
+	 */
+	public Coordinate getCoordinate(Point point) {
+		return new Coordinate(viewOrigin.x + point.x/viewScale,
+				viewOrigin.y + point.y/viewScale);
+	}
+	
+	/**
+	 * Gets the scale (kilometers per pixel).
+	 *
+	 * @return the scale
+	 */
+	public double getViewScale() {
+		return Math.max(MIN_SCALE,Math.min(MAX_SCALE,viewScale));
+	}
+	
+	/**
+	 * Gets the position of the upper-left hand corner.
+	 *
+	 * @return the position
+	 */
+	public Coordinate getViewOrigin() {
+		return viewOrigin;
+	}
+	
+	/**
+	 * Gets the auto scale. Scales the view to fit the entire city image (if
+	 * exists).
+	 *
+	 * @return the auto scale
+	 */
+	private double getAutoScale() {
+		if(city.getImage()==null) return viewScale;
+		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
+		y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;
+		for(Coordinate coordinate : city.getImagePolygon().getCoordinates()) {
+			x1 = Math.min(x1, coordinate.x);
+			x2 = Math.max(x2, coordinate.x);
+			y1 = Math.min(y1, coordinate.y);
+			y2 = Math.max(y2, coordinate.y);
+		}
+		return Math.min(getWidth()/Math.abs(x2-x1),getHeight()/Math.abs(y2-y1));
+	}
+	
+	/**
+	 * Gets the auto position.
+	 *
+	 * @return the auto position
+	 */
+	private Coordinate getAutoPosition() {
+		if(city.getImage()==null) return viewOrigin;
+		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
+		y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;
+		for(Coordinate coordinate : city.getImagePolygon().getCoordinates()) {
+			x1 = Math.min(x1, coordinate.x);
+			x2 = Math.max(x2, coordinate.x);
+			y1 = Math.min(y1, coordinate.y);
+			y2 = Math.max(y2, coordinate.y);
+		}
+		Point p1 = getPoint(new Coordinate(x1,y1));
+		Point p2 = getPoint(new Coordinate(x2,y2));
+		Point p = getPoint(new Coordinate(viewOrigin.x,viewOrigin.y));
+		p.x = p1.x - (getWidth()-Math.abs(p2.x-p1.x))/2;
+		p.y = p1.y - (getHeight()-Math.abs(p2.y-p1.y))/2;
+		return getCoordinate(p);
+	}
+	
+	/**
+	 * Pans the view.
+	 *
+	 * @param distance the distance
+	 */
+	private void panView(Point distance) {
+		viewOrigin.x += (distance.x)/viewScale;
+		viewOrigin.y += (distance.y)/viewScale;
+		repaint();
+	}
+	
+	/**
+	 * Centers the view.
+	 *
+	 * @param location the location
+	 */
+	private void centerView(Point location) {
+		viewOrigin.x += (location.x - getWidth()/2)/viewScale;
+		viewOrigin.y += (location.y - getHeight()/2)/viewScale;
+		repaint();
+	}
+	
+	/**
+	 * Zooms the view, maintaining the location as constant display.
+	 *
+	 * @param level the level, zoom in >0, zoom out <0
+	 * @param location the location
+	 */
+	private void zoomView(int level, Point location) {
+		double scaleFactor = Math.pow(1.5, level);
+		Coordinate coordinate = getCoordinate(location);
+		viewOrigin.x = coordinate.x - (coordinate.x-viewOrigin.x)/scaleFactor;
+		viewOrigin.y = coordinate.y - (coordinate.y-viewOrigin.y)/scaleFactor;
+		viewScale *= scaleFactor;
+		repaint();
+	}
+
+	/**
+	 * Updates the cursor to the correct cursor type.
+	 *
+	 * @param isClicking the is clicking
+	 */
+	private void updateCursor(boolean isClicking) {
+		if(isClicking) {
+			setCursor(CityNetCursor.CLOSED_HAND.getCursor());
+		} else {
+			setCursor(CityNetCursor.OPEN_HAND.getCursor());
+		}
 	}
 }

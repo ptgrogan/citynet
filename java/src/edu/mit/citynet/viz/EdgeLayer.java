@@ -46,16 +46,10 @@ public class EdgeLayer extends JPanel {
 		Set<Edge> edges = vizPane.getSystem().getEdges();
 		
 		for(Edge edge : edges) {
-			double x1 = edge.getOrigin().getCell().getPolygon().getCentroid().getCoordinate().x;
-			double y1 = edge.getOrigin().getCell().getPolygon().getCentroid().getCoordinate().y;
-			// convert distance units to pixels
-			int[] ij1 = vizPane.xy2ij(x1, y1);
-			Point origin = new Point(ij1[0],ij1[1]);
-			double x2 = edge.getDestination().getCell().getPolygon().getCentroid().getCoordinate().x;
-			double y2 = edge.getDestination().getCell().getPolygon().getCentroid().getCoordinate().y;
-			// convert distance units to pixels
-			int[] ij2 = vizPane.xy2ij(x2, y2);
-			Point destination = new Point(ij2[0],ij2[1]);
+			Point origin = vizPane.getPoint(edge.getOrigin()
+					.getCell().getPolygon().getCentroid().getCoordinate());
+			Point destination = vizPane.getPoint(edge.getDestination()
+					.getCell().getPolygon().getCentroid().getCoordinate());
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
 				// draw a line from origin to destination using the edge
