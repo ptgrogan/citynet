@@ -68,7 +68,6 @@ public class CityTestPanel extends CityPanel {
 		systemPanels = new HashSet<SystemPanel>();
 		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
 		Collections.sort(systems, new Comparator<CitySystem>() {
-			@Override
 			public int compare(CitySystem system1, CitySystem system2) {
 				return system1.getName().compareTo(system2.getName());
 			}

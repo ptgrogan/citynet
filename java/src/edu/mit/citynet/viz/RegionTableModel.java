@@ -47,7 +47,6 @@ public class RegionTableModel<t> extends AbstractTableModel {
 		selectedRegions.clear();
 		this.regions.addAll(regions);
 		Collections.sort(this.regions, new Comparator<t>() {
-			@Override
 			public int compare(t region1, t region2) {
 				// TODO: this is a hack-y way to sort based on description
 				// ...should be a superclass property/method

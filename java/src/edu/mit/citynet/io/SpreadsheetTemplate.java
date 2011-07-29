@@ -747,7 +747,6 @@ public class SpreadsheetTemplate {
 		
 		List<CellRegion> cellRegions = new ArrayList<CellRegion>(city.getCellRegions());
 		Collections.sort(cellRegions, new Comparator<CellRegion>() {
-			@Override
 			public int compare(CellRegion region1, CellRegion region2) {
 				return region1.getId()-region2.getId();
 			}
@@ -757,7 +756,6 @@ public class SpreadsheetTemplate {
 		}
 		List<Cell> cells = new ArrayList<Cell>(city.getCells());
 		Collections.sort(cells, new Comparator<Cell>() {
-			@Override
 			public int compare(Cell cell1, Cell cell2) {
 				return cell1.getId()-cell2.getId();
 			}
@@ -767,7 +765,6 @@ public class SpreadsheetTemplate {
 		}
 		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
 		Collections.sort(systems, new Comparator<CitySystem>() {
-			@Override
 			public int compare(CitySystem system1, CitySystem system2) {
 				return system1.getId()-system2.getId();
 			}
