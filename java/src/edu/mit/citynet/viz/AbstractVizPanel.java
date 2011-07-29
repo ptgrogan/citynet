@@ -19,21 +19,42 @@ public abstract class AbstractVizPanel extends JSplitPane {
 	private static final long serialVersionUID = 3664632230067588258L;
 
 	/**
-	 * Gets the set of selected cell regions.
+	 * Gets the set of checked cell regions.
+	 *
+	 * @return the checked cell regions
+	 */
+	public abstract Set<CellRegion> getCheckedCellRegions();
+	
+	/**
+	 * Gets the set of checked node regions.
+	 *
+	 * @return the checked node regions
+	 */
+	public abstract Set<NodeRegion> getCheckedNodeRegions();
+	
+	/**
+	 * Gets the set of checked edge regions.
+	 *
+	 * @return the checked edge regions
+	 */
+	public abstract Set<EdgeRegion> getCheckedEdgeRegions();
+	
+	/**
+	 * Gets the selected cell regions.
 	 *
 	 * @return the selected cell regions
 	 */
 	public abstract Set<CellRegion> getSelectedCellRegions();
 	
 	/**
-	 * Gets the set of selected node regions.
+	 * Gets the selected node regions.
 	 *
 	 * @return the selected node regions
 	 */
 	public abstract Set<NodeRegion> getSelectedNodeRegions();
 	
 	/**
-	 * Gets the set of selected edge regions.
+	 * Gets the selected edge regions.
 	 *
 	 * @return the selected edge regions
 	 */

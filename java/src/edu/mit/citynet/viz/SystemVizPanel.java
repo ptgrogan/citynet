@@ -13,7 +13,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
@@ -38,7 +39,9 @@ public class SystemVizPanel extends AbstractVizPanel {
 	private CitySystem system;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
+	private RegionTable<NodeRegion> nodeRegionTable;
 	private RegionTableModel<EdgeRegion> edgeRegionTableModel;
+	private RegionTable<EdgeRegion> edgeRegionTable;
 	
 	/**
 	 * Instantiates a new system viz panel.
@@ -78,7 +81,12 @@ public class SystemVizPanel extends AbstractVizPanel {
 				layeredPane.repaint();
 			}
 		});
-		JTable nodeRegionTable = new JTable(nodeRegionTableModel);
+		nodeRegionTable = new RegionTable<NodeRegion>(nodeRegionTableModel);
+		nodeRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				repaint();
+			}
+		});
 		nodeRegionTable.getTableHeader().setReorderingAllowed(false);
 		nodeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		nodeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
@@ -93,7 +101,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		JButton generateNodesButton = new JButton("Generate",CityNetIcon.NODE_REGIONS.getIcon());
 		generateNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				systemPanel.generateNodesCommand(nodeRegionTableModel.getSelectedRegions());
+				systemPanel.generateNodesCommand(nodeRegionTableModel.getCheckedRegions());
 				repaint();
 			}
 		});
@@ -117,7 +125,12 @@ public class SystemVizPanel extends AbstractVizPanel {
 				layeredPane.repaint();
 			}
 		});
-		JTable edgeRegionTable = new JTable(edgeRegionTableModel);
+		edgeRegionTable = new RegionTable<EdgeRegion>(edgeRegionTableModel);
+		edgeRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				repaint();
+			}
+		});
 		edgeRegionTable.getTableHeader().setReorderingAllowed(false);
 		edgeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		edgeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
@@ -132,7 +145,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		JButton generateEdgesButton = new JButton("Generate",CityNetIcon.EDGE_REGIONS.getIcon());
 		generateEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				systemPanel.generateEdgesCommand(edgeRegionTableModel.getSelectedRegions());
+				systemPanel.generateEdgesCommand(edgeRegionTableModel.getCheckedRegions());
 				repaint();
 			}
 		});
@@ -156,21 +169,42 @@ public class SystemVizPanel extends AbstractVizPanel {
 	/* (non-Javadoc)
 	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
 	 */
-	public Set<CellRegion> getSelectedCellRegions() {
+	public Set<CellRegion> getCheckedCellRegions() {
 		return new HashSet<CellRegion>();
 	}
 	
 	/* (non-Javadoc)
 	 * @see edu.mit.citynet.viz2.AbstractVizPanel#getSelectedNodeRegions()
 	 */
-	public Set<NodeRegion> getSelectedNodeRegions() {
-		return nodeRegionTableModel.getSelectedRegions();
+	public Set<NodeRegion> getCheckedNodeRegions() {
+		return nodeRegionTableModel.getCheckedRegions();
 	}
 	
 	/* (non-Javadoc)
 	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
 	 */
+	public Set<EdgeRegion> getCheckedEdgeRegions() {
+		return edgeRegionTableModel.getCheckedRegions();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
+	 */
+	public Set<CellRegion> getSelectedCellRegions() {
+		return new HashSet<CellRegion>();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedNodeRegions()
+	 */
+	public Set<NodeRegion> getSelectedNodeRegions() {
+		return nodeRegionTable.getSelectedRegions();
+	}
+
+	/* (non-Javadoc)
+	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
+	 */
 	public Set<EdgeRegion> getSelectedEdgeRegions() {
-		return edgeRegionTableModel.getSelectedRegions();
+		return edgeRegionTable.getSelectedRegions();
 	}
 }

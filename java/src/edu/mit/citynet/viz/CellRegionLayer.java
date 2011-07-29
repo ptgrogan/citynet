@@ -41,9 +41,10 @@ public class CellRegionLayer extends JPanel {
 		if(vizPane.getCity().getImage() == null 
 				|| vizPane.getCity().getImagePolygon() == null) return;
 		
-		Set<CellRegion> cellRegions = vizPane.getVizPanel().getSelectedCellRegions();
+		Set<CellRegion> cellRegions = vizPane.getVizPanel().getCheckedCellRegions();
 		
 		for(CellRegion cellRegion : cellRegions) {
+			boolean selected = vizPane.getVizPanel().getSelectedCellRegions().contains(cellRegion);
 			int[] xPoints = new int[cellRegion.getCoordinateList().size()];
 			int[] yPoints = new int[cellRegion.getCoordinateList().size()];
 			for(int i=0; i<cellRegion.getCoordinateList().size(); i++) {
@@ -55,8 +56,13 @@ public class CellRegionLayer extends JPanel {
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
 				// draw a semi-tranparent black square with a black outline
-				g2d.setStroke(new BasicStroke(2f));
-				g2d.setColor(Color.BLACK);
+				if(selected) {
+					g2d.setStroke(new BasicStroke(5f));
+					g2d.setColor(Color.WHITE);
+				} else {
+					g2d.setStroke(new BasicStroke(2f));
+					g2d.setColor(Color.BLACK);
+				}
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 				g2d.fillPolygon(xPoints, yPoints, xPoints.length);

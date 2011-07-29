@@ -2,6 +2,7 @@ package edu.mit.citynet.viz;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,9 +42,10 @@ public class EdgeRegionLayer extends JPanel {
 				|| vizPane.getCity().getImagePolygon() == null
 				|| vizPane.getSystem() == null) return;
 		
-		Set<EdgeRegion> edgeRegions = vizPane.getVizPanel().getSelectedEdgeRegions();
+		Set<EdgeRegion> edgeRegions = vizPane.getVizPanel().getCheckedEdgeRegions();
 		
 		for(EdgeRegion edgeRegion : edgeRegions) {
+			boolean selected = vizPane.getVizPanel().getSelectedEdgeRegions().contains(edgeRegion);
 			int[] xPoints = new int[edgeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[edgeRegion.getCoordinateList().size()];
 			for(int i=0; i<edgeRegion.getCoordinateList().size(); i++) {
@@ -54,8 +56,13 @@ public class EdgeRegionLayer extends JPanel {
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
-				g2d.setStroke(new BasicStroke(2f));
-				g2d.setColor(edgeRegion.getEdgeType().getColor());
+				if(selected) {
+					g2d.setStroke(new BasicStroke(5f));
+					g2d.setColor(Color.WHITE);
+				} else {
+					g2d.setStroke(new BasicStroke(2f));
+					g2d.setColor(edgeRegion.getEdgeType().getColor());
+				}
 				if(edgeRegion.getEdgeRegionType()==EdgeRegion.EdgeRegionType.POLYGON_ADJACENT
 						|| edgeRegion.getEdgeRegionType()==EdgeRegion.EdgeRegionType.POLYGON_CONNECTED
 						|| edgeRegion.getEdgeRegionType()==EdgeRegion.EdgeRegionType.POLYGON_ORTHOGONAL) {

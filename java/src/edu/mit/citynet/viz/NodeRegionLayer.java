@@ -2,6 +2,7 @@ package edu.mit.citynet.viz;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,9 +42,10 @@ public class NodeRegionLayer extends JPanel {
 				|| vizPane.getCity().getImagePolygon() == null
 				|| vizPane.getSystem() == null) return;
 		
-		Set<NodeRegion> nodeRegions = vizPane.getVizPanel().getSelectedNodeRegions();
+		Set<NodeRegion> nodeRegions = vizPane.getVizPanel().getCheckedNodeRegions();
 		
 		for(NodeRegion nodeRegion : nodeRegions) {
+			boolean selected = vizPane.getVizPanel().getSelectedNodeRegions().contains(nodeRegion);
 			int[] xPoints = new int[nodeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[nodeRegion.getCoordinateList().size()];
 			for(int i=0; i<nodeRegion.getCoordinateList().size(); i++) {
@@ -54,8 +56,13 @@ public class NodeRegionLayer extends JPanel {
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
-				g2d.setStroke(new BasicStroke(2f));
-				g2d.setColor(nodeRegion.getNodeType().getColor());
+				if(selected) {
+					g2d.setStroke(new BasicStroke(5f));
+					g2d.setColor(Color.WHITE);
+				} else {
+					g2d.setStroke(new BasicStroke(2f));
+					g2d.setColor(nodeRegion.getNodeType().getColor());
+				}
 				if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYGON) {
 					// draw a semi-transparent polygon with the node type color 
 					// with a solid outline of the same color

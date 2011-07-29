@@ -26,7 +26,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 	private static final long serialVersionUID = -1151237693598337559L;
 	
 	private List<t> regions;
-	private Set<t> selectedRegions;
+	private Set<t> checkedRegions;
 	
 	/**
 	 * Instantiates a new node region table model.
@@ -34,7 +34,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 	public RegionTableModel() {
 		super();
 		regions = new ArrayList<t>();
-		selectedRegions = new HashSet<t>();
+		checkedRegions = new HashSet<t>();
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 	 */
 	public void setRegions(Set<t> regions) {
 		this.regions.clear();
-		selectedRegions.clear();
+		checkedRegions.clear();
 		this.regions.addAll(regions);
 		Collections.sort(this.regions, new Comparator<t>() {
 			public int compare(t region1, t region2) {
@@ -59,17 +59,27 @@ public class RegionTableModel<t> extends AbstractTableModel {
 				else return 0;
 			}
 		});
-		selectedRegions.addAll(regions);
+		checkedRegions.addAll(regions);
 		fireTableDataChanged();
 	}
 	
 	/**
-	 * Gets the selected regions.
+	 * Gets the region at a row.
 	 *
-	 * @return the selected regions
+	 * @param row the row
+	 * @return the region
 	 */
-	public Set<t> getSelectedRegions() {
-		return new HashSet<t>(selectedRegions);
+	public t getRegionAt(int row) {
+		return regions.get(row);
+	}
+	
+	/**
+	 * Gets the checked regions.
+	 *
+	 * @return the checked regions
+	 */
+	public Set<t> getCheckedRegions() {
+		return new HashSet<t>(checkedRegions);
 	}
 	
 	/* (non-Javadoc)
@@ -91,7 +101,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		if(columnIndex==0) {
-			return selectedRegions.contains(regions.get(rowIndex));
+			return checkedRegions.contains(regions.get(rowIndex));
 		} else {
 			// TODO: this is a hack-y way to display the region description
 			// ...should be a superclass property/method
@@ -129,9 +139,9 @@ public class RegionTableModel<t> extends AbstractTableModel {
     	if(col==0) {
     		if(value instanceof Boolean) {
     			if((Boolean)value) {
-    				selectedRegions.add(regions.get(row));
+    				checkedRegions.add(regions.get(row));
     			} else {
-    				selectedRegions.remove(regions.get(row));
+    				checkedRegions.remove(regions.get(row));
     			}
     		}
     	}
