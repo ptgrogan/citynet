@@ -216,7 +216,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the scale
 	 */
 	public double getViewScale() {
-		return Math.max(MIN_SCALE,Math.min(MAX_SCALE,viewScale));
+		return viewScale;
 	}
 	
 	/**
@@ -300,10 +300,11 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	private void zoomView(int level, Point location) {
 		double scaleFactor = Math.pow(1.5, level);
+		double newViewScale = Math.max(MIN_SCALE,Math.min(MAX_SCALE,viewScale*scaleFactor));
 		Coordinate coordinate = getCoordinate(location);
-		viewOrigin.x = coordinate.x - (coordinate.x-viewOrigin.x)/scaleFactor;
-		viewOrigin.y = coordinate.y - (coordinate.y-viewOrigin.y)/scaleFactor;
-		viewScale *= scaleFactor;
+		viewOrigin.x = coordinate.x - (coordinate.x-viewOrigin.x)*viewScale/newViewScale;
+		viewOrigin.y = coordinate.y - (coordinate.y-viewOrigin.y)*viewScale/newViewScale;
+		viewScale = newViewScale;
 		repaint();
 	}
 
