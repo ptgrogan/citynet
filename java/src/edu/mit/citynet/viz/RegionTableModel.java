@@ -70,7 +70,9 @@ public class RegionTableModel<t> extends AbstractTableModel {
 	 * @return the region
 	 */
 	public t getRegionAt(int row) {
-		return regions.get(row);
+		if(row >= 0 && row < regions.size())
+			return regions.get(row);
+		else return null;
 	}
 	
 	/**
@@ -145,6 +147,6 @@ public class RegionTableModel<t> extends AbstractTableModel {
     			}
     		}
     	}
-    	fireTableDataChanged();
+    	fireTableRowsUpdated(row, row);
 	}
 }

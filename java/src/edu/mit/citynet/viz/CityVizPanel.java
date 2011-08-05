@@ -6,12 +6,18 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -37,6 +43,7 @@ public class CityVizPanel extends AbstractVizPanel {
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<CellRegion> cellRegionTableModel;
 	private RegionTable<CellRegion> cellRegionTable;
+	private JButton editCellRegionButton, deleteCellRegionsButton;
 	
 	/**
 	 * Instantiates a new city viz panel.
@@ -49,6 +56,42 @@ public class CityVizPanel extends AbstractVizPanel {
 		}
 		this.cityPanel = cityPanel;
 		initializePanel();
+	}
+	
+	/**
+	 * Creates the cell region popup menu.
+	 *
+	 * @param regions the regions
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createCellRegionPopupMenu(Set<CellRegion> regions) {
+		JPopupMenu cellRegionPopupMenu = new JPopupMenu();
+		if(regions.size()>0) {
+			JMenuItem editCellRegionMenuItem = new JMenuItem("Edit Cell Region");
+			editCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editCellRegionCommand();
+				}
+			});
+			editCellRegionMenuItem.setEnabled(regions.size()==1);
+			cellRegionPopupMenu.add(editCellRegionMenuItem);
+			JMenuItem deleteCellRegionMenuItem = new JMenuItem("Delete Cell Region" + (regions.size()>1?"s":""));
+			deleteCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteCellRegionsCommand();
+				}
+			});
+			cellRegionPopupMenu.add(deleteCellRegionMenuItem);
+		} else {
+			JMenuItem addCellRegionMenuItem = new JMenuItem("Add Cell Region");
+			addCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addCellRegionCommand();
+				}
+			});
+			cellRegionPopupMenu.add(addCellRegionMenuItem);
+		}
+		return cellRegionPopupMenu;
 	}
 	
 	/**
@@ -85,10 +128,83 @@ public class CityVizPanel extends AbstractVizPanel {
 		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
 		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(200,400));
-		leftPanel.add(new JScrollPane(cellRegionTable),c);
+		MouseAdapter cellRegionMouseAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					if(cellRegionTable.getSelectionModel().isSelectionEmpty())
+						addCellRegionCommand();
+					else
+						editCellRegionCommand();
+				}
+			}
+			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=cellRegionTable)
+					cellRegionTable.getSelectionModel().clearSelection();
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					int row = cellRegionTable.rowAtPoint(e.getPoint());
+					CellRegion region = (CellRegion)cellRegionTableModel.getRegionAt(row);
+					if(!cellRegionTable.getSelectedRegions().contains(region)) {
+						cellRegionTable.getSelectionModel().addSelectionInterval(row, row);
+					}
+					createCellRegionPopupMenu(cellRegionTable.getSelectedRegions()).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		cellRegionTable.addMouseListener(cellRegionMouseAdapter);
+		cellRegionTable.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
+					deleteCellRegionsCommand();
+				} else if(e.getKeyCode()==KeyEvent.VK_ENTER && cellRegionTable.getSelectedRowCount()==1){
+					editCellRegionCommand();
+				}
+			}
+		});
+		cellRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				editCellRegionButton.setEnabled(cellRegionTable.getSelectedRowCount()==1);
+				deleteCellRegionsButton.setEnabled(cellRegionTable.getSelectedRowCount()>0);
+			}
+		});
+		JScrollPane cellRegionScroll = new JScrollPane(cellRegionTable);
+		cellRegionScroll.addMouseListener(cellRegionMouseAdapter);
+		leftPanel.add(cellRegionScroll,c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
+		JPanel cellRegionPanel = new JPanel();
+		cellRegionPanel.setLayout(new BoxLayout(cellRegionPanel,BoxLayout.LINE_AXIS));
+		JButton addCellRegionButton = new JButton("Add");
+		addCellRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addCellRegionCommand();
+			}
+		});
+		cellRegionPanel.add(addCellRegionButton);
+		editCellRegionButton = new JButton("Edit");
+		editCellRegionButton.setEnabled(false);
+		editCellRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editCellRegionCommand();
+			}
+		});
+		cellRegionPanel.add(editCellRegionButton);
+		deleteCellRegionsButton = new JButton("Delete");
+		deleteCellRegionsButton.setEnabled(false);
+		deleteCellRegionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteCellRegionsCommand();
+			}
+		});
+		cellRegionPanel.add(deleteCellRegionsButton);
+		leftPanel.add(cellRegionPanel, c);
+		c.gridy++;
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
 		JButton generateCellsButton = new JButton("Generate",CityNetIcon.CELL_REGIONS.getIcon());
@@ -113,6 +229,18 @@ public class CityVizPanel extends AbstractVizPanel {
 		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), null);
 		rightPanel.add(layeredPane,BorderLayout.CENTER);
 		setRightComponent(rightPanel);
+	}
+	
+	private void addCellRegionCommand() {
+		System.out.println("Add Cell Region Command");
+	}
+	
+	private void editCellRegionCommand() {
+		System.out.println("Edit Cell Region Command");
+	}
+	
+	private void deleteCellRegionsCommand() {
+		System.out.println("Delete Cell Regions Command");
 	}
 	
 	/**
