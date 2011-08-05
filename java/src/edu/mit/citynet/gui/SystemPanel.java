@@ -1,8 +1,10 @@
 package edu.mit.citynet.gui;
 
+import java.awt.BorderLayout;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import edu.mit.citynet.core.CitySystem;
@@ -10,6 +12,7 @@ import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.viz.SystemVizPanel;
 
 /**
  * The SystemPanel class is a panel to display system information.
@@ -19,8 +22,9 @@ import edu.mit.citynet.core.NodeRegion;
 public class SystemPanel extends JPanel {
 	private static final long serialVersionUID = -2586548029906436001L;
 
-	protected CityPanel cityPanel;
-	protected CitySystem system;
+	private CityPanel cityPanel;
+	private CitySystem system;
+	private SystemVizPanel systemVizPanel;
 	
 	/**
 	 * Instantiates a new system panel.
@@ -34,6 +38,17 @@ public class SystemPanel extends JPanel {
 		}
 		this.cityPanel = cityPanel;
 		this.system = system;
+		initializePanel();
+	}
+
+	/**
+	 * Initializes the panel.
+	 */
+	private void initializePanel() {
+		setLayout(new BorderLayout());
+		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		systemVizPanel = new SystemVizPanel(this, system);
+		add(systemVizPanel,BorderLayout.CENTER);
 	}
 	
 	/**

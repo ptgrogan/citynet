@@ -25,6 +25,7 @@ public class MapLayer extends JPanel {
 	 */
 	public MapLayer(VizLayeredPane vizPane) {
 		this.vizPane = vizPane;
+		setOpaque(false);
 	}
 	
 	/* (non-Javadoc)

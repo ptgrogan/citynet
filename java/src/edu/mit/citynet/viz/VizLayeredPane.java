@@ -33,6 +33,7 @@ public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
 	private static final double MIN_SCALE = 10, MAX_SCALE = 1000;
 	private AbstractVizPanel vizPanel;
+	private GridLayer gridLayer;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
 	private CellLayer cellLayer;
@@ -70,20 +71,22 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	private void initializePanel() {
 		setPreferredSize(new Dimension(250,250));
+		gridLayer = new GridLayer(this);
+		add(gridLayer, new Integer(1));
 		mapLayer = new MapLayer(this);
-		add(mapLayer, new Integer(1));
+		add(mapLayer, new Integer(2));
 		cellRegionLayer = new CellRegionLayer(this);
-		add(cellRegionLayer, new Integer(2));
+		add(cellRegionLayer, new Integer(3));
 		cellLayer = new CellLayer(this);
-		add(cellLayer, new Integer(3));
+		add(cellLayer, new Integer(4));
 		nodeRegionLayer = new NodeRegionLayer(this);
-		add(nodeRegionLayer, new Integer(4));
+		add(nodeRegionLayer, new Integer(5));
 		nodeLayer = new NodeLayer(this);
-		add(nodeLayer, new Integer(5));
+		add(nodeLayer, new Integer(6));
 		edgeRegionLayer = new EdgeRegionLayer(this);
-		add(edgeRegionLayer, new Integer(6));
+		add(edgeRegionLayer, new Integer(7));
 		edgeLayer = new EdgeLayer(this);
-		add(edgeLayer,new Integer(7));
+		add(edgeLayer,new Integer(8));
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
 				updateCursor(false);
@@ -152,6 +155,7 @@ public class VizLayeredPane extends JLayeredPane {
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x,y,width,height);
 		// synchronize all bounding boxes
+		gridLayer.setBounds(x,y,width,height);
 		mapLayer.setBounds(x,y,width,height);
 		cellRegionLayer.setBounds(x,y,width,height);
 		cellLayer.setBounds(x,y,width,height);

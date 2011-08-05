@@ -1,7 +1,6 @@
 package edu.mit.citynet.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,10 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
@@ -29,8 +29,9 @@ public class CityPanel extends JPanel {
 	private static final long serialVersionUID = -9157294901016405959L;
 
 	private CityNetFrame cityNetFrame;
-	protected City city;
-	protected Set<SystemPanel> systemPanels;
+	private City city;
+	private JTabbedPane tabbedPane;
+	private Set<SystemPanel> systemPanels;
 	private CityVizPanel cityVizPanel;
 	
 	/**
@@ -53,7 +54,8 @@ public class CityPanel extends JPanel {
 	 */
 	private void initializePanel() {
 		setLayout(new BorderLayout());
-		JTabbedPane tabbedPane = new JTabbedPane();
+		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		tabbedPane = new JTabbedPane();
 		cityVizPanel = new CityVizPanel(this);
 		tabbedPane.addTab("City", cityVizPanel);
 		systemPanels = new HashSet<SystemPanel>();
@@ -64,12 +66,19 @@ public class CityPanel extends JPanel {
 			}
 		});
 		for(CitySystem system : systems) {
-			/*
-			SystemTestPanel systemPanel = new SystemTestPanel(this, system);
+			SystemPanel systemPanel = new SystemPanel(this, system);
 			systemPanels.add(systemPanel);
 			tabbedPane.addTab(system.getName(), systemPanel);
-			*/
 		}
+		tabbedPane.addTab("+", new JPanel());
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if(tabbedPane.getSelectedIndex()==tabbedPane.getTabCount()-1) {
+					System.out.println("Add System");
+					tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2);
+				}
+			}
+		});
 		add(tabbedPane, BorderLayout.CENTER);
 	}
 	
