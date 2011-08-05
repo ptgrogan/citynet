@@ -214,7 +214,11 @@ public class CityNetFrame extends JFrame {
 		if(cityPanel != null) {
 			int returnVal = fileChooser.showSaveDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				template.setFilePath(fileChooser.getSelectedFile().getAbsolutePath());
+				String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+				if(!filePath.substring(filePath.length() - 4, filePath.length()).equals(".xls")) {
+					filePath += ".xls";
+				}
+				template.setFilePath(filePath);
 				saveCityCommand();
 			}
 		}
