@@ -15,7 +15,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,7 +28,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
 
-public class CityDetailsDialog extends JDialog {
+public class CityDetailsPanel extends JPanel {
 	private static final long serialVersionUID = 4642496612942013193L;
 	private static final String SOUTH = "South", NORTH = "North", 
 		EAST = "East", WEST = "West";
@@ -43,10 +42,8 @@ public class CityDetailsDialog extends JDialog {
 	private SpinnerNumberModel latitudeModel, longitudeModel, rotationModel,
 		x1Model, y1Model, x2Model, y2Model;
 	private JLabel imageLabel;
-	private JButton saveButton,cancelButton;
 	
-	public CityDetailsDialog(CityNetFrame owner) {
-		super(owner, "City Details", true);
+	public CityDetailsPanel(CityNetFrame owner) {
 		fileChooser = new JFileChooser(System.getProperty("user.dir"));
 		initializeDialog();
 	}
@@ -86,29 +83,6 @@ public class CityDetailsDialog extends JDialog {
 		c.fill = GridBagConstraints.BOTH;
 		imageLabel = new JLabel(new ImageIcon(), JLabel.CENTER);
 		add(imageLabel, c);
-		c.gridy+=3;
-		c.gridx = 0;
-		c.weightx = 0;
-		c.weighty = 0;
-		c.gridwidth = 3;
-		c.anchor = GridBagConstraints.LINE_END;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-		saveButton = new JButton("Save");
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveCityDetailsCommand();
-			}
-		});
-		buttonPanel.add(saveButton);
-		cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-		buttonPanel.add(cancelButton);
-		add(buttonPanel, c);
 	}
 	
 	/**
@@ -272,7 +246,7 @@ public class CityDetailsDialog extends JDialog {
 		longitudeModel.setValue(Math.abs(city.getLongitude()));
 		longitudeCombo.setSelectedItem(city.getLongitude()>0?EAST:WEST);
 		rotationModel.setValue(city.getRotation());
-		getRootPane().setDefaultButton(saveButton);
+		//getRootPane().setDefaultButton(okButton);
 	}
 	
 	/**
@@ -288,8 +262,9 @@ public class CityDetailsDialog extends JDialog {
 				repaint();
 				imagePathText.setText(fileChooser.getSelectedFile().getAbsolutePath());
 			} catch(Exception ex) {
-				JOptionPane.showMessageDialog(this, "Invalid image selected.", 
-						"City.Net Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Could not read image file:\n" + 
+						fileChooser.getSelectedFile().getAbsolutePath(), 
+						"City.Net | Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -323,6 +298,5 @@ public class CityDetailsDialog extends JDialog {
 		city.setLongitude(longitudeModel.getNumber().doubleValue()
 				*(longitudeCombo.getSelectedItem()==EAST?1:-1));
 		city.setRotation(rotationModel.getNumber().doubleValue());
-		dispose();
 	}
 }

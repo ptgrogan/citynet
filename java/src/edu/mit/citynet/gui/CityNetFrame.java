@@ -32,7 +32,7 @@ public class CityNetFrame extends JFrame {
 	private JPanel backgroundPanel;
 	private CityPanel cityPanel;
 	private JFileChooser fileChooser;
-	private CityDetailsDialog cityDetailsDialog;
+	private CityDetailsPanel cityDetailsDialog;
 	private SpreadsheetTemplate template;
 	
 	/**
@@ -85,12 +85,7 @@ public class CityNetFrame extends JFrame {
 				return "XLS Files";
 			}
 		});
-		cityDetailsDialog = new CityDetailsDialog(this);
-		cityDetailsDialog.addWindowListener(new WindowAdapter() {
-			public void windowClosed(WindowEvent e) {
-				repaint();
-			}
-		});
+		cityDetailsDialog = new CityDetailsPanel(this);
 		initializeFrame();
 	}
 	
@@ -181,10 +176,6 @@ public class CityNetFrame extends JFrame {
 	 */
 	private void openCityCommand(City city) {
 		CityNet.getInstance().setCity(city);
-		// toggle the commenting on the two following lines to switch between
-		// the editor and the test panels
-		//cityPanel = new CityTestPanel(city);
-		//cityPanel = new CityEditorPanel(city);
 		cityPanel = new CityPanel(this,city);
 		setContentPane(cityPanel);
 		validate();
@@ -200,7 +191,8 @@ public class CityNetFrame extends JFrame {
 		System.out.println("Close City Command");
 		int answer = JOptionPane.showOptionDialog(this, 
 				"Save changes to '" + cityPanel.getCity().getName() + "' before closing?", 
-				"Save Warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+				"City.Net | Warning", JOptionPane.YES_NO_CANCEL_OPTION, 
+				JOptionPane.WARNING_MESSAGE, null, null, null);
 	    if(answer == JOptionPane.CANCEL_OPTION) {
 	    	return false;
 	    } else if (answer == JOptionPane.YES_OPTION) {
@@ -241,7 +233,8 @@ public class CityNetFrame extends JFrame {
 					template.writeTemplate(cityPanel.getCity());
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(this, "An error of type " + 
-							e.getClass().getSimpleName() + " occurred while saving the city.");
+							e.getClass().getSimpleName() + " occurred while saving the city.",
+							"City.Net | Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 			}
@@ -266,8 +259,10 @@ public class CityNetFrame extends JFrame {
 	public void editCityDetailsCommand() {
 		System.out.println("Edit City Details Command");
 		cityDetailsDialog.loadCityDetails(cityPanel.getCity());
-		cityDetailsDialog.pack();
-		cityDetailsDialog.setLocationRelativeTo(this);
-		cityDetailsDialog.setVisible(true);
+		int value = JOptionPane.showConfirmDialog(this,cityDetailsDialog,"City.Net | City Details", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			cityDetailsDialog.saveCityDetailsCommand();
+		}
 	}
 }
