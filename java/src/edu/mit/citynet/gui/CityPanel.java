@@ -1,21 +1,24 @@
 package edu.mit.citynet.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.viz.CityVizPanel;
 
 /**
  * The CityPanel class is a panel to display city information.
@@ -28,8 +31,7 @@ public class CityPanel extends JPanel {
 	private CityNetFrame cityNetFrame;
 	protected City city;
 	protected Set<SystemPanel> systemPanels;
-	private JLabel cityNameLabel;
-	private JButton editCityButton;
+	private CityVizPanel cityVizPanel;
 	
 	/**
 	 * Instantiates a new city panel.
@@ -50,33 +52,25 @@ public class CityPanel extends JPanel {
 	 * Initializes the panel.
 	 */
 	private void initializePanel() {
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(2,2,2,2);
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weightx = 0;
-		c.weighty = 0;
-		c.anchor = GridBagConstraints.LINE_START;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		cityNameLabel = new JLabel(city.getName());
-		add(cityNameLabel,c);
-		c.gridx++;
-		editCityButton = new JButton("Edit");
-		editCityButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cityNetFrame.editCityDetailsCommand();
+		setLayout(new BorderLayout());
+		JTabbedPane tabbedPane = new JTabbedPane();
+		cityVizPanel = new CityVizPanel(this);
+		tabbedPane.addTab("City", cityVizPanel);
+		systemPanels = new HashSet<SystemPanel>();
+		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
+		Collections.sort(systems, new Comparator<CitySystem>() {
+			public int compare(CitySystem system1, CitySystem system2) {
+				return system1.getName().compareTo(system2.getName());
 			}
 		});
-		add(editCityButton,c);
-	}
-	
-	/* (non-Javadoc)
-	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
-	 */
-	public void paint(Graphics g) {
-		super.paint(g);
-		cityNameLabel.setText(city.getName());
+		for(CitySystem system : systems) {
+			/*
+			SystemTestPanel systemPanel = new SystemTestPanel(this, system);
+			systemPanels.add(systemPanel);
+			tabbedPane.addTab(system.getName(), systemPanel);
+			*/
+		}
+		add(tabbedPane, BorderLayout.CENTER);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package edu.mit.citynet.gui;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -123,6 +124,15 @@ public class CityNetFrame extends JFrame {
 		});
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.awt.Window#paint(java.awt.Graphics)
+	 */
+	public void paint(Graphics g) {
+		super.paint(g);
+		if(isCityOpen()) setTitle("CityNet | " + cityPanel.getCity().getName());
+		else setTitle("CityNet");
+	}
+	
 	/**
 	 * Checks if is city open.
 	 *
@@ -142,6 +152,7 @@ public class CityNetFrame extends JFrame {
 		}
 		template.setFilePath(null);
 		openCityCommand(new City());
+		editCityDetailsCommand();
 	}
 	
 	/**
