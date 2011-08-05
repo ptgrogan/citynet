@@ -6,8 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +28,6 @@ public class CityPanel extends JPanel {
 	private CityNetFrame cityNetFrame;
 	protected City city;
 	protected Set<SystemPanel> systemPanels;
-	private CityDetailsDialog cityDetailsDialog;
 	private JLabel cityNameLabel;
 	private JButton editCityButton;
 	
@@ -46,12 +43,6 @@ public class CityPanel extends JPanel {
 		}
 		this.cityNetFrame = cityNetFrame;
 		this.city = city;
-		cityDetailsDialog = new CityDetailsDialog(cityNetFrame);
-		cityDetailsDialog.addWindowListener(new WindowAdapter() {
-			public void windowClosed(WindowEvent e) {
-				repaint();
-			}
-		});
 		initializePanel();
 	}
 	
@@ -74,7 +65,7 @@ public class CityPanel extends JPanel {
 		editCityButton = new JButton("Edit");
 		editCityButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				editCityDetailsCommand();
+				cityNetFrame.editCityDetailsCommand();
 			}
 		});
 		add(editCityButton,c);
@@ -104,17 +95,6 @@ public class CityPanel extends JPanel {
 	 */
 	public CityNetFrame getCityNetFrame() {
 		return cityNetFrame;
-	}
-	
-	/**
-	 * Edits the city details command.
-	 */
-	public void editCityDetailsCommand() {
-		System.out.println("Edit City Details Command");
-		cityDetailsDialog.loadCityDetails(city);
-		cityDetailsDialog.pack();
-		cityDetailsDialog.setLocationRelativeTo(this);
-		cityDetailsDialog.setVisible(true);
 	}
 
 	/**

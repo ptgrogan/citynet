@@ -24,6 +24,8 @@ public class CityNetMenuBar extends JMenuBar {
 	private JMenu fileMenu;
 	private JMenuItem newCityItem, openCityItem, closeCityItem, 
 		saveCityAsItem, saveCityItem, exitItem;
+	private JMenu editMenu;
+	private JMenuItem cityDetails;
 	
 	/**
 	 * Instantiates a new city net menu bar.
@@ -92,6 +94,18 @@ public class CityNetMenuBar extends JMenuBar {
         });
         fileMenu.add(exitItem);
 	    add(fileMenu);
+	    editMenu = new JMenu("Edit");
+	    editMenu.setMnemonic(KeyEvent.VK_E);
+	    cityDetails = new JMenuItem("City Details", KeyEvent.VK_D);
+	    cityDetails.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_D, ActionEvent.CTRL_MASK));
+	    cityDetails.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+    			frame.editCityDetailsCommand();
+        	}
+        });
+	    editMenu.add(cityDetails);
+	    add(editMenu);
 	}
 	
 	/* (non-Javadoc)
@@ -104,5 +118,6 @@ public class CityNetMenuBar extends JMenuBar {
 		closeCityItem.setEnabled(frame.isCityOpen());
 		saveCityItem.setEnabled(frame.isCityOpen());
 		saveCityAsItem.setEnabled(frame.isCityOpen());
+		editMenu.setEnabled(frame.isCityOpen());
 	}
 }

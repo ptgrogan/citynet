@@ -31,6 +31,7 @@ public class CityNetFrame extends JFrame {
 	private JPanel backgroundPanel;
 	private CityPanel cityPanel;
 	private JFileChooser fileChooser;
+	private CityDetailsDialog cityDetailsDialog;
 	private SpreadsheetTemplate template;
 	
 	/**
@@ -41,37 +42,6 @@ public class CityNetFrame extends JFrame {
 		template = new SpreadsheetTemplate();
 		menuBar = new CityNetMenuBar(this);
 		backgroundPanel = new BackgroundPanel();
-		initializeFrame();
-	}
-	
-	/**
-	 * Initializes the frame.
-	 */
-	private void initializeFrame() {
-		setJMenuBar(menuBar);
-		setContentPane(backgroundPanel);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		// try to specify multiple icon sizes (used for windows 7 task bar)
-	    try {
-	        java.lang.reflect.Method method = Class.forName("java.awt.Window").getDeclaredMethod("setIconImages", java.util.List.class);
-			ArrayList<Image> images = new ArrayList<Image>();
-			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
-			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_32.png")));
-	        method.invoke(this,images);
-	    } catch( Exception e ) {
-	    	// otherwise assign small icon only
-	        try {
-				setIconImage(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(null, "The City.Net icon could not be loaded.");
-				e.printStackTrace();
-			}
-	    }
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				exitCommand();
-			}
-		});
 		fileChooser = new JFileChooser(System.getProperty("user.dir")) {
 			private static final long serialVersionUID = 5853237903722516861L;
 			public void approveSelection() {
@@ -112,6 +82,43 @@ public class CityNetFrame extends JFrame {
 			@Override
 			public String getDescription() {
 				return "XLS Files";
+			}
+		});
+		cityDetailsDialog = new CityDetailsDialog(this);
+		cityDetailsDialog.addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
+				repaint();
+			}
+		});
+		initializeFrame();
+	}
+	
+	/**
+	 * Initializes the frame.
+	 */
+	private void initializeFrame() {
+		setJMenuBar(menuBar);
+		setContentPane(backgroundPanel);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		// try to specify multiple icon sizes (used for windows 7 task bar)
+	    try {
+	        java.lang.reflect.Method method = Class.forName("java.awt.Window").getDeclaredMethod("setIconImages", java.util.List.class);
+			ArrayList<Image> images = new ArrayList<Image>();
+			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
+			images.add(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_32.png")));
+	        method.invoke(this,images);
+	    } catch( Exception e ) {
+	    	// otherwise assign small icon only
+	        try {
+				setIconImage(ImageIO.read(getClass().getClassLoader().getResource("resources/citynet_16.png")));
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "The City.Net icon could not be loaded.");
+				e.printStackTrace();
+			}
+	    }
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				exitCommand();
 			}
 		});
 	}
@@ -170,6 +177,7 @@ public class CityNetFrame extends JFrame {
 		cityPanel = new CityPanel(this,city);
 		setContentPane(cityPanel);
 		validate();
+		repaint();
 	}
 	
 	/**
@@ -191,6 +199,7 @@ public class CityNetFrame extends JFrame {
 		cityPanel = null;
 		setContentPane(backgroundPanel);
 		validate();
+		repaint();
 		return true;
 	}
 	
@@ -238,5 +247,16 @@ public class CityNetFrame extends JFrame {
 		} else {
 			dispose();
 		}
+	}
+	
+	/**
+	 * Edits the city details command.
+	 */
+	public void editCityDetailsCommand() {
+		System.out.println("Edit City Details Command");
+		cityDetailsDialog.loadCityDetails(cityPanel.getCity());
+		cityDetailsDialog.pack();
+		cityDetailsDialog.setLocationRelativeTo(this);
+		cityDetailsDialog.setVisible(true);
 	}
 }
