@@ -1,8 +1,18 @@
 package edu.mit.citynet.gui;
 
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.mit.citynet.core.Cell;
@@ -10,27 +20,72 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 
 /**
- * The CityPanel class is an abstract panel to display city information. It is used
- * as a common base class for the CityPanelViz and the editor.
+ * The CityPanel class is a panel to display city information.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public abstract class CityPanel extends JPanel {
+public class CityPanel extends JPanel {
 	private static final long serialVersionUID = -9157294901016405959L;
 
+	private CityNetFrame cityNetFrame;
 	protected City city;
 	protected Set<SystemPanel> systemPanels;
+	private CityDetailsDialog cityDetailsDialog;
+	private JLabel cityNameLabel;
+	private JButton editCityButton;
 	
 	/**
 	 * Instantiates a new city panel.
 	 *
+	 * @param cityNetFrame the city net frame
 	 * @param city the city
 	 */
-	public CityPanel(City city) {
+	public CityPanel(CityNetFrame cityNetFrame, City city) {
 		if (city==null) {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
+		this.cityNetFrame = cityNetFrame;
 		this.city = city;
+		cityDetailsDialog = new CityDetailsDialog(cityNetFrame);
+		cityDetailsDialog.addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
+				repaint();
+			}
+		});
+		initializePanel();
+	}
+	
+	/**
+	 * Initializes the panel.
+	 */
+	private void initializePanel() {
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(2,2,2,2);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		cityNameLabel = new JLabel(city.getName());
+		add(cityNameLabel,c);
+		c.gridx++;
+		editCityButton = new JButton("Edit");
+		editCityButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editCityDetailsCommand();
+			}
+		});
+		add(editCityButton,c);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.JComponent#paint(java.awt.Graphics)
+	 */
+	public void paint(Graphics g) {
+		super.paint(g);
+		cityNameLabel.setText(city.getName());
 	}
 	
 	/**
@@ -40,6 +95,26 @@ public abstract class CityPanel extends JPanel {
 	 */
 	public City getCity() {
 		return city;
+	}
+	
+	/**
+	 * Gets the city net frame.
+	 *
+	 * @return the city net frame
+	 */
+	public CityNetFrame getCityNetFrame() {
+		return cityNetFrame;
+	}
+	
+	/**
+	 * Edits the city details command.
+	 */
+	public void editCityDetailsCommand() {
+		System.out.println("Edit City Details Command");
+		cityDetailsDialog.loadCityDetails(city);
+		cityDetailsDialog.pack();
+		cityDetailsDialog.setLocationRelativeTo(this);
+		cityDetailsDialog.setVisible(true);
 	}
 
 	/**

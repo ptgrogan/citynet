@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.gui.CityPanel;
 import edu.mit.citynet.gui.SystemPanel;
 import edu.mit.citynet.viz.CityVizPanel;
@@ -29,8 +30,8 @@ public class CityTestPanel extends CityPanel {
 	/**
 	 * Instantiates a new city panel.
 	 */
-	public CityTestPanel(City city) {
-		super(city);
+	public CityTestPanel(CityNetFrame owner, City city) {
+		super(owner,city);
 		initializePanel();
 	}
 	

@@ -12,12 +12,11 @@ import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 
 /**
- * The SystemPanel class is an abstract panel to display system information. 
- * It is used as a common base class for the SystemPanelViz and the editor.
+ * The SystemPanel class is a panel to display system information.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public abstract class SystemPanel extends JPanel {
+public class SystemPanel extends JPanel {
 	private static final long serialVersionUID = -2586548029906436001L;
 
 	protected CityPanel cityPanel;

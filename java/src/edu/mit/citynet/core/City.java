@@ -181,10 +181,12 @@ public class City {
 	 */
 	public void setImageFilePath(String imageFilePath) {
 		this.imageFilePath = imageFilePath;
-		try {
-			image = ImageIO.read(new FileInputStream(imageFilePath));
-		} catch (IOException ex) {
-			throw new IllegalArgumentException("Invalid image file path.");
+		if(imageFilePath!=null) {
+			try {
+				image = ImageIO.read(new FileInputStream(imageFilePath));
+			} catch (IOException ex) {
+				throw new IllegalArgumentException("Invalid image file path.");
+			}
 		}
 	}
 	

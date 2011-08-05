@@ -16,7 +16,6 @@ import javax.swing.filechooser.FileFilter;
 
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
-import edu.mit.citynet.gui.editor.CityEditorPanel;
 import edu.mit.citynet.io.SpreadsheetTemplate;
 
 /**
@@ -167,7 +166,8 @@ public class CityNetFrame extends JFrame {
 		// toggle the commenting on the two following lines to switch between
 		// the editor and the test panels
 		//cityPanel = new CityTestPanel(city);
-		cityPanel = new CityEditorPanel(city);
+		//cityPanel = new CityEditorPanel(city);
+		cityPanel = new CityPanel(this,city);
 		setContentPane(cityPanel);
 		validate();
 	}
