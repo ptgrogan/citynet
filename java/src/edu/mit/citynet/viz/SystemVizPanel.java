@@ -22,7 +22,7 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
-import edu.mit.citynet.gui.test.SystemTestPanel;
+import edu.mit.citynet.gui.SystemPanel;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
@@ -35,7 +35,7 @@ import edu.mit.citynet.util.CityNetIcon;
 public class SystemVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = -3650203268180181634L;
 	
-	private SystemTestPanel systemPanel;
+	private SystemPanel systemPanel;
 	private CitySystem system;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
@@ -49,7 +49,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 * @param systemPanel the system panel
 	 * @param system the system
 	 */
-	public SystemVizPanel(SystemTestPanel systemPanel, CitySystem system) {
+	public SystemVizPanel(SystemPanel systemPanel, CitySystem system) {
 		if (systemPanel==null) {
 			throw new IllegalArgumentException("System Panel cannot be null.");
 		}
