@@ -3,8 +3,10 @@
  */
 package edu.mit.citynet.viz;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 
 import javax.swing.JPanel;
@@ -48,11 +50,27 @@ public class GridLayer extends JPanel {
 		double startX = Math.floor(c1.x / gridSpacing+1)*gridSpacing;
 		double startY = Math.floor(c1.y / gridSpacing+1)*gridSpacing;
 		for(int i = 0; i < numX; i++) {
+			if(g instanceof Graphics2D) {
+				Graphics2D g2d = (Graphics2D)g;
+				if(startX+i*gridSpacing==0) {
+					g2d.setStroke(new BasicStroke(3f));
+				} else {
+					g2d.setStroke(new BasicStroke(1f));
+				}
+			}
 			Point p1 = vizPane.getPoint(new Coordinate(startX+i*gridSpacing,c1.y));
 			Point p2 = vizPane.getPoint(new Coordinate(startX+i*gridSpacing,c2.y));
 			g.drawLine(p1.x, p1.y, p2.x, p2.y);
 		}
 		for(int i = 0; i < numY; i++) {
+			if(g instanceof Graphics2D) {
+				Graphics2D g2d = (Graphics2D)g;
+				if(startY+i*gridSpacing==0) {
+					g2d.setStroke(new BasicStroke(3f));
+				} else {
+					g2d.setStroke(new BasicStroke(1f));
+				}
+			}
 			Point p1 = vizPane.getPoint(new Coordinate(c1.x,startY+i*gridSpacing));
 			Point p2 = vizPane.getPoint(new Coordinate(c2.x,startY+i*gridSpacing));
 			g.drawLine(p1.x, p1.y, p2.x, p2.y);
