@@ -31,7 +31,7 @@ import edu.mit.citynet.util.CityNetCursor;
  */
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
-	private static final double MIN_SCALE = 10, MAX_SCALE = 1000;
+	private static final double MIN_SCALE = 10, MAX_SCALE = 1000, MAX_X = 50, MAX_Y = 50;
 	private AbstractVizPanel vizPanel;
 	private GridLayer gridLayer;
 	private MapLayer mapLayer;
@@ -280,8 +280,12 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @param distance the distance
 	 */
 	private void panView(Point distance) {
-		viewOrigin.x += (distance.x)/viewScale;
-		viewOrigin.y += (distance.y)/viewScale;
+		Coordinate c1 = getCoordinate(new Point(0,0));
+		Coordinate c2 = getCoordinate(new Point(getWidth(),getHeight()));
+		viewOrigin.x = Math.min(Math.max(viewOrigin.x
+				+ (distance.x)/viewScale, -MAX_X),MAX_X-(c2.x-c1.x));
+		viewOrigin.y = Math.min(Math.max(viewOrigin.y
+				+ (distance.y)/viewScale, -MAX_Y),MAX_Y-(c2.y-c1.y));
 		repaint();
 	}
 	
@@ -291,8 +295,8 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @param location the location
 	 */
 	private void centerView(Point location) {
-		viewOrigin.x += (location.x - getWidth()/2)/viewScale;
-		viewOrigin.y += (location.y - getHeight()/2)/viewScale;
+		viewOrigin.x = viewOrigin.x + (location.x - getWidth()/2)/viewScale;
+		viewOrigin.y = viewOrigin.y + (location.y - getHeight()/2)/viewScale;
 		repaint();
 	}
 	
