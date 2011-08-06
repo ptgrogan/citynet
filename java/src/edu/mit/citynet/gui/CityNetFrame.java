@@ -267,6 +267,7 @@ public class CityNetFrame extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			cityDetailsDialog.saveCityDetailsCommand();
+			repaint();
 		}
 	}
 }

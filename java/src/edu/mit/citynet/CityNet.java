@@ -300,7 +300,7 @@ public class CityNet {
 							InfoNodeLookAndFeelThemes.getSoftGrayTheme()));
 					System.out.println("Launching City.Net...");
 					CityNetFrame f = new CityNetFrame();
-					f.setSize(new Dimension(600,400));
+					f.setSize(new Dimension(800,600));
 					f.setLocationRelativeTo(null);
 					f.setVisible(true);
             	} catch(Exception e) {

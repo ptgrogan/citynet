@@ -257,7 +257,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the auto position
 	 */
 	private Coordinate getAutoPosition() {
-		if(city.getImage()==null) return viewOrigin;
+		if(city.getImage()==null) return new Coordinate(-getWidth()/2/viewScale,-getHeight()/2/viewScale);
 		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
 		y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;
 		for(Coordinate coordinate : city.getImagePolygon().getCoordinates()) {
