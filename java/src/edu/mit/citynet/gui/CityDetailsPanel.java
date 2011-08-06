@@ -43,7 +43,7 @@ public class CityDetailsPanel extends JPanel {
 		x1Model, y1Model, x2Model, y2Model;
 	private JLabel imageLabel;
 	
-	public CityDetailsPanel(CityNetFrame owner) {
+	public CityDetailsPanel() {
 		fileChooser = new JFileChooser(System.getProperty("user.dir"));
 		initializeDialog();
 	}

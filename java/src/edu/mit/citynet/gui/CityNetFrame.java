@@ -85,7 +85,7 @@ public class CityNetFrame extends JFrame {
 				return "XLS Files";
 			}
 		});
-		cityDetailsDialog = new CityDetailsPanel(this);
+		cityDetailsDialog = new CityDetailsPanel();
 		initializeFrame();
 	}
 	
