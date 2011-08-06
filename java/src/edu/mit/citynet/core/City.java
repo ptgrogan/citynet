@@ -10,6 +10,9 @@ import javax.imageio.ImageIO;
 
 import com.vividsolutions.jts.geom.Polygon;
 
+import edu.mit.citynet.CityNet;
+
+// TODO: Auto-generated Javadoc
 /**
  * City class.
  * 
@@ -18,15 +21,32 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class City {
+	
+	/** The name. */
 	private String name;
+	
+	/** The longitude. */
 	private double latitude, longitude;
+	
+	/** The rotation. */
 	private double rotation;
+	
+	/** The image file path. */
 	private String imageFilePath;
+	
+	/** The image. */
 	private transient Image image;
+	
+	/** The image polygon. */
 	private Polygon imagePolygon;
 
+	/** The cells. */
 	private Set<Cell> cells;
+	
+	/** The cell regions. */
 	private Set<CellRegion> cellRegions;
+	
+	/** The systems. */
 	private Set<CitySystem> systems;
 	
 	/**
@@ -64,6 +84,8 @@ public class City {
 	 * @return true, if successful
 	 */
 	public boolean addCell(Cell cell) {
+		if(cell.getId()==0) 
+			cell.setId(CityNet.getInstance().getNextCellId());
 		return cells.add(cell);
 	}
 
@@ -220,7 +242,7 @@ public class City {
 	/**
 	 * Sets the image polygon.
 	 *
-	 * @param imageVertices the new image polygon
+	 * @param imagePolygon the new image polygon
 	 */
 	public void setImagePolygon(Polygon imagePolygon) {
 		this.imagePolygon = imagePolygon;
@@ -242,5 +264,17 @@ public class City {
 	 */
 	public Set<CellRegion> getCellRegions() {
 		return new HashSet<CellRegion>(cellRegions);
+	}
+	
+	/**
+	 * Adds the cell region.
+	 *
+	 * @param cellRegion the cell region
+	 * @return true, if successful
+	 */
+	public boolean addCellRegion(CellRegion cellRegion) {
+		if(cellRegion.getId()==0) 
+			cellRegion.setId(CityNet.getInstance().getNextCellRegionId());
+		return cellRegions.add(cellRegion);
 	}
 }

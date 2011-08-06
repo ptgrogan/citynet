@@ -18,6 +18,13 @@ public abstract class AbstractRegion {
 	private CoordinateList coordinateList;
 	
 	/**
+	 * Instantiates a new abstract region.
+	 */
+	public AbstractRegion() {
+		coordinateList = new CoordinateList();
+	}
+	
+	/**
 	 * Gets the coordinate list.
 	 *
 	 * @return the coordinate list

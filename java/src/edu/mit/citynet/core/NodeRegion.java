@@ -75,7 +75,7 @@ public class NodeRegion extends AbstractRegion {
 	 * Instantiates a new node region.
 	 */
 	public NodeRegion() {
-		
+		super();
 	}
 	
 	/**

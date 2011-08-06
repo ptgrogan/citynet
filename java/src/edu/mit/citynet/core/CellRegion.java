@@ -22,7 +22,9 @@ public class CellRegion extends AbstractRegion {
 	/**
 	 * Instantiates a new cell region.
 	 */
-	public CellRegion() { }
+	public CellRegion() { 
+		super();
+	}
 
 	/**
 	 * Gets the id.

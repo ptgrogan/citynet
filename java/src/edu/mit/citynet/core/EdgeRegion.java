@@ -93,6 +93,7 @@ public class EdgeRegion extends AbstractRegion {
 	 * Instantiates a new edge region.
 	 */
 	public EdgeRegion() {
+		super();
 		layers = new ArrayList<Layer>();
 	}
 	
