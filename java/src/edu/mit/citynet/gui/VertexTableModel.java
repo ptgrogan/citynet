@@ -1,6 +1,3 @@
-/*
- * 
- */
 package edu.mit.citynet.gui;
 
 import javax.swing.table.AbstractTableModel;
@@ -8,7 +5,9 @@ import javax.swing.table.AbstractTableModel;
 import com.vividsolutions.jts.geom.CoordinateList;
 
 /**
- * The Class VertexTableModel.
+ * The VertexTableModel provides a table model for vertices (coordinates).
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class VertexTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -3408504299722389072L;

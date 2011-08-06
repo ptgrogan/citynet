@@ -9,7 +9,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -26,10 +25,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import com.vividsolutions.jts.geom.CoordinateList;
-
 import edu.mit.citynet.core.City;
 
+/**
+ * The CityDetailsPanel allows for the editing of city details, such as its 
+ * name, background image (and coordinates), and latitude/longitude info.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ */
 public class CityDetailsPanel extends JPanel {
 	private static final long serialVersionUID = 4642496612942013193L;
 	private static final String SOUTH = "South", NORTH = "North", 
@@ -45,6 +48,9 @@ public class CityDetailsPanel extends JPanel {
 	private SpinnerNumberModel latitudeModel, longitudeModel, rotationModel;
 	private JLabel imageLabel;
 	
+	/**
+	 * Instantiates a new city details panel.
+	 */
 	public CityDetailsPanel() {
 		fileChooser = new JFileChooser(System.getProperty("user.dir"));
 		initializePanel();
