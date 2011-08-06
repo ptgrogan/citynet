@@ -45,13 +45,13 @@ public class CityDetailsPanel extends JPanel {
 	
 	public CityDetailsPanel() {
 		fileChooser = new JFileChooser(System.getProperty("user.dir"));
-		initializeDialog();
+		initializePanel();
 	}
 	
 	/**
 	 * Initialize panel.
 	 */
-	private void initializeDialog() {
+	private void initializePanel() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(2,2,2,2);
