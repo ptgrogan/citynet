@@ -42,4 +42,13 @@ public class RegionTable<t> extends JTable {
 		}
 		return regions;
 	}
+	
+	/**
+	 * Gets the selected region.
+	 *
+	 * @return the selected region
+	 */
+	public t getSelectedRegion() {
+		return getModel().getRegionAt(getSelectedRow());
+	}
 }

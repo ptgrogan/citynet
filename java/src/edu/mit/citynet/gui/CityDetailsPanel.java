@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -19,13 +20,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
 
-import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
 
 public class CityDetailsPanel extends JPanel {
@@ -36,11 +38,11 @@ public class CityDetailsPanel extends JPanel {
 	private JFileChooser fileChooser;
 	private JTextField nameText, imagePathText;
 	private JButton imageBrowseButton;
-	private JSpinner latitudeSpinner, longitudeSpinner, rotationSpinner,
-		x1Spinner, y1Spinner, x2Spinner, y2Spinner;
+	private JTable verticesTable;
+	private VertexTableModel verticesTableModel;
+	private JSpinner latitudeSpinner, longitudeSpinner, rotationSpinner;
 	private JComboBox latitudeCombo, longitudeCombo;
-	private SpinnerNumberModel latitudeModel, longitudeModel, rotationModel,
-		x1Model, y1Model, x2Model, y2Model;
+	private SpinnerNumberModel latitudeModel, longitudeModel, rotationModel;
 	private JLabel imageLabel;
 	
 	public CityDetailsPanel() {
@@ -117,40 +119,21 @@ public class CityDetailsPanel extends JPanel {
 		p.add(imagePathPanel, c);
 		c.gridy++;
 		c.gridx = 0;
-		c.weightx = 0;
-		c.anchor = GridBagConstraints.LINE_END;
-		p.add(new JLabel("Upper-left Corner:", JLabel.RIGHT),c);
+		c.anchor = GridBagConstraints.FIRST_LINE_END;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		p.add(new JLabel("Vertices: ", JLabel.RIGHT), c);
 		c.gridx++;
-		c.weightx = 1;
+		c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
-		JPanel vertex1Panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		vertex1Panel.add(new JLabel("X="));
-		x1Model = new SpinnerNumberModel(0,-100,100,1d);
-		x1Spinner = new JSpinner(x1Model);
-		vertex1Panel.add(x1Spinner);
-		vertex1Panel.add(new JLabel("Y="));
-		y1Model = new SpinnerNumberModel(0,-100,100,1d);
-		y1Spinner = new JSpinner(y1Model);
-		vertex1Panel.add(y1Spinner);
-		p.add(vertex1Panel, c);
-		c.gridy++;
-		c.gridx = 0;
-		c.weightx = 0;
-		c.anchor = GridBagConstraints.LINE_END;
-		p.add(new JLabel("Lower-right Corner:", JLabel.RIGHT),c);
-		c.gridx++;
-		c.weightx = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		JPanel vertex2Panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		vertex2Panel.add(new JLabel("X="));
-		x2Model = new SpinnerNumberModel(0,-100,100,1d);
-		x2Spinner = new JSpinner(x2Model);
-		vertex2Panel.add(x2Spinner);
-		vertex2Panel.add(new JLabel("Y="));
-		y2Model = new SpinnerNumberModel(0,-100,100,1d);
-		y2Spinner = new JSpinner(y2Model);
-		vertex2Panel.add(y2Spinner);
-		p.add(vertex2Panel, c);
+		c.fill = GridBagConstraints.VERTICAL;
+		verticesTableModel = new VertexTableModel();
+		verticesTableModel.setSquare(true);
+		verticesTable = new JTable(verticesTableModel);
+		verticesTable.getTableHeader().setReorderingAllowed(false);
+		verticesTable.getColumnModel().getColumn(0).setHeaderValue("X");
+		verticesTable.getColumnModel().getColumn(1).setHeaderValue("Y");
+		verticesTable.setPreferredScrollableViewportSize(new Dimension(150,75));
+		p.add(new JScrollPane(verticesTable), c);
 		return p;
 	}
 	
@@ -230,23 +213,12 @@ public class CityDetailsPanel extends JPanel {
 			imageLabel.setIcon(new ImageIcon(city.getImage()
 					.getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
 		}
-		if(city.getImagePolygon()!=null) {
-			x1Model.setValue(city.getImagePolygon().getCoordinates()[0].x);
-			y1Model.setValue(city.getImagePolygon().getCoordinates()[0].y);
-			x2Model.setValue(city.getImagePolygon().getCoordinates()[2].x);
-			y2Model.setValue(city.getImagePolygon().getCoordinates()[2].y);
-		} else {
-			x1Model.setValue(0);
-			y1Model.setValue(0);
-			x2Model.setValue(1);
-			y2Model.setValue(1);
-		}
+		verticesTableModel.setCoordinates(city.getImageCoordinates());
 		latitudeModel.setValue(Math.abs(city.getLatitude()));
 		latitudeCombo.setSelectedItem(city.getLatitude()>0?NORTH:SOUTH);
 		longitudeModel.setValue(Math.abs(city.getLongitude()));
 		longitudeCombo.setSelectedItem(city.getLongitude()>0?EAST:WEST);
 		rotationModel.setValue(city.getRotation());
-		//getRootPane().setDefaultButton(okButton);
 	}
 	
 	/**
@@ -279,20 +251,7 @@ public class CityDetailsPanel extends JPanel {
 			city.setImageFilePath(imagePathText.getText());
 		else
 			city.setImageFilePath(null);
-		city.setImagePolygon(CityNet.getInstance().getGeometryFactory().createPolygon(
-				CityNet.getInstance().getGeometryFactory().createLinearRing(
-						new Coordinate[]{
-								new Coordinate(x1Model.getNumber().doubleValue(),
-										y1Model.getNumber().doubleValue()), 
-								new Coordinate(x2Model.getNumber().doubleValue(),
-										y1Model.getNumber().doubleValue()), 
-								new Coordinate(x2Model.getNumber().doubleValue(),
-										y2Model.getNumber().doubleValue()), 
-								new Coordinate(x1Model.getNumber().doubleValue(),
-										y2Model.getNumber().doubleValue()), 
-								new Coordinate(x1Model.getNumber().doubleValue(),
-										y1Model.getNumber().doubleValue())}
-						), null));
+		city.setImageCoordinates(verticesTableModel.getCoordinates());
 		city.setLatitude(latitudeModel.getNumber().doubleValue()
 				*(latitudeCombo.getSelectedItem()==NORTH?1:-1));
 		city.setLongitude(longitudeModel.getNumber().doubleValue()

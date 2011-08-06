@@ -1,6 +1,7 @@
 package edu.mit.citynet.core;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import edu.mit.citynet.CityNet;
@@ -24,6 +25,12 @@ public class CellRegion extends AbstractRegion {
 	 */
 	public CellRegion() { 
 		super();
+		description = "New Cell Region";
+		setCoordinateList(new CoordinateList(new Coordinate[]{
+				new Coordinate(0,0), new Coordinate(1,0), 
+				new Coordinate(1,1), new Coordinate(0,1)}));
+		numberRows = 1;
+		numberColumns = 1;
 	}
 
 	/**
@@ -67,15 +74,16 @@ public class CellRegion extends AbstractRegion {
 	 */
 	public void generateCells() {
 		// force rectangular region
-		double minX = 0,maxX = 0,minY = 0,maxY = 0;
-		for(Coordinate coord : getPolygon().getCoordinates()) {
+		double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE,
+			minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
+		for(Coordinate coord : getCoordinateList().toCoordinateArray()) {
 			minX = Math.min(minX,coord.x);
 			maxX = Math.max(maxX,coord.x);
 			minY = Math.min(minY,coord.y);
 			maxY = Math.max(maxY,coord.y);
 		}
 		double cellWidth = Math.abs((maxX-minX)/numberRows);
-		double cellHeight = Math.abs((maxY-minY)/numberRows);
+		double cellHeight = Math.abs((maxY-minY)/numberColumns);
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
 		for(int i=0; i<numberRows; i++) {
 			for(int j=0; j<numberColumns; j++) {

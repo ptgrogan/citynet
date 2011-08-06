@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -27,6 +28,7 @@ import javax.swing.event.TableModelListener;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.gui.CellRegionPanel;
 import edu.mit.citynet.gui.CityPanel;
 import edu.mit.citynet.util.CityNetIcon;
 
@@ -39,6 +41,7 @@ import edu.mit.citynet.util.CityNetIcon;
 public class CityVizPanel extends AbstractVizPanel {
 	private static final long serialVersionUID = 3994034732879260199L;
 	
+	private CellRegionPanel cellRegionPanel;
 	private CityPanel cityPanel;
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<CellRegion> cellRegionTableModel;
@@ -55,6 +58,7 @@ public class CityVizPanel extends AbstractVizPanel {
 			throw new IllegalArgumentException("City Panel cannot be null.");
 		}
 		this.cityPanel = cityPanel;
+		cellRegionPanel = new CellRegionPanel();
 		initializePanel();
 	}
 	
@@ -231,16 +235,54 @@ public class CityVizPanel extends AbstractVizPanel {
 		setRightComponent(rightPanel);
 	}
 	
+	/**
+	 * Adds the cell region command.
+	 */
 	private void addCellRegionCommand() {
 		System.out.println("Add Cell Region Command");
+		CellRegion cellRegion = new CellRegion();
+		cellRegionPanel.loadCellRegion(cellRegion);
+		int value = JOptionPane.showConfirmDialog(this,cellRegionPanel,"City.Net | Cell Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			cellRegionPanel.saveCellRegionCommand();
+			cityPanel.getCity().addCellRegion(cellRegion);
+			// TODO: should only add new cell region to table model and update
+			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+			repaint();
+		}
 	}
 	
+	/**
+	 * Edits the cell region command.
+	 */
 	private void editCellRegionCommand() {
 		System.out.println("Edit Cell Region Command");
+		cellRegionPanel.loadCellRegion(cellRegionTable.getSelectedRegion());
+		int value = JOptionPane.showConfirmDialog(this,cellRegionPanel,"City.Net | Cell Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			cellRegionPanel.saveCellRegionCommand();
+			repaint();
+		}
 	}
 	
+	/**
+	 * Delete cell regions command.
+	 */
 	private void deleteCellRegionsCommand() {
 		System.out.println("Delete Cell Regions Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these cell regions?", 
+				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			Set<CellRegion> regions = cityPanel.getCity().getCellRegions();
+			regions.removeAll(cellRegionTable.getSelectedRegions());
+			// TODO: should move removeAll method to the city
+			cityPanel.getCity().setCellRegions(regions);
+			// TODO: should remove cell region from table model and update
+			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+			repaint();
+		}
 	}
 	
 	/**

@@ -37,8 +37,6 @@ public class CellLayer extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(vizPane.getCity().getImage() == null 
-				|| vizPane.getCity().getImagePolygon() == null) return;
 		
 		Set<Cell> cells = vizPane.getCity().getCells();
 		

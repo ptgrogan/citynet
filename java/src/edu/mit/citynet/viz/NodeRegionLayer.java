@@ -38,9 +38,7 @@ public class NodeRegionLayer extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(vizPane.getCity().getImage() == null 
-				|| vizPane.getCity().getImagePolygon() == null
-				|| vizPane.getSystem() == null) return;
+		if(vizPane.getSystem() == null) return;
 		
 		Set<NodeRegion> nodeRegions = vizPane.getVizPanel().getCheckedNodeRegions();
 		

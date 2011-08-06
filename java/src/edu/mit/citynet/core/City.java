@@ -8,11 +8,13 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 
 import edu.mit.citynet.CityNet;
 
-// TODO: Auto-generated Javadoc
 /**
  * City class.
  * 
@@ -21,32 +23,14 @@ import edu.mit.citynet.CityNet;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class City {
-	
-	/** The name. */
 	private String name;
-	
-	/** The longitude. */
 	private double latitude, longitude;
-	
-	/** The rotation. */
 	private double rotation;
-	
-	/** The image file path. */
 	private String imageFilePath;
-	
-	/** The image. */
 	private transient Image image;
-	
-	/** The image polygon. */
-	private Polygon imagePolygon;
-
-	/** The cells. */
+	private CoordinateList imageCoordinates;
 	private Set<Cell> cells;
-	
-	/** The cell regions. */
 	private Set<CellRegion> cellRegions;
-	
-	/** The systems. */
 	private Set<CitySystem> systems;
 	
 	/**
@@ -57,6 +41,9 @@ public class City {
 		cells = new HashSet<Cell>();
 		cellRegions = new HashSet<CellRegion>();
 		systems = new HashSet<CitySystem>();
+		imageCoordinates = new CoordinateList(new Coordinate[]{		
+			new Coordinate(0,0), new Coordinate(1,0), 
+			new Coordinate(1,1), new Coordinate(0,1)});
 	}
 	
 	/**
@@ -231,21 +218,37 @@ public class City {
 	}
 	
 	/**
+	 * Gets the image coordinates.
+	 *
+	 * @return the image coordinates
+	 */
+	public CoordinateList getImageCoordinates() {
+		return new CoordinateList(imageCoordinates.toCoordinateArray());
+	}
+	
+	/**
+	 * Sets the image coordinates.
+	 *
+	 * @param coordinates the new image coordinates
+	 */
+	public void setImageCoordinates(CoordinateList coordinates) {
+		this.imageCoordinates = coordinates;
+	}
+	
+	/**
 	 * Gets the image polygon.
 	 *
 	 * @return the image polygon
 	 */
 	public Polygon getImagePolygon() {
-		return imagePolygon;
-	}
-	
-	/**
-	 * Sets the image polygon.
-	 *
-	 * @param imagePolygon the new image polygon
-	 */
-	public void setImagePolygon(Polygon imagePolygon) {
-		this.imagePolygon = imagePolygon;
+		if(imageCoordinates.size()==4) {
+			GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+			CoordinateList ringCoordinates = getImageCoordinates();
+			ringCoordinates.closeRing();
+			return gf.createPolygon(gf.createLinearRing(ringCoordinates.toCoordinateArray()), null);
+		} else {
+			throw new IllegalStateException("Cannot create an image polygon without 4 points.");
+		}
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class CityNetFrame extends JFrame {
 	private JPanel backgroundPanel;
 	private CityPanel cityPanel;
 	private JFileChooser fileChooser;
-	private CityDetailsPanel cityDetailsDialog;
+	private CityDetailsPanel cityDetailsPanel;
 	private SpreadsheetTemplate template;
 	
 	/**
@@ -51,7 +51,7 @@ public class CityNetFrame extends JFrame {
 					if (file != null && file.exists()) {
 						int answer = JOptionPane.showOptionDialog(this, 
 								"City '" + file.getAbsolutePath() + "' already exists. Overwrite?", 
-								"Save Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+								"City.Net | Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
 					    if (answer == JOptionPane.NO_OPTION) {
 							return;
 					    }
@@ -85,7 +85,7 @@ public class CityNetFrame extends JFrame {
 				return "XLS Files";
 			}
 		});
-		cityDetailsDialog = new CityDetailsPanel();
+		cityDetailsPanel = new CityDetailsPanel();
 		initializeFrame();
 	}
 	
@@ -262,11 +262,11 @@ public class CityNetFrame extends JFrame {
 	 */
 	public void editCityDetailsCommand() {
 		System.out.println("Edit City Details Command");
-		cityDetailsDialog.loadCityDetails(cityPanel.getCity());
-		int value = JOptionPane.showConfirmDialog(this,cityDetailsDialog,"City.Net | City Details", 
+		cityDetailsPanel.loadCityDetails(cityPanel.getCity());
+		int value = JOptionPane.showConfirmDialog(this,cityDetailsPanel,"City.Net | City Details", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			cityDetailsDialog.saveCityDetailsCommand();
+			cityDetailsPanel.saveCityDetailsCommand();
 			repaint();
 		}
 	}

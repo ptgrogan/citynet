@@ -175,11 +175,8 @@ public class SpreadsheetTemplate {
 			if(row.getRowNum()==CITY_IMAGE_VERTICES_Y)
 				verticesY = row.getCell(1).getStringCellValue();
 		}
-		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
 		CoordinateList coords = createCoordinatesFromMatlabSyntax(verticesX,verticesY);
-		coords.closeRing(); 
-		city.setImagePolygon(gf.createPolygon(
-				gf.createLinearRing(coords.toCoordinateArray()), null));
+		city.setImageCoordinates(coords);
 		city.setCellRegions(readCellRegions(wb));
 		city.setCells(readCells(wb));
 		city.setSystems(readSystems(wb));
@@ -742,7 +739,7 @@ public class SpreadsheetTemplate {
 		s.getRow(CITY_LONGITUDE).getCell(1).setCellValue(city.getLongitude());
 		s.getRow(CITY_ROTATION).getCell(1).setCellValue(city.getRotation());
 		s.getRow(CITY_IMAGE_PATH).getCell(1).setCellValue(city.getImageFilePath());
-		String[] vertices = createCoordinatesForMatlabSyntax(city.getImagePolygon().getCoordinates());
+		String[] vertices = createCoordinatesForMatlabSyntax(city.getImageCoordinates().toCoordinateArray());
 		s.getRow(CITY_IMAGE_VERTICES_X).getCell(1).setCellValue(vertices[0]);
 		s.getRow(CITY_IMAGE_VERTICES_Y).getCell(1).setCellValue(vertices[1]);
 		

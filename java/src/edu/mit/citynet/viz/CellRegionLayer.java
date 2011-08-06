@@ -38,8 +38,6 @@ public class CellRegionLayer extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(vizPane.getCity().getImage() == null 
-				|| vizPane.getCity().getImagePolygon() == null) return;
 		
 		Set<CellRegion> cellRegions = vizPane.getVizPanel().getCheckedCellRegions();
 		
