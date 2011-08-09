@@ -3,6 +3,10 @@ package edu.mit.citynet.core;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.ImageIcon;
+
+import edu.mit.citynet.util.CityNetIcon;
+
 /**
  * The CitySystem class  contains node and edge information on multiple layers.
  * 
@@ -10,6 +14,7 @@ import java.util.Set;
  */
 public class CitySystem {
 	private int id;
+	private CitySystemType type;
 	private String name, description;
 	private Set<Layer> layers;
 	private Set<NodeType> nodeTypes;
@@ -20,9 +25,77 @@ public class CitySystem {
 	private Set<EdgeRegion> edgeRegions;
 	
 	/**
+	 * The CitySystemType enumeration defines the possible system types.
+	 * 
+	 * @author Paul Grogan, ptgrogan@mit.edu
+	 */
+	public enum CitySystemType {
+		BUILDING("Building"), ENERGY("Energy"), 
+		TRANSPORTATION("Transportation"), WASTE("Waste"), WATER("Water"), 
+		UNDEFINED("Undefined");
+		private String name;
+		
+		/**
+		 * Instantiates a new city system type.
+		 *
+		 * @param name the name
+		 */
+		private CitySystemType(String name) {
+			this.name = name;
+		}
+		
+		/**
+		 * Gets the name.
+		 *
+		 * @return the name
+		 */
+		public String getName() { 
+			return name;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Enum#toString()
+		 */
+		public String toString() {
+			return name;
+		}
+		
+		/**
+		 * Gets the single instance of CitySystemType.
+		 *
+		 * @param name the name
+		 * @return single instance of CitySystemType
+		 */
+		public static CitySystemType getInstance(String name) {
+			for(CitySystemType type : CitySystemType.values()) {
+				if(type.getName().toLowerCase().equals(name.toLowerCase()))
+					return type;
+			}
+			return UNDEFINED;
+		}
+		
+		/**
+		 * Gets the icon.
+		 *
+		 * @return the icon
+		 */
+		public ImageIcon getIcon() {
+			switch(this) {
+			case BUILDING: return CityNetIcon.BUILDING_SYSTEM.getIcon();
+			case ENERGY: return CityNetIcon.ENERGY_SYSTEM.getIcon();
+			case TRANSPORTATION: return CityNetIcon.TRANSPORTATION_SYSTEM.getIcon();
+			case WASTE: return CityNetIcon.WASTE_SYSTEM.getIcon();
+			case WATER: return CityNetIcon.WATER_SYSTEM.getIcon();
+			default: return CityNetIcon.UNDEFINED_SYSTEM.getIcon();
+			}
+		}
+	}
+	
+	/**
 	 * Instantiates a new city system.
 	 */
 	public CitySystem() {
+		type = CitySystemType.UNDEFINED;
 		layers = new HashSet<Layer>();
 		nodeTypes = new HashSet<NodeType>();
 		edgeTypes = new HashSet<EdgeType>();
@@ -30,6 +103,24 @@ public class CitySystem {
 		edges = new HashSet<Edge>();
 		nodeRegions = new HashSet<NodeRegion>();
 		edgeRegions = new HashSet<EdgeRegion>();
+	}
+	
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
+	public CitySystemType getType() {
+		return type==null?CitySystemType.UNDEFINED:type;
+	}
+	
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
+	public void setType(CitySystemType type) {
+		this.type = type;
 	}
 
 	/**

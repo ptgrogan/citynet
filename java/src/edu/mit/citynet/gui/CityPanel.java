@@ -18,6 +18,7 @@ import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.util.CityNetIcon;
 import edu.mit.citynet.viz.CityVizPanel;
 
 /**
@@ -57,7 +58,7 @@ public class CityPanel extends JPanel {
 		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 		tabbedPane = new JTabbedPane();
 		cityVizPanel = new CityVizPanel(this);
-		tabbedPane.addTab("City", cityVizPanel);
+		tabbedPane.addTab("City", CityNetIcon.CITY.getIcon(), cityVizPanel);
 		systemPanels = new HashSet<SystemPanel>();
 		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
 		Collections.sort(systems, new Comparator<CitySystem>() {
@@ -68,7 +69,7 @@ public class CityPanel extends JPanel {
 		for(CitySystem system : systems) {
 			SystemPanel systemPanel = new SystemPanel(this, system);
 			systemPanels.add(systemPanel);
-			tabbedPane.addTab(system.getName(), systemPanel);
+			tabbedPane.addTab(system.getName(), system.getType().getIcon(), systemPanel);
 		}
 		tabbedPane.addTab("+", new JPanel());
 		tabbedPane.addChangeListener(new ChangeListener() {

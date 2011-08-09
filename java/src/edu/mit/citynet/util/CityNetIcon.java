@@ -6,8 +6,19 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public enum CityNetIcon {
+	CITY("resources/map.png"),
+	BUILDING_SYSTEM("resources/building.png"),
+	TRANSPORTATION_SYSTEM("resources/car.png"),
+	ENERGY_SYSTEM("resources/lightbulb.png"),
+	WASTE_SYSTEM("resources/bin.png"),
+	WATER_SYSTEM("resources/paintcan.png"),
+	UNDEFINED_SYSTEM("resources/brick.png"),
 	EDGE_REGIONS("resources/chart_line.png"),
 	NODE_REGIONS("resources/map.png"),
+	POLYPOINT_REGION("resources/bullet_red.png"),
+	POLYLINE_REGION("resources/chart_line.png"),
+	POLYGON_REGION("resources/shape_handles.png"),
+	UNDEFINED_REGION("resources/bullet_error.png"),
 	CELL_REGIONS("resources/shape_handles.png"),
 	DELETE("resources/delete.png");
 	

@@ -38,6 +38,7 @@ import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
+import edu.mit.citynet.core.CitySystem.CitySystemType;
 
 /**
  * The SpreadsheetTemplate provides file input/operation methods for
@@ -196,6 +197,7 @@ public class SpreadsheetTemplate {
 			CitySystem system = new CitySystem();
 			system.setId((int)row.getCell(SYSTEM_ID).getNumericCellValue());
 			system.setName(row.getCell(SYSTEM_NAME).getStringCellValue());
+			system.setType(CitySystemType.getInstance(system.getName()));
 			system.setDescription(row.getCell(SYSTEM_DESCRIPTION).getStringCellValue());
 			system.setLayers(readLayers(wb,system.getId()));
 			system.setNodeTypes(readNodeTypes(wb,system.getId()));
