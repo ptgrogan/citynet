@@ -6,6 +6,8 @@ package edu.mit.citynet.viz;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -15,6 +17,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.JLayeredPane;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -96,6 +100,7 @@ public class VizLayeredPane extends JLayeredPane {
 				if(e.getClickCount()==2) {
 					centerView(e.getPoint());
 				}
+				maybeShowPopup(e);
 			}
 			public void mousePressed(MouseEvent e) {
 				updateCursor(true);
@@ -104,9 +109,15 @@ public class VizLayeredPane extends JLayeredPane {
 			public void mouseReleased(MouseEvent e) {
 				updateCursor(false);
 				previousDrag = null;
+				maybeShowPopup(e);
 			}
 			public void mouseExited(MouseEvent e) {
 				setCursor(Cursor.getDefaultCursor());
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					createVisualizationPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+				}
 			}
 		});
 		addMouseMotionListener(new MouseMotionAdapter() {
@@ -141,12 +152,48 @@ public class VizLayeredPane extends JLayeredPane {
 					viewOrigin.y = 0;
 					repaint();
 				} else if(e.getKeyCode()==KeyEvent.VK_ENTER){
-					viewScale = getAutoScale();
-					viewOrigin = getAutoPosition();
-					repaint();
+					autofitView();
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Creates the visualization popup menu.
+	 *
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createVisualizationPopupMenu() {
+		JPopupMenu visualizationPopupMenu = new JPopupMenu();
+		JMenuItem autofitItem = new JMenuItem("Autofit View");
+		autofitItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				autofitView();
+			}
+		});
+		visualizationPopupMenu.add(autofitItem);
+		JMenuItem centerViewItem = new JMenuItem("Center View");
+		centerViewItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				centerView(getMousePosition());
+			}
+		});
+		visualizationPopupMenu.add(centerViewItem);
+		JMenuItem zoomInItem = new JMenuItem("Zoom In");
+		zoomInItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoomView(1,getMousePosition());
+			}
+		});
+		visualizationPopupMenu.add(zoomInItem);
+		JMenuItem zoomOutItem = new JMenuItem("Zoom Out");
+		zoomOutItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				zoomView(-1,getMousePosition());
+			}
+		});
+		visualizationPopupMenu.add(zoomOutItem);
+		return visualizationPopupMenu;
 	}
 	
 	/* (non-Javadoc)
@@ -313,6 +360,15 @@ public class VizLayeredPane extends JLayeredPane {
 		viewOrigin.x = coordinate.x - (coordinate.x-viewOrigin.x)*viewScale/newViewScale;
 		viewOrigin.y = coordinate.y - (coordinate.y-viewOrigin.y)*viewScale/newViewScale;
 		viewScale = newViewScale;
+		repaint();
+	}
+	
+	/**
+	 * Autofit view.
+	 */
+	private void autofitView() {
+		viewScale = getAutoScale();
+		viewOrigin = getAutoPosition();
 		repaint();
 	}
 
