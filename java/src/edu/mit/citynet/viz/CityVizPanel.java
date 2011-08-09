@@ -185,6 +185,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		JPanel cellRegionPanel = new JPanel();
 		cellRegionPanel.setLayout(new BoxLayout(cellRegionPanel,BoxLayout.LINE_AXIS));
 		JButton addCellRegionButton = new JButton("Add");
+		addCellRegionButton.setToolTipText("Add a new cell region");
 		addCellRegionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addCellRegionCommand();
@@ -192,6 +193,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		});
 		cellRegionPanel.add(addCellRegionButton);
 		editCellRegionButton = new JButton("Edit");
+		editCellRegionButton.setToolTipText("Edit an existing cell region");
 		editCellRegionButton.setEnabled(false);
 		editCellRegionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -200,6 +202,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		});
 		cellRegionPanel.add(editCellRegionButton);
 		deleteCellRegionsButton = new JButton("Delete");
+		deleteCellRegionsButton.setToolTipText("Delete an existing cell region");
 		deleteCellRegionsButton.setEnabled(false);
 		deleteCellRegionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -212,6 +215,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
 		JButton generateCellsButton = new JButton("Generate",CityNetIcon.CELL_REGIONS.getIcon());
+		generateCellsButton.setToolTipText("Generate cells in cell regions");
 		generateCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.generateCellsCommand(cellRegionTableModel.getCheckedRegions());
@@ -220,6 +224,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		});
 		buttonPanel.add(generateCellsButton);
 		JButton clearCellsButton = new JButton("Clear",CityNetIcon.DELETE.getIcon());
+		clearCellsButton.setToolTipText("Clear cells in cell regions");
 		clearCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cityPanel.clearCellsCommand();
