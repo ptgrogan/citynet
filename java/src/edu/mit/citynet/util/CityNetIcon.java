@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 
 public enum CityNetIcon {
 	CITY("resources/map.png"),
+	BROWSE("resources/folder_explore.png"),
 	BUILDING_SYSTEM("resources/building.png"),
 	TRANSPORTATION_SYSTEM("resources/car.png"),
 	ENERGY_SYSTEM("resources/lightbulb.png"),

@@ -69,7 +69,8 @@ public class CityPanel extends JPanel {
 		for(CitySystem system : systems) {
 			SystemPanel systemPanel = new SystemPanel(this, system);
 			systemPanels.add(systemPanel);
-			tabbedPane.addTab(system.getName(), system.getType().getIcon(), systemPanel);
+			tabbedPane.addTab(system.getName(), system.getType().getIcon(), 
+					systemPanel, system.getDescription());
 		}
 		tabbedPane.addTab("+", new JPanel());
 		tabbedPane.addChangeListener(new ChangeListener() {
@@ -125,5 +126,26 @@ public class CityPanel extends JPanel {
 		for(CellRegion r : cellRegions) {
 			r.generateCells();
 		}
+	}
+	
+	/**
+	 * Adds the system command.
+	 *
+	 * @param system the system
+	 */
+	public void addSystemCommand(CitySystem system) {
+		System.out.println("Add System Command");
+		city.addSystem(system);
+		SystemPanel systemPanel = new SystemPanel(this, system);
+		systemPanels.add(systemPanel);
+		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
+		Collections.sort(systems, new Comparator<CitySystem>() {
+			public int compare(CitySystem system1, CitySystem system2) {
+				return system1.getName().compareTo(system2.getName());
+			}
+		});
+		tabbedPane.insertTab(system.getName(), system.getType().getIcon(), 
+				systemPanel, system.getDescription(), 1+systems.indexOf(system));
+		repaint();
 	}
 }

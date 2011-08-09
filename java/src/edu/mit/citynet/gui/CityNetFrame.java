@@ -17,6 +17,7 @@ import javax.swing.filechooser.FileFilter;
 
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.io.SpreadsheetTemplate;
 
 /**
@@ -33,6 +34,7 @@ public class CityNetFrame extends JFrame {
 	private CityPanel cityPanel;
 	private JFileChooser fileChooser;
 	private CityDetailsPanel cityDetailsPanel;
+	private SystemImportPanel systemImportPanel;
 	private SpreadsheetTemplate template;
 	
 	/**
@@ -86,6 +88,7 @@ public class CityNetFrame extends JFrame {
 			}
 		});
 		cityDetailsPanel = new CityDetailsPanel();
+		systemImportPanel = new SystemImportPanel();
 		initializeFrame();
 	}
 	
@@ -275,6 +278,13 @@ public class CityNetFrame extends JFrame {
 	 * Command to import a system.
 	 */
 	public void importSystemCommand() {
-		System.out.println("Edit City Details Command");
+		System.out.println("Import System Command");
+		int value = JOptionPane.showConfirmDialog(this,systemImportPanel,"City.Net | Import System", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			for(CitySystem system : systemImportPanel.getSelectedSystems()) {
+				cityPanel.addSystemCommand(system);
+			}
+		}
 	}
 }

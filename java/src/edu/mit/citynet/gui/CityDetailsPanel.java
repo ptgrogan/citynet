@@ -26,6 +26,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import edu.mit.citynet.core.City;
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The CityDetailsPanel allows for the editing of city details, such as its 
@@ -102,6 +103,7 @@ public class CityDetailsPanel extends JPanel {
 		JPanel p = new JPanel(new GridBagLayout());
 		p.setBorder(BorderFactory.createTitledBorder("Background Image"));
 		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(2,2,2,2);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 0;
@@ -111,11 +113,12 @@ public class CityDetailsPanel extends JPanel {
 		c.gridx++;
 		c.weightx = 1;
 		c.anchor = GridBagConstraints.LINE_START;
-		JPanel imagePathPanel = new JPanel(new BorderLayout());
+		JPanel imagePathPanel = new JPanel(new FlowLayout(FlowLayout.LEADING,0, 0));
 		imagePathText = new JTextField(30);
 		imagePathText.setEnabled(false);
 		imagePathPanel.add(imagePathText, BorderLayout.CENTER);
-		imageBrowseButton = new JButton("Browse");
+		imageBrowseButton = new JButton(CityNetIcon.BROWSE.getIcon());
+		imageBrowseButton.setToolTipText("Browse for image file");
 		imageBrowseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveImagePathCommand();

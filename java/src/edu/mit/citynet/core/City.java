@@ -280,4 +280,16 @@ public class City {
 			cellRegion.setId(CityNet.getInstance().getNextCellRegionId());
 		return cellRegions.add(cellRegion);
 	}
+	
+	/**
+	 * Adds the system.
+	 *
+	 * @param system the system
+	 * @return true, if successful
+	 */
+	public boolean addSystem(CitySystem system) {
+		if(system.getId()==0)
+			system.setId(CityNet.getInstance().getNextSystemId());
+		return systems.add(system);
+	}
 }
