@@ -5,12 +5,14 @@ import java.util.Set;
 
 import javax.swing.JTable;
 
+import edu.mit.citynet.core.AbstractRegion;
+
 /**
  * The Class RegionTable.
  *
  * @param <t> the generic type
  */
-public class RegionTable<t> extends JTable {
+public class RegionTable<t extends AbstractRegion> extends JTable {
 	private static final long serialVersionUID = -8984001928254508996L;
 	
 	/**

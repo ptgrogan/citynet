@@ -18,14 +18,13 @@ public class CellRegion extends AbstractRegion {
 	private int id;
 	private int numberRows;
 	private int numberColumns;
-	private String description;
 	
 	/**
 	 * Instantiates a new cell region.
 	 */
 	public CellRegion() { 
 		super();
-		description = "New Cell Region";
+		setDescription("New Cell Region");
 		setCoordinateList(new CoordinateList(new Coordinate[]{
 				new Coordinate(0,0), new Coordinate(1,0), 
 				new Coordinate(1,1), new Coordinate(0,1)}));
@@ -49,24 +48,6 @@ public class CellRegion extends AbstractRegion {
 	 */
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	/**
-	 * Gets the description.
-	 *
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 *
-	 * @param description the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
 	/**

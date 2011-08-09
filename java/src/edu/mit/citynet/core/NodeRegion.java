@@ -69,13 +69,13 @@ public class NodeRegion extends AbstractRegion {
 	private NodeRegionType nodeRegionType;
 	private Layer layer;
 	private NodeType nodeType;
-	private String description;
 	
 	/**
 	 * Instantiates a new node region.
 	 */
 	public NodeRegion() {
 		super();
+		setDescription("New Node Region");
 	}
 	
 	/**
@@ -201,24 +201,6 @@ public class NodeRegion extends AbstractRegion {
 	 */
 	public void setNodeType(NodeType nodeType) {
 		this.nodeType = nodeType;
-	}
-
-	/**
-	 * Gets the description.
-	 *
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 *
-	 * @param description the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
 	}
 	
 	/* (non-Javadoc)

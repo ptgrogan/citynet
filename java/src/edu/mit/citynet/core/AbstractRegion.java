@@ -16,6 +16,7 @@ import edu.mit.citynet.CityNet;
  */
 public abstract class AbstractRegion {
 	private CoordinateList coordinateList;
+	private String description;
 	
 	/**
 	 * Instantiates a new abstract region.
@@ -40,6 +41,24 @@ public abstract class AbstractRegion {
 	 */
 	public void setCoordinateList(CoordinateList coordinateList) {
 		this.coordinateList = coordinateList;
+	}
+
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets the description.
+	 *
+	 * @param description the new description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	/**

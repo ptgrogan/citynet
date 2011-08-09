@@ -9,9 +9,7 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
-import edu.mit.citynet.core.CellRegion;
-import edu.mit.citynet.core.EdgeRegion;
-import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.core.AbstractRegion;
 
 /**
  * The RegionTableModel class provides a generic table model for use in node,
@@ -22,7 +20,7 @@ import edu.mit.citynet.core.NodeRegion;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class RegionTableModel<t> extends AbstractTableModel {
+public class RegionTableModel<t extends AbstractRegion> extends AbstractTableModel {
 	private static final long serialVersionUID = -1151237693598337559L;
 	
 	private List<t> regions;
@@ -48,15 +46,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 		this.regions.addAll(regions);
 		Collections.sort(this.regions, new Comparator<t>() {
 			public int compare(t region1, t region2) {
-				// TODO: this is a hack-y way to sort based on description
-				// ...should be a superclass property/method
-				if(region1 instanceof NodeRegion && region2 instanceof NodeRegion)
-					return ((NodeRegion)region1).getDescription().compareTo(((NodeRegion)region2).getDescription());
-				else if(region1 instanceof EdgeRegion && region2 instanceof EdgeRegion)
-					return ((EdgeRegion)region1).getDescription().compareTo(((EdgeRegion)region2).getDescription());
-				else if(region1 instanceof CellRegion && region2 instanceof CellRegion)
-					return ((CellRegion)region1).getDescription().compareTo(((CellRegion)region2).getDescription());
-				else return 0;
+				return region1.getDescription().compareTo(region2.getDescription());
 			}
 		});
 		checkedRegions.addAll(regions);
@@ -105,16 +95,7 @@ public class RegionTableModel<t> extends AbstractTableModel {
 		if(columnIndex==0) {
 			return checkedRegions.contains(regions.get(rowIndex));
 		} else {
-			// TODO: this is a hack-y way to display the region description
-			// ...should be a superclass property/method
-			if(regions.get(rowIndex) instanceof NodeRegion)
-				return ((NodeRegion)regions.get(rowIndex)).getDescription();
-			else if(regions.get(rowIndex) instanceof EdgeRegion)
-				return ((EdgeRegion)regions.get(rowIndex)).getDescription();
-			else if(regions.get(rowIndex) instanceof CellRegion)
-				return ((CellRegion)regions.get(rowIndex)).getDescription();
-			else
-				return regions.get(rowIndex);
+			return regions.get(rowIndex).getDescription();
 		}
 	}
 	

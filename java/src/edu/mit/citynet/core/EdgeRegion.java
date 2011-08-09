@@ -87,13 +87,13 @@ public class EdgeRegion extends AbstractRegion {
 	private List<Layer> layers;
 	private EdgeType edgeType;
 	private boolean directed;
-	private String description;
 	
 	/**
 	 * Instantiates a new edge region.
 	 */
 	public EdgeRegion() {
 		super();
+		setDescription("New Edge Region");
 		layers = new ArrayList<Layer>();
 	}
 	
@@ -298,24 +298,6 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public void setDirected(boolean directed) {
 		this.directed = directed;
-	}
-
-	/**
-	 * Gets the description.
-	 *
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Sets the description.
-	 *
-	 * @param description the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	/**
