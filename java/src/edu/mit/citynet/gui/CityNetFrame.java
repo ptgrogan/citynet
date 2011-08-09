@@ -258,7 +258,7 @@ public class CityNetFrame extends JFrame {
 	}
 	
 	/**
-	 * Edits the city details command.
+	 * Command to edit the city details.
 	 */
 	public void editCityDetailsCommand() {
 		System.out.println("Edit City Details Command");
@@ -269,5 +269,12 @@ public class CityNetFrame extends JFrame {
 			cityDetailsPanel.saveCityDetailsCommand();
 			repaint();
 		}
+	}
+	
+	/**
+	 * Command to import a system.
+	 */
+	public void importSystemCommand() {
+		System.out.println("Edit City Details Command");
 	}
 }

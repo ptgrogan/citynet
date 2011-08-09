@@ -23,7 +23,7 @@ public class CityNetMenuBar extends JMenuBar {
 	private CityNetFrame frame;
 	private JMenu fileMenu;
 	private JMenuItem newCityItem, openCityItem, closeCityItem, 
-		saveCityAsItem, saveCityItem, exitItem;
+		saveCityAsItem, saveCityItem, importSystemItem, exitItem;
 	private JMenu editMenu;
 	private JMenuItem cityDetails;
 	
@@ -84,6 +84,14 @@ public class CityNetMenuBar extends JMenuBar {
         });
         fileMenu.add(saveCityAsItem);
         fileMenu.addSeparator();
+        importSystemItem = new JMenuItem("Import System...", KeyEvent.VK_I);
+        importSystemItem.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+    			frame.importSystemCommand();
+        	}
+        });
+        fileMenu.add(importSystemItem);
+        fileMenu.addSeparator();
         exitItem = new JMenuItem("Exit");
         exitItem.setAccelerator(KeyStroke.getKeyStroke(
                 KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
@@ -118,6 +126,7 @@ public class CityNetMenuBar extends JMenuBar {
 		closeCityItem.setEnabled(frame.isCityOpen());
 		saveCityItem.setEnabled(frame.isCityOpen());
 		saveCityAsItem.setEnabled(frame.isCityOpen());
+		importSystemItem.setEnabled(frame.isCityOpen());
 		editMenu.setEnabled(frame.isCityOpen());
 	}
 }
