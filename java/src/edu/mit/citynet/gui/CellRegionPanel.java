@@ -114,6 +114,7 @@ public class CellRegionPanel extends JPanel {
 	 * Save cell region command.
 	 */
 	public void saveCellRegionCommand() {
+		if(verticesTable.isEditing()) verticesTable.getCellEditor().stopCellEditing();
 		cellRegion.setDescription(descriptionText.getText());
 		cellRegion.setCoordinateList(verticesTableModel.getCoordinates());
 		cellRegion.setNumberColumns(columnsModel.getNumber().intValue());

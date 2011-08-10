@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -11,6 +13,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.mit.citynet.CityNet;
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The EdgeRegion class specifies a spatial area over which edges should be
@@ -66,6 +69,23 @@ public class EdgeRegion extends AbstractRegion {
 		 */
 		public String toString() {
 			return getName();
+		}
+		
+		/**
+		 * Gets the icon.
+		 *
+		 * @return the icon
+		 */
+		public ImageIcon getIcon() {
+			switch(this) {
+			// TODO: differentiate icons for three types of polygon regions
+			case POLYGON_ORTHOGONAL: return CityNetIcon.POLYGON_REGION.getIcon();
+			case POLYGON_ADJACENT: return CityNetIcon.POLYGON_REGION.getIcon();
+			case POLYGON_CONNECTED: return CityNetIcon.POLYGON_REGION.getIcon();
+			case POLYLINE: return CityNetIcon.POLYLINE_REGION.getIcon();
+			case POLYPOINT: return CityNetIcon.POLYPOINT_REGION.getIcon();
+			default: return CityNetIcon.UNDEFINED_REGION.getIcon();
+			}
 		}
 		
 		/**

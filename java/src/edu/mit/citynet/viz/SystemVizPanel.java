@@ -69,7 +69,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		this.systemPanel = systemPanel;
 		this.system = system;
 		nodeRegionPanel = new NodeRegionPanel(this);
-		edgeRegionPanel = new EdgeRegionPanel();
+		edgeRegionPanel = new EdgeRegionPanel(this);
 		initializePanel();
 	}
 	

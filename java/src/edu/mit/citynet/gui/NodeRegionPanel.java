@@ -262,6 +262,7 @@ public class NodeRegionPanel extends JPanel {
 	 * Save node region command.
 	 */
 	public void saveNodeRegionCommand() {
+		if(verticesTable.isEditing()) verticesTable.getCellEditor().stopCellEditing();
 		nodeRegion.setNodeRegionType((NodeRegionType)nodeRegionTypeCombo.getSelectedItem());
 		nodeRegion.setDescription(descriptionText.getText());
 		nodeRegion.setLayer((Layer)layerCombo.getSelectedItem());

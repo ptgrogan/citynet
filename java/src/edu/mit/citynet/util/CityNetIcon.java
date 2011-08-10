@@ -17,6 +17,7 @@ public enum CityNetIcon {
 	EDGE_REGIONS("resources/chart_line.png"),
 	NODE_REGIONS("resources/map.png"),
 	NODE_TYPE_BLANK("resources/bullet_white.png"),
+	EDGE_TYPE_BLANK("resources/edge_blank.png"),
 	POLYPOINT_REGION("resources/bullet_red.png"),
 	POLYLINE_REGION("resources/chart_line.png"),
 	POLYGON_REGION("resources/shape_handles.png"),
