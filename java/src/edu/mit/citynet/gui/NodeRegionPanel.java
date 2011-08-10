@@ -177,6 +177,10 @@ public class NodeRegionPanel extends JPanel {
 		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
 		coordinateTable.setPreferredScrollableViewportSize(new Dimension(150,200));
 		MouseAdapter coordinateMouseAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2 && e.getComponent()!=coordinateTable)
+					addCoordinateCommand();
+			}
 			public void mousePressed(MouseEvent e) {
 				if(e.getComponent()!=coordinateTable)
 					coordinateTable.getSelectionModel().clearSelection();

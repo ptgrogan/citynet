@@ -68,9 +68,9 @@ public class CoordinateTableModel3D extends CoordinateTableModel {
 	 * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
 	 */
 	public void setValueAt(Object value, int row, int col) {
-    	if(col==3 && value instanceof Layer) {
+    	if(col==2 && value instanceof Layer) {
     		layers.set(row,(Layer)value);
+        	fireTableRowsUpdated(row, row);
     	} else super.setValueAt(value, row, col);
-    	fireTableRowsUpdated(row, row);
 	}
 }
