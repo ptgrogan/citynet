@@ -68,13 +68,12 @@ public class CityDetailsPanel extends JPanel {
 		c.gridy = 0;
 		c.weightx = 0;
 		c.weighty = 0;
-		c.anchor = GridBagConstraints.LINE_END;
+		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(new JLabel("City Name: ", JLabel.RIGHT), c);
 		c.gridx++;
 		c.weightx = 1;
 		c.gridwidth = 2;
-		c.anchor = GridBagConstraints.LINE_START;
 		nameText = new JTextField(20);
 		add(nameText, c);
 		c.gridy++;
@@ -255,6 +254,9 @@ public class CityDetailsPanel extends JPanel {
 	 */
 	public void saveCityDetailsCommand() {
 		System.out.println("Save City Details Command");
+		if (city==null) {
+			throw new IllegalArgumentException("City cannot be null.");
+		}
 		city.setName(nameText.getText());
 		if(imagePathText.getText().length()>0)
 			city.setImageFilePath(imagePathText.getText());

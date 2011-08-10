@@ -95,6 +95,7 @@ public class CitySystem {
 	 * Instantiates a new city system.
 	 */
 	public CitySystem() {
+		name = "New System";
 		type = CitySystemType.UNDEFINED;
 		layers = new HashSet<Layer>();
 		nodeTypes = new HashSet<NodeType>();

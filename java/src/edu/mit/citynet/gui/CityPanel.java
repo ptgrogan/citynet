@@ -1,14 +1,14 @@
 package edu.mit.citynet.gui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -31,8 +31,8 @@ public class CityPanel extends JPanel {
 
 	private CityNetFrame cityNetFrame;
 	private City city;
+	private SystemDetailsPanel systemDetailsPanel;
 	private JTabbedPane tabbedPane;
-	private Set<SystemPanel> systemPanels;
 	private CityVizPanel cityVizPanel;
 	
 	/**
@@ -47,6 +47,7 @@ public class CityPanel extends JPanel {
 		}
 		this.cityNetFrame = cityNetFrame;
 		this.city = city;
+		systemDetailsPanel = new SystemDetailsPanel();
 		initializePanel();
 	}
 	
@@ -59,25 +60,30 @@ public class CityPanel extends JPanel {
 		tabbedPane = new JTabbedPane();
 		cityVizPanel = new CityVizPanel(this);
 		tabbedPane.addTab("City", CityNetIcon.CITY.getIcon(), cityVizPanel);
-		systemPanels = new HashSet<SystemPanel>();
-		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
-		Collections.sort(systems, new Comparator<CitySystem>() {
-			public int compare(CitySystem system1, CitySystem system2) {
-				return system1.getName().compareTo(system2.getName());
-			}
-		});
-		for(CitySystem system : systems) {
+		for(CitySystem system : city.getSystems()) {
 			SystemPanel systemPanel = new SystemPanel(this, system);
-			systemPanels.add(systemPanel);
 			tabbedPane.addTab(system.getName(), system.getType().getIcon(), 
 					systemPanel, system.getDescription());
 		}
+		tabbedPane.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
+					if(c instanceof CityVizPanel)
+						cityNetFrame.editCityDetailsCommand();
+					else if(c instanceof SystemPanel)
+						editSystemDetailsCommand(((SystemPanel)c).getSystem());
+				}
+			}
+		});
 		tabbedPane.addTab("+", new JPanel());
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if(tabbedPane.getSelectedIndex()==tabbedPane.getTabCount()-1) {
-					System.out.println("Add System");
-					tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2);
+					tabbedPane.setSelectedIndex(0);
+					CitySystem system = new CitySystem();
+					addSystemCommand(system);
+					editSystemDetailsCommand(system);
 				}
 			}
 		});
@@ -107,11 +113,14 @@ public class CityPanel extends JPanel {
 	 */
 	public void clearCellsCommand() {
 		System.out.println("Clear Cells Command");
-		for(SystemPanel p : systemPanels) {
-			if(!p.getSystem().getEdges().isEmpty())
-				p.clearEdgesCommand();
-			if(!p.getSystem().getNodes().isEmpty())
-				p.clearNodesCommand();
+		for(Component c : tabbedPane.getComponents()) {
+			if(c instanceof SystemPanel) {
+				SystemPanel p = (SystemPanel)c;
+				if(!p.getSystem().getEdges().isEmpty())
+					p.clearEdgesCommand();
+				if(!p.getSystem().getNodes().isEmpty())
+					p.clearNodesCommand();
+			}
 		}
 		city.setCells(new HashSet<Cell>());
 	}
@@ -137,15 +146,24 @@ public class CityPanel extends JPanel {
 		System.out.println("Add System Command");
 		city.addSystem(system);
 		SystemPanel systemPanel = new SystemPanel(this, system);
-		systemPanels.add(systemPanel);
-		List<CitySystem> systems = new ArrayList<CitySystem>(city.getSystems());
-		Collections.sort(systems, new Comparator<CitySystem>() {
-			public int compare(CitySystem system1, CitySystem system2) {
-				return system1.getName().compareTo(system2.getName());
-			}
-		});
 		tabbedPane.insertTab(system.getName(), system.getType().getIcon(), 
-				systemPanel, system.getDescription(), 1+systems.indexOf(system));
-		repaint();
+				systemPanel, system.getDescription(), tabbedPane.getTabCount()-1);
+		tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2);
+	}
+	
+	/**
+	 * Command to edit the system details.
+	 */
+	public void editSystemDetailsCommand(CitySystem system) {
+		System.out.println("Edit System Details Command");
+		systemDetailsPanel.loadSystemDetails(system);
+		int value = JOptionPane.showConfirmDialog(this,systemDetailsPanel,"City.Net | System Details", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			systemDetailsPanel.saveSystemDetailsCommand();
+			tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), system.getName());
+			tabbedPane.setIconAt(tabbedPane.getSelectedIndex(), system.getType().getIcon());
+			tabbedPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), system.getDescription());
+		}
 	}
 }
