@@ -127,8 +127,8 @@ public class CityNetFrame extends JFrame {
 	 */
 	public void paint(Graphics g) {
 		super.paint(g);
-		if(isCityOpen()) setTitle("CityNet | " + cityPanel.getCity().getName());
-		else setTitle("CityNet");
+		if(isCityOpen()) setTitle("City.Net | " + cityPanel.getCity().getName());
+		else setTitle("City.Net");
 	}
 	
 	/**
