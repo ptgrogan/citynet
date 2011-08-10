@@ -9,10 +9,14 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
@@ -21,7 +25,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -170,6 +176,27 @@ public class NodeRegionPanel extends JPanel {
 		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
 		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
 		coordinateTable.setPreferredScrollableViewportSize(new Dimension(150,200));
+		MouseAdapter coordinateMouseAdapter = new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=coordinateTable)
+					coordinateTable.getSelectionModel().clearSelection();
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					int row = coordinateTable.rowAtPoint(e.getPoint());
+					coordinateTable.getSelectionModel().addSelectionInterval(row, row);
+					Set<Coordinate> coordinates = new HashSet<Coordinate>();
+					for(int i : coordinateTable.getSelectedRows()) 
+						coordinates.add(coordinateTableModel.getCoordinates().getCoordinate(i));
+					createCoordinatePopupMenu(coordinates).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		coordinateTable.addMouseListener(coordinateMouseAdapter);
 		coordinateTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				deleteCoordinatesButton.setEnabled(coordinateTable.getSelectedRowCount()>0);
@@ -179,7 +206,9 @@ public class NodeRegionPanel extends JPanel {
 						&& coordinateTable.getSelectedRow() < coordinateTableModel.getRowCount()-1);
 			}
 		});
-		add(new JScrollPane(coordinateTable), c);
+		JScrollPane coordinateScroll = new JScrollPane(coordinateTable);
+		coordinateScroll.addMouseListener(coordinateMouseAdapter);
+		add(coordinateScroll,c);
 		c.gridx++;
 		c.weightx = 0;
 		JPanel coordinateButtonPanel = new JPanel();
@@ -187,34 +216,16 @@ public class NodeRegionPanel extends JPanel {
 		moveUpButton = new JButton(CityNetIcon.MOVE_UP.getIcon());
 		moveUpButton.setToolTipText("Move coordinate up one row");
 		moveUpButton.addActionListener(new ActionListener() {
-			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = coordinateTable.getSelectedRow();
-				if(selectedRow > 0) {
-					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
-					coordinateTableModel.getCoordinates().set(selectedRow,
-							coordinateTableModel.getCoordinates().getCoordinate(selectedRow-1));
-					coordinateTableModel.getCoordinates().set(selectedRow-1, coord);
-					coordinateTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
-					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
-				}
+				moveCoordinateUpCommand();
 			}
 		});
 		coordinateButtonPanel.add(moveUpButton);
 		moveDownButton = new JButton(CityNetIcon.MOVE_DOWN.getIcon());
 		moveDownButton.setToolTipText("Move coordinate down one row");
 		moveDownButton.addActionListener(new ActionListener() {
-			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = coordinateTable.getSelectedRow();
-				if(selectedRow < coordinateTableModel.getRowCount()-1) {
-					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
-					coordinateTableModel.getCoordinates().set(selectedRow,
-							coordinateTableModel.getCoordinates().getCoordinate(selectedRow+1));
-					coordinateTableModel.getCoordinates().set(selectedRow+1, coord);
-					coordinateTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
-					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
-				}
+				moveCoordinateDownCommand();
 			}
 		});
 		coordinateButtonPanel.add(moveDownButton);
@@ -222,10 +233,7 @@ public class NodeRegionPanel extends JPanel {
 		addCoordinateButton.setToolTipText("Add new coordinate");
 		addCoordinateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				coordinateTableModel.getCoordinates().add(new Coordinate(),true);
-				coordinateTableModel.fireTableRowsInserted(
-						coordinateTableModel.getRowCount(),
-						coordinateTableModel.getRowCount());
+				addCoordinateCommand();
 			}
 		});
 		coordinateButtonPanel.add(addCoordinateButton);
@@ -233,15 +241,110 @@ public class NodeRegionPanel extends JPanel {
 		deleteCoordinatesButton.setToolTipText("Delete selected coordinates");
 		deleteCoordinatesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				for(int i = coordinateTable.getSelectedRows().length-1; i>=0; i--) {
-					int rowDeleted = coordinateTable.getSelectedRows()[i];
-					coordinateTableModel.getCoordinates().remove(rowDeleted);
-					coordinateTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
-				}
+				deleteCoordinatesCommand();
 			}
 		});
 		coordinateButtonPanel.add(deleteCoordinatesButton);
 		add(coordinateButtonPanel, c);
+	}
+	
+	/**
+	 * Creates the coordinate popup menu.
+	 *
+	 * @param coordinates the coordinates
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createCoordinatePopupMenu(final Set<Coordinate> coordinates) {
+		JPopupMenu coordinatePopupMenu = new JPopupMenu();
+		if(coordinates.size()>0) {
+			JMenuItem moveCoordinatesUpItem = new JMenuItem("Move Coordinate Up");
+			moveCoordinatesUpItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					moveCoordinateUpCommand();
+				}
+			});
+			moveCoordinatesUpItem.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() > 0);
+			coordinatePopupMenu.add(moveCoordinatesUpItem);
+			JMenuItem moveCoordinatesDownItem = new JMenuItem("Move Coordinate Down");
+			moveCoordinatesDownItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					moveCoordinateDownCommand();
+				}
+			});
+			moveCoordinatesDownItem.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() < coordinateTableModel.getRowCount()-1);
+			coordinatePopupMenu.add(moveCoordinatesDownItem);
+			JMenuItem deleteCoordinatesMenuItem = new JMenuItem("Delete Coordinate" + (coordinates.size()>1?"s":""));
+			deleteCoordinatesMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteCoordinatesCommand();
+				}
+			});
+			coordinatePopupMenu.add(deleteCoordinatesMenuItem);
+		} else {
+			JMenuItem addCoordinateMenuItem = new JMenuItem("Add Coordinate");
+			addCoordinateMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addCoordinateCommand();
+				}
+			});
+			coordinatePopupMenu.add(addCoordinateMenuItem);
+		}
+		return coordinatePopupMenu;
+	}
+	
+	/**
+	 * Adds the coordinate command.
+	 */
+	private void addCoordinateCommand() {
+		coordinateTableModel.getCoordinates().add(new Coordinate(),true);
+		coordinateTableModel.fireTableRowsInserted(
+				coordinateTableModel.getRowCount(),
+				coordinateTableModel.getRowCount());
+	}
+	
+	/**
+	 * Delete coordinates command.
+	 */
+	private void deleteCoordinatesCommand() {
+		for(int i = coordinateTable.getSelectedRows().length-1; i>=0; i--) {
+			int rowDeleted = coordinateTable.getSelectedRows()[i];
+			coordinateTableModel.getCoordinates().remove(rowDeleted);
+			coordinateTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
+		}
+	}
+	
+	/**
+	 * Move coordinate up command.
+	 */
+	@SuppressWarnings("unchecked")
+	private void moveCoordinateUpCommand() {
+		int selectedRow = coordinateTable.getSelectedRow();
+		if(selectedRow > 0) {
+			Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+			coordinateTableModel.getCoordinates().set(selectedRow,
+					coordinateTableModel.getCoordinates().getCoordinate(selectedRow-1));
+			coordinateTableModel.getCoordinates().set(selectedRow-1, coord);
+			coordinateTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
+			coordinateTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
+		}
+	}
+	
+	/**
+	 * Move coordinate down command.
+	 */
+	@SuppressWarnings("unchecked")
+	private void moveCoordinateDownCommand() {
+		int selectedRow = coordinateTable.getSelectedRow();
+		if(selectedRow < coordinateTableModel.getRowCount()-1) {
+			Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+			coordinateTableModel.getCoordinates().set(selectedRow,
+					coordinateTableModel.getCoordinates().getCoordinate(selectedRow+1));
+			coordinateTableModel.getCoordinates().set(selectedRow+1, coord);
+			coordinateTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
+			coordinateTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
+		}
 	}
 	
 	/**

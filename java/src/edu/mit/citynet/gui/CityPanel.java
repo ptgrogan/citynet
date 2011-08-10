@@ -107,6 +107,12 @@ public class CityPanel extends JPanel {
 		add(tabbedPane, BorderLayout.CENTER);
 	}
 
+	/**
+	 * Creates the system tabs popup menu.
+	 *
+	 * @param system the system
+	 * @return the j popup menu
+	 */
 	private JPopupMenu createSystemTabsPopupMenu(final CitySystem system) {
 		JPopupMenu systemTabsPopupMenu = new JPopupMenu();
 		if(system != null) {
