@@ -88,6 +88,21 @@ public class EdgeRegionPanel extends JPanel {
 		add(new JLabel("Directed: ", JLabel.RIGHT), c);
 		c.gridx++;
 		directedCombo = new JComboBox(new String[]{DIRECTED,UNDIRECTED});
+		directedCombo.setRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 2820843521395503530L;
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				super.getListCellRendererComponent(list, value, index, 
+						isSelected, cellHasFocus);
+				if(value == DIRECTED) {
+					setIcon(CityNetIcon.DIRECTED.getIcon());
+				} else if(value==UNDIRECTED) {
+					setIcon(CityNetIcon.UNDIRECTED.getIcon());
+				}
+				return this;
+			}
+		});
 		add(directedCombo,c);
 		c.gridx = 0;
 		c.gridy++;
@@ -244,6 +259,7 @@ public class EdgeRegionPanel extends JPanel {
 				moveCoordinateUpCommand();
 			}
 		});
+		moveUpButton.setEnabled(false);
 		coordinateButtonPanel.add(moveUpButton);
 		moveDownButton = new JButton(CityNetIcon.MOVE_DOWN.getIcon());
 		moveDownButton.setToolTipText("Move coordinate down one row");
@@ -252,6 +268,7 @@ public class EdgeRegionPanel extends JPanel {
 				moveCoordinateDownCommand();
 			}
 		});
+		moveDownButton.setEnabled(false);
 		coordinateButtonPanel.add(moveDownButton);
 		addCoordinateButton = new JButton(CityNetIcon.ADD_COORDINATE.getIcon());
 		addCoordinateButton.setToolTipText("Add new coordinate");
@@ -268,6 +285,7 @@ public class EdgeRegionPanel extends JPanel {
 				deleteCoordinatesCommand();
 			}
 		});
+		deleteCoordinatesButton.setEnabled(false);
 		coordinateButtonPanel.add(deleteCoordinatesButton);
 		add(coordinateButtonPanel, c);
 	}
@@ -391,6 +409,7 @@ public class EdgeRegionPanel extends JPanel {
 		edgeRegionTypeCombo.setSelectedItem(edgeRegion.getEdgeRegionType());
 		descriptionText.setText(edgeRegion.getDescription());
 		edgeTypeCombo.setSelectedItem(edgeRegion.getEdgeType());
+		directedCombo.setSelectedItem(edgeRegion.isDirected()?DIRECTED:UNDIRECTED);
 		coordinateTableModel.setCoordinates(edgeRegion.getCoordinateList());
 		coordinateTableModel.setLayers(edgeRegion.getLayers());
 	}
@@ -403,6 +422,7 @@ public class EdgeRegionPanel extends JPanel {
 		edgeRegion.setEdgeRegionType((EdgeRegionType)edgeRegionTypeCombo.getSelectedItem());
 		edgeRegion.setDescription(descriptionText.getText());
 		edgeRegion.setEdgeType((EdgeType)edgeTypeCombo.getSelectedItem());
+		edgeRegion.setDirected(directedCombo.getSelectedItem()==DIRECTED);
 		for(int i = coordinateTableModel.getLayers().size()-1; i >=0; i--) {
 			// remove any null layer coordinates, cannot initialize layers to
 			// non-null value because not guaranteed to exist

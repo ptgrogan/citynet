@@ -209,6 +209,7 @@ public class NodeRegionPanel extends JPanel {
 				moveCoordinateUpCommand();
 			}
 		});
+		moveUpButton.setEnabled(false);
 		coordinateButtonPanel.add(moveUpButton);
 		moveDownButton = new JButton(CityNetIcon.MOVE_DOWN.getIcon());
 		moveDownButton.setToolTipText("Move coordinate down one row");
@@ -217,6 +218,7 @@ public class NodeRegionPanel extends JPanel {
 				moveCoordinateDownCommand();
 			}
 		});
+		moveDownButton.setEnabled(false);
 		coordinateButtonPanel.add(moveDownButton);
 		addCoordinateButton = new JButton(CityNetIcon.ADD_COORDINATE.getIcon());
 		addCoordinateButton.setToolTipText("Add new coordinate");
@@ -233,6 +235,7 @@ public class NodeRegionPanel extends JPanel {
 				deleteCoordinatesCommand();
 			}
 		});
+		deleteCoordinatesButton.setEnabled(false);
 		coordinateButtonPanel.add(deleteCoordinatesButton);
 		add(coordinateButtonPanel, c);
 	}

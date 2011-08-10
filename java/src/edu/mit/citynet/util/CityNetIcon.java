@@ -27,6 +27,8 @@ public enum CityNetIcon {
 	DELETE_COORDINATE("resources/bullet_delete.png"),
 	MOVE_UP("resources/bullet_arrow_up.png"),
 	MOVE_DOWN("resources/bullet_arrow_down.png"),
+	UNDIRECTED("resources/arrow_both.png"),
+	DIRECTED("resources/arrow_right.png"),
 	DELETE("resources/delete.png");
 	
 	private String filePath;
