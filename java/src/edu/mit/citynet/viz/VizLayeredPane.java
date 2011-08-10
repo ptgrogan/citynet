@@ -172,7 +172,7 @@ public class VizLayeredPane extends JLayeredPane {
 			}
 		});
 		visualizationPopupMenu.add(autofitItem);
-		JMenuItem centerViewItem = new JMenuItem("Center View");
+		JMenuItem centerViewItem = new JMenuItem("Center Here");
 		centerViewItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				centerView(getMousePosition());
