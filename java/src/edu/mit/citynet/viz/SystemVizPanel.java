@@ -68,7 +68,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		}
 		this.systemPanel = systemPanel;
 		this.system = system;
-		nodeRegionPanel = new NodeRegionPanel();
+		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel();
 		initializePanel();
 	}
@@ -548,5 +548,14 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 */
 	public Set<EdgeRegion> getSelectedEdgeRegions() {
 		return edgeRegionTable.getSelectedRegions();
+	}
+	
+	/**
+	 * Gets the system panel.
+	 *
+	 * @return the system panel
+	 */
+	public SystemPanel getSystemPanel() {
+		return systemPanel;
 	}
 }

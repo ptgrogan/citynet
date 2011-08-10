@@ -1,10 +1,13 @@
 package edu.mit.citynet.core;
 
+import javax.swing.ImageIcon;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
 import edu.mit.citynet.CityNet;
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The NodeRegion class describes nodes that will be generated at cells over a 
@@ -50,6 +53,20 @@ public class NodeRegion extends AbstractRegion {
 		 */
 		public String toString() {
 			return getName();
+		}
+		
+		/**
+		 * Gets the icon.
+		 *
+		 * @return the icon
+		 */
+		public ImageIcon getIcon() {
+			switch(this) {
+			case POLYGON: return CityNetIcon.POLYGON_REGION.getIcon();
+			case POLYLINE: return CityNetIcon.POLYLINE_REGION.getIcon();
+			case POLYPOINT: return CityNetIcon.POLYPOINT_REGION.getIcon();
+			default: return CityNetIcon.UNDEFINED_REGION.getIcon();
+			}
 		}
 		
 		/**
