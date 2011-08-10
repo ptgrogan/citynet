@@ -6,12 +6,19 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -22,6 +29,8 @@ import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.gui.EdgeRegionPanel;
+import edu.mit.citynet.gui.NodeRegionPanel;
 import edu.mit.citynet.gui.SystemPanel;
 import edu.mit.citynet.util.CityNetIcon;
 
@@ -40,8 +49,12 @@ public class SystemVizPanel extends AbstractVizPanel {
 	private VizLayeredPane layeredPane;
 	private RegionTableModel<NodeRegion> nodeRegionTableModel;
 	private RegionTable<NodeRegion> nodeRegionTable;
+	private NodeRegionPanel nodeRegionPanel;
+	private JButton editNodeRegionButton, deleteNodeRegionsButton;
 	private RegionTableModel<EdgeRegion> edgeRegionTableModel;
 	private RegionTable<EdgeRegion> edgeRegionTable;
+	private EdgeRegionPanel edgeRegionPanel;
+	private JButton editEdgeRegionButton, deleteEdgeRegionsButton;
 	
 	/**
 	 * Instantiates a new system viz panel.
@@ -55,6 +68,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 		}
 		this.systemPanel = systemPanel;
 		this.system = system;
+		nodeRegionPanel = new NodeRegionPanel();
+		edgeRegionPanel = new EdgeRegionPanel();
 		initializePanel();
 	}
 	
@@ -92,7 +107,85 @@ public class SystemVizPanel extends AbstractVizPanel {
 		nodeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		nodeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Node Region");
 		nodeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
-		leftPanel.add(new JScrollPane(nodeRegionTable),c);
+		MouseAdapter nodeRegionMouseAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					if(nodeRegionTable.getSelectionModel().isSelectionEmpty())
+						addNodeRegionCommand();
+					else
+						editNodeRegionCommand();
+				}
+			}
+			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=nodeRegionTable)
+					nodeRegionTable.getSelectionModel().clearSelection();
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					int row = nodeRegionTable.rowAtPoint(e.getPoint());
+					NodeRegion region = (NodeRegion)nodeRegionTableModel.getRegionAt(row);
+					if(!nodeRegionTable.getSelectedRegions().contains(region)) {
+						nodeRegionTable.getSelectionModel().addSelectionInterval(row, row);
+					}
+					createNodeRegionPopupMenu(nodeRegionTable.getSelectedRegions()).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		nodeRegionTable.addMouseListener(nodeRegionMouseAdapter);
+		nodeRegionTable.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
+					deleteNodeRegionsCommand();
+				} else if(e.getKeyCode()==KeyEvent.VK_ENTER && nodeRegionTable.getSelectedRowCount()==1){
+					editNodeRegionCommand();
+				}
+			}
+		});
+		nodeRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				editNodeRegionButton.setEnabled(nodeRegionTable.getSelectedRowCount()==1);
+				deleteNodeRegionsButton.setEnabled(nodeRegionTable.getSelectedRowCount()>0);
+			}
+		});
+		JScrollPane nodeRegionScroll = new JScrollPane(nodeRegionTable);
+		nodeRegionScroll.addMouseListener(nodeRegionMouseAdapter);
+		leftPanel.add(nodeRegionScroll,c);
+		c.gridy++;
+		c.fill = GridBagConstraints.NONE;
+		c.weighty = 0;
+		JPanel nodeRegionButtonPanel = new JPanel();
+		nodeRegionButtonPanel.setLayout(new BoxLayout(nodeRegionButtonPanel,BoxLayout.LINE_AXIS));
+		JButton addNodeRegionButton = new JButton("Add");
+		addNodeRegionButton.setToolTipText("Add a new node region");
+		addNodeRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addNodeRegionCommand();
+			}
+		});
+		nodeRegionButtonPanel.add(addNodeRegionButton);
+		editNodeRegionButton = new JButton("Edit");
+		editNodeRegionButton.setToolTipText("Edit an existing node region");
+		editNodeRegionButton.setEnabled(false);
+		editNodeRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editNodeRegionCommand();
+			}
+		});
+		nodeRegionButtonPanel.add(editNodeRegionButton);
+		deleteNodeRegionsButton = new JButton("Delete");
+		deleteNodeRegionsButton.setToolTipText("Delete an existing node region");
+		deleteNodeRegionsButton.setEnabled(false);
+		deleteNodeRegionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteNodeRegionsCommand();
+			}
+		});
+		nodeRegionButtonPanel.add(deleteNodeRegionsButton);
+		leftPanel.add(nodeRegionButtonPanel, c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
@@ -136,7 +229,85 @@ public class SystemVizPanel extends AbstractVizPanel {
 		edgeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		edgeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Edge Region");
 		edgeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
-		leftPanel.add(new JScrollPane(edgeRegionTable),c);
+		MouseAdapter edgeRegionMouseAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					if(edgeRegionTable.getSelectionModel().isSelectionEmpty())
+						addEdgeRegionCommand();
+					else
+						editEdgeRegionCommand();
+				}
+			}
+			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=edgeRegionTable)
+					edgeRegionTable.getSelectionModel().clearSelection();
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					int row = edgeRegionTable.rowAtPoint(e.getPoint());
+					EdgeRegion region = (EdgeRegion)edgeRegionTableModel.getRegionAt(row);
+					if(!edgeRegionTable.getSelectedRegions().contains(region)) {
+						edgeRegionTable.getSelectionModel().addSelectionInterval(row, row);
+					}
+					createEdgeRegionPopupMenu(edgeRegionTable.getSelectedRegions()).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		edgeRegionTable.addMouseListener(edgeRegionMouseAdapter);
+		edgeRegionTable.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
+					deleteEdgeRegionsCommand();
+				} else if(e.getKeyCode()==KeyEvent.VK_ENTER && edgeRegionTable.getSelectedRowCount()==1){
+					editEdgeRegionCommand();
+				}
+			}
+		});
+		edgeRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				editEdgeRegionButton.setEnabled(edgeRegionTable.getSelectedRowCount()==1);
+				deleteEdgeRegionsButton.setEnabled(edgeRegionTable.getSelectedRowCount()>0);
+			}
+		});
+		JScrollPane edgeRegionScroll = new JScrollPane(edgeRegionTable);
+		edgeRegionScroll.addMouseListener(edgeRegionMouseAdapter);
+		leftPanel.add(edgeRegionScroll,c);
+		c.gridy++;
+		c.fill = GridBagConstraints.NONE;
+		c.weighty = 0;
+		JPanel edgeRegionButtonPanel = new JPanel();
+		edgeRegionButtonPanel.setLayout(new BoxLayout(edgeRegionButtonPanel,BoxLayout.LINE_AXIS));
+		JButton addEdgeRegionButton = new JButton("Add");
+		addEdgeRegionButton.setToolTipText("Add a new edge region");
+		addEdgeRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addEdgeRegionCommand();
+			}
+		});
+		edgeRegionButtonPanel.add(addEdgeRegionButton);
+		editEdgeRegionButton = new JButton("Edit");
+		editEdgeRegionButton.setToolTipText("Edit an existing edge region");
+		editEdgeRegionButton.setEnabled(false);
+		editEdgeRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editEdgeRegionCommand();
+			}
+		});
+		edgeRegionButtonPanel.add(editEdgeRegionButton);
+		deleteEdgeRegionsButton = new JButton("Delete");
+		deleteEdgeRegionsButton.setToolTipText("Delete an existing edge region");
+		deleteEdgeRegionsButton.setEnabled(false);
+		deleteEdgeRegionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteEdgeRegionsCommand();
+			}
+		});
+		edgeRegionButtonPanel.add(deleteEdgeRegionsButton);
+		leftPanel.add(edgeRegionButtonPanel, c);
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
@@ -164,6 +335,177 @@ public class SystemVizPanel extends AbstractVizPanel {
 		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
 		rightPanel.add(layeredPane,BorderLayout.CENTER);
 		setRightComponent(rightPanel);
+	}
+	
+	/**
+	 * Creates the node region popup menu.
+	 *
+	 * @param regions the regions
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createNodeRegionPopupMenu(Set<NodeRegion> regions) {
+		JPopupMenu nodeRegionPopupMenu = new JPopupMenu();
+		if(regions.size()>0) {
+			JMenuItem editNodeRegionMenuItem = new JMenuItem("Edit Node Region");
+			editNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editNodeRegionCommand();
+				}
+			});
+			editNodeRegionMenuItem.setEnabled(regions.size()==1);
+			nodeRegionPopupMenu.add(editNodeRegionMenuItem);
+			JMenuItem deleteNodeRegionMenuItem = new JMenuItem("Delete Node Region" + (regions.size()>1?"s":""));
+			deleteNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteNodeRegionsCommand();
+				}
+			});
+			nodeRegionPopupMenu.add(deleteNodeRegionMenuItem);
+		} else {
+			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
+			addNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addNodeRegionCommand();
+				}
+			});
+			nodeRegionPopupMenu.add(addNodeRegionMenuItem);
+		}
+		return nodeRegionPopupMenu;
+	}
+	
+	/**
+	 * Creates the edge region popup menu.
+	 *
+	 * @param regions the regions
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createEdgeRegionPopupMenu(Set<EdgeRegion> regions) {
+		JPopupMenu edgeRegionPopupMenu = new JPopupMenu();
+		if(regions.size()>0) {
+			JMenuItem editEdgeRegionMenuItem = new JMenuItem("Edit Edge Region");
+			editEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editEdgeRegionCommand();
+				}
+			});
+			editEdgeRegionMenuItem.setEnabled(regions.size()==1);
+			edgeRegionPopupMenu.add(editEdgeRegionMenuItem);
+			JMenuItem deleteEdgeRegionMenuItem = new JMenuItem("Delete Edge Region" + (regions.size()>1?"s":""));
+			deleteEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteEdgeRegionsCommand();
+				}
+			});
+			edgeRegionPopupMenu.add(deleteEdgeRegionMenuItem);
+		} else {
+			JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
+			addEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addEdgeRegionCommand();
+				}
+			});
+			edgeRegionPopupMenu.add(addEdgeRegionMenuItem);
+		}
+		return edgeRegionPopupMenu;
+	}
+	
+	/**
+	 * Adds the node region command.
+	 */
+	private void addNodeRegionCommand() {
+		System.out.println("Add Node Region Command");
+		NodeRegion nodeRegion = new NodeRegion();
+		nodeRegionPanel.loadNodeRegion(nodeRegion);
+		int value = JOptionPane.showConfirmDialog(this,nodeRegionPanel,"City.Net | Node Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeRegionPanel.saveNodeRegionCommand();
+			systemPanel.getSystem().addNodeRegion(nodeRegion);
+			// TODO: should only add new node region to table model and update
+			nodeRegionTableModel.setRegions(systemPanel.getSystem().getNodeRegions());
+			repaint();
+		}
+	}
+	
+	/**
+	 * Edits the node region command.
+	 */
+	private void editNodeRegionCommand() {
+		System.out.println("Edit Node Region Command");
+		nodeRegionPanel.loadNodeRegion(nodeRegionTable.getSelectedRegion());
+		int value = JOptionPane.showConfirmDialog(this,nodeRegionPanel,"City.Net | Node Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeRegionPanel.saveNodeRegionCommand();
+			repaint();
+		}
+	}
+	
+	/**
+	 * Delete node regions command.
+	 */
+	private void deleteNodeRegionsCommand() {
+		System.out.println("Delete Node Regions Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these node regions?", 
+				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			Set<NodeRegion> regions = systemPanel.getSystem().getNodeRegions();
+			regions.removeAll(nodeRegionTable.getSelectedRegions());
+			// TODO: should move removeAll method to the city
+			systemPanel.getSystem().setNodeRegions(regions);
+			// TODO: should remove node region from table model and update
+			nodeRegionTableModel.setRegions(systemPanel.getSystem().getNodeRegions());
+			repaint();
+		}
+	}
+	/**
+	 * Adds the edge region command.
+	 */
+	private void addEdgeRegionCommand() {
+		System.out.println("Add Edge Region Command");
+		EdgeRegion edgeRegion = new EdgeRegion();
+		edgeRegionPanel.loadEdgeRegion(edgeRegion);
+		int value = JOptionPane.showConfirmDialog(this,edgeRegionPanel,"City.Net | Edge Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeRegionPanel.saveEdgeRegionCommand();
+			systemPanel.getSystem().addEdgeRegion(edgeRegion);
+			// TODO: should only add new edge region to table model and update
+			edgeRegionTableModel.setRegions(systemPanel.getSystem().getEdgeRegions());
+			repaint();
+		}
+	}
+	
+	/**
+	 * Edits the edge region command.
+	 */
+	private void editEdgeRegionCommand() {
+		System.out.println("Edit Edge Region Command");
+		edgeRegionPanel.loadEdgeRegion(edgeRegionTable.getSelectedRegion());
+		int value = JOptionPane.showConfirmDialog(this,edgeRegionPanel,"City.Net | Edge Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeRegionPanel.saveEdgeRegionCommand();
+			repaint();
+		}
+	}
+	
+	/**
+	 * Delete edge regions command.
+	 */
+	private void deleteEdgeRegionsCommand() {
+		System.out.println("Delete Edge Regions Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these edge regions?", 
+				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			Set<EdgeRegion> regions = systemPanel.getSystem().getEdgeRegions();
+			regions.removeAll(edgeRegionTable.getSelectedRegions());
+			// TODO: should move removeAll method to the city
+			systemPanel.getSystem().setEdgeRegions(regions);
+			// TODO: should remove edge region from table model and update
+			edgeRegionTableModel.setRegions(systemPanel.getSystem().getEdgeRegions());
+			repaint();
+		}
 	}
 	
 	/* (non-Javadoc)

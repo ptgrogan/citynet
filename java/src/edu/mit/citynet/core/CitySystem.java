@@ -324,6 +324,46 @@ public class CitySystem {
 		this.nodeTypes = nodeTypes;
 	}
 	
+	/**
+	 * Adds the node region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean addNodeRegion(NodeRegion region) {
+		return nodeRegions.add(region);
+	}
+	
+	/**
+	 * Removes the node region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean removeNodeRegion(NodeRegion region) {
+		return nodeRegions.remove(region);
+	}
+	
+	/**
+	 * Adds the edge region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean addEdgeRegion(EdgeRegion region) {
+		return edgeRegions.add(region);
+	}
+	
+	/**
+	 * Removes the edge region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean removeEdgeRegion(EdgeRegion region) {
+		return edgeRegions.remove(region);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

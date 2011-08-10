@@ -182,8 +182,8 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.gridy++;
 		c.fill = GridBagConstraints.NONE;
 		c.weighty = 0;
-		JPanel cellRegionPanel = new JPanel();
-		cellRegionPanel.setLayout(new BoxLayout(cellRegionPanel,BoxLayout.LINE_AXIS));
+		JPanel cellRegionButtonPanel = new JPanel();
+		cellRegionButtonPanel.setLayout(new BoxLayout(cellRegionButtonPanel,BoxLayout.LINE_AXIS));
 		JButton addCellRegionButton = new JButton("Add");
 		addCellRegionButton.setToolTipText("Add a new cell region");
 		addCellRegionButton.addActionListener(new ActionListener() {
@@ -191,7 +191,7 @@ public class CityVizPanel extends AbstractVizPanel {
 				addCellRegionCommand();
 			}
 		});
-		cellRegionPanel.add(addCellRegionButton);
+		cellRegionButtonPanel.add(addCellRegionButton);
 		editCellRegionButton = new JButton("Edit");
 		editCellRegionButton.setToolTipText("Edit an existing cell region");
 		editCellRegionButton.setEnabled(false);
@@ -200,7 +200,7 @@ public class CityVizPanel extends AbstractVizPanel {
 				editCellRegionCommand();
 			}
 		});
-		cellRegionPanel.add(editCellRegionButton);
+		cellRegionButtonPanel.add(editCellRegionButton);
 		deleteCellRegionsButton = new JButton("Delete");
 		deleteCellRegionsButton.setToolTipText("Delete an existing cell region");
 		deleteCellRegionsButton.setEnabled(false);
@@ -209,8 +209,8 @@ public class CityVizPanel extends AbstractVizPanel {
 				deleteCellRegionsCommand();
 			}
 		});
-		cellRegionPanel.add(deleteCellRegionsButton);
-		leftPanel.add(cellRegionPanel, c);
+		cellRegionButtonPanel.add(deleteCellRegionsButton);
+		leftPanel.add(cellRegionButtonPanel, c);
 		c.gridy++;
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
