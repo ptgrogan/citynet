@@ -25,8 +25,8 @@ public class CellRegionPanel extends JPanel {
 
 	private CellRegion cellRegion;
 	private JTextArea descriptionText;
-	private JTable verticesTable;
-	private VertexTableModel verticesTableModel;
+	private JTable coordinateTable;
+	private CoordinateTableModel coordinateTableModel;
 	private JSpinner rowsSpinner, columnsSpinner;
 	private SpinnerNumberModel rowsModel, columnsModel;
 	
@@ -87,14 +87,14 @@ public class CellRegionPanel extends JPanel {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.VERTICAL;
-		verticesTableModel = new VertexTableModel();
-		verticesTableModel.setSquare(true);
-		verticesTable = new JTable(verticesTableModel);
-		verticesTable.getTableHeader().setReorderingAllowed(false);
-		verticesTable.getColumnModel().getColumn(0).setHeaderValue("X");
-		verticesTable.getColumnModel().getColumn(1).setHeaderValue("Y");
-		verticesTable.setPreferredScrollableViewportSize(new Dimension(150,75));
-		add(new JScrollPane(verticesTable), c);
+		coordinateTableModel = new CoordinateTableModel();
+		coordinateTableModel.setSquare(true);
+		coordinateTable = new JTable(coordinateTableModel);
+		coordinateTable.getTableHeader().setReorderingAllowed(false);
+		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
+		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
+		coordinateTable.setPreferredScrollableViewportSize(new Dimension(150,75));
+		add(new JScrollPane(coordinateTable), c);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class CellRegionPanel extends JPanel {
 	public void loadCellRegion(CellRegion cellRegion) {
 		this.cellRegion = cellRegion;
 		descriptionText.setText(cellRegion.getDescription());
-		verticesTableModel.setCoordinates(cellRegion.getCoordinateList());
+		coordinateTableModel.setCoordinates(cellRegion.getCoordinateList());
 		rowsSpinner.setValue(cellRegion.getNumberRows());
 		columnsSpinner.setValue(cellRegion.getNumberColumns());
 	}
@@ -114,9 +114,9 @@ public class CellRegionPanel extends JPanel {
 	 * Save cell region command.
 	 */
 	public void saveCellRegionCommand() {
-		if(verticesTable.isEditing()) verticesTable.getCellEditor().stopCellEditing();
+		if(coordinateTable.isEditing()) coordinateTable.getCellEditor().stopCellEditing();
 		cellRegion.setDescription(descriptionText.getText());
-		cellRegion.setCoordinateList(verticesTableModel.getCoordinates());
+		cellRegion.setCoordinateList(coordinateTableModel.getCoordinates());
 		cellRegion.setNumberColumns(columnsModel.getNumber().intValue());
 		cellRegion.setNumberRows(rowsModel.getNumber().intValue());
 	}

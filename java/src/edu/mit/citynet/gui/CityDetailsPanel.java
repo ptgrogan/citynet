@@ -42,8 +42,8 @@ public class CityDetailsPanel extends JPanel {
 	private JFileChooser fileChooser;
 	private JTextField nameText, imagePathText;
 	private JButton imageBrowseButton;
-	private JTable verticesTable;
-	private VertexTableModel verticesTableModel;
+	private JTable coordinateTable;
+	private CoordinateTableModel coordinateTableModel;
 	private JSpinner latitudeSpinner, longitudeSpinner, rotationSpinner;
 	private JComboBox latitudeCombo, longitudeCombo;
 	private SpinnerNumberModel latitudeModel, longitudeModel, rotationModel;
@@ -134,14 +134,14 @@ public class CityDetailsPanel extends JPanel {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.VERTICAL;
-		verticesTableModel = new VertexTableModel();
-		verticesTableModel.setSquare(true);
-		verticesTable = new JTable(verticesTableModel);
-		verticesTable.getTableHeader().setReorderingAllowed(false);
-		verticesTable.getColumnModel().getColumn(0).setHeaderValue("X");
-		verticesTable.getColumnModel().getColumn(1).setHeaderValue("Y");
-		verticesTable.setPreferredScrollableViewportSize(new Dimension(150,75));
-		p.add(new JScrollPane(verticesTable), c);
+		coordinateTableModel = new CoordinateTableModel();
+		coordinateTableModel.setSquare(true);
+		coordinateTable = new JTable(coordinateTableModel);
+		coordinateTable.getTableHeader().setReorderingAllowed(false);
+		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
+		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
+		coordinateTable.setPreferredScrollableViewportSize(new Dimension(150,75));
+		p.add(new JScrollPane(coordinateTable), c);
 		return p;
 	}
 	
@@ -221,7 +221,7 @@ public class CityDetailsPanel extends JPanel {
 			imageLabel.setIcon(new ImageIcon(city.getImage()
 					.getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
 		}
-		verticesTableModel.setCoordinates(city.getImageCoordinates());
+		coordinateTableModel.setCoordinates(city.getImageCoordinates());
 		latitudeModel.setValue(Math.abs(city.getLatitude()));
 		latitudeCombo.setSelectedItem(city.getLatitude()>0?NORTH:SOUTH);
 		longitudeModel.setValue(Math.abs(city.getLongitude()));
@@ -262,7 +262,7 @@ public class CityDetailsPanel extends JPanel {
 			city.setImageFilePath(imagePathText.getText());
 		else
 			city.setImageFilePath(null);
-		city.setImageCoordinates(verticesTableModel.getCoordinates());
+		city.setImageCoordinates(coordinateTableModel.getCoordinates());
 		city.setLatitude(latitudeModel.getNumber().doubleValue()
 				*(latitudeCombo.getSelectedItem()==NORTH?1:-1));
 		city.setLongitude(longitudeModel.getNumber().doubleValue()

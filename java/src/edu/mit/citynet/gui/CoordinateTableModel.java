@@ -9,7 +9,7 @@ import com.vividsolutions.jts.geom.CoordinateList;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class VertexTableModel extends AbstractTableModel {
+public class CoordinateTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = -3408504299722389072L;
 	
 	private CoordinateList coordinates;
@@ -20,7 +20,7 @@ public class VertexTableModel extends AbstractTableModel {
 	/**
 	 * Instantiates a new vertex table model.
 	 */
-	public VertexTableModel() {
+	public CoordinateTableModel() {
 		coordinates = new CoordinateList();
 	}
 	

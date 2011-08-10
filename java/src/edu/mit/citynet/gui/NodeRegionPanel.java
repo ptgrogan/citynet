@@ -44,8 +44,8 @@ public class NodeRegionPanel extends JPanel {
 	private NodeRegion nodeRegion;
 	private JTextArea descriptionText;
 	private JComboBox nodeRegionTypeCombo, layerCombo, nodeTypeCombo;
-	private JTable verticesTable;
-	private VertexTableModel verticesTableModel;
+	private JTable coordinateTable;
+	private CoordinateTableModel coordinateTableModel;
 	private JButton addCoordinateButton, deleteCoordinatesButton, moveUpButton, moveDownButton;
 	
 	/**
@@ -159,27 +159,27 @@ public class NodeRegionPanel extends JPanel {
 		c.gridy = 0;
 		c.gridx = 2;
 		c.anchor = GridBagConstraints.FIRST_LINE_END;
-		add(new JLabel("Vertices: ", JLabel.RIGHT), c);
+		add(new JLabel("Coordinates: ", JLabel.RIGHT), c);
 		c.gridx++;
 		c.gridheight = 4;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.VERTICAL;
-		verticesTableModel = new VertexTableModel();
-		verticesTable = new JTable(verticesTableModel);
-		verticesTable.getTableHeader().setReorderingAllowed(false);
-		verticesTable.getColumnModel().getColumn(0).setHeaderValue("X");
-		verticesTable.getColumnModel().getColumn(1).setHeaderValue("Y");
-		verticesTable.setPreferredScrollableViewportSize(new Dimension(150,200));
-		verticesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		coordinateTableModel = new CoordinateTableModel();
+		coordinateTable = new JTable(coordinateTableModel);
+		coordinateTable.getTableHeader().setReorderingAllowed(false);
+		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
+		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
+		coordinateTable.setPreferredScrollableViewportSize(new Dimension(150,200));
+		coordinateTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				deleteCoordinatesButton.setEnabled(verticesTable.getSelectedRowCount()>0);
-				moveUpButton.setEnabled(verticesTable.getSelectedRowCount()==1
-						&& verticesTable.getSelectedRow() > 0);
-				moveDownButton.setEnabled(verticesTable.getSelectedRowCount()==1
-						&& verticesTable.getSelectedRow() < verticesTableModel.getRowCount()-1);
+				deleteCoordinatesButton.setEnabled(coordinateTable.getSelectedRowCount()>0);
+				moveUpButton.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() > 0);
+				moveDownButton.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() < coordinateTableModel.getRowCount()-1);
 			}
 		});
-		add(new JScrollPane(verticesTable), c);
+		add(new JScrollPane(coordinateTable), c);
 		c.gridx++;
 		c.weightx = 0;
 		JPanel coordinateButtonPanel = new JPanel();
@@ -189,14 +189,14 @@ public class NodeRegionPanel extends JPanel {
 		moveUpButton.addActionListener(new ActionListener() {
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = verticesTable.getSelectedRow();
+				int selectedRow = coordinateTable.getSelectedRow();
 				if(selectedRow > 0) {
-					Coordinate coord = verticesTableModel.getCoordinates().getCoordinate(selectedRow);
-					verticesTableModel.getCoordinates().set(selectedRow,
-							verticesTableModel.getCoordinates().getCoordinate(selectedRow-1));
-					verticesTableModel.getCoordinates().set(selectedRow-1, coord);
-					verticesTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
-					verticesTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
+					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+					coordinateTableModel.getCoordinates().set(selectedRow,
+							coordinateTableModel.getCoordinates().getCoordinate(selectedRow-1));
+					coordinateTableModel.getCoordinates().set(selectedRow-1, coord);
+					coordinateTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
+					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
 				}
 			}
 		});
@@ -206,14 +206,14 @@ public class NodeRegionPanel extends JPanel {
 		moveDownButton.addActionListener(new ActionListener() {
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = verticesTable.getSelectedRow();
-				if(selectedRow < verticesTableModel.getRowCount()-1) {
-					Coordinate coord = verticesTableModel.getCoordinates().getCoordinate(selectedRow);
-					verticesTableModel.getCoordinates().set(selectedRow,
-							verticesTableModel.getCoordinates().getCoordinate(selectedRow+1));
-					verticesTableModel.getCoordinates().set(selectedRow+1, coord);
-					verticesTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
-					verticesTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
+				int selectedRow = coordinateTable.getSelectedRow();
+				if(selectedRow < coordinateTableModel.getRowCount()-1) {
+					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+					coordinateTableModel.getCoordinates().set(selectedRow,
+							coordinateTableModel.getCoordinates().getCoordinate(selectedRow+1));
+					coordinateTableModel.getCoordinates().set(selectedRow+1, coord);
+					coordinateTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
+					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
 				}
 			}
 		});
@@ -222,10 +222,10 @@ public class NodeRegionPanel extends JPanel {
 		addCoordinateButton.setToolTipText("Add new coordinate");
 		addCoordinateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				verticesTableModel.getCoordinates().add(new Coordinate(),true);
-				verticesTableModel.fireTableRowsInserted(
-						verticesTableModel.getRowCount(),
-						verticesTableModel.getRowCount());
+				coordinateTableModel.getCoordinates().add(new Coordinate(),true);
+				coordinateTableModel.fireTableRowsInserted(
+						coordinateTableModel.getRowCount(),
+						coordinateTableModel.getRowCount());
 			}
 		});
 		coordinateButtonPanel.add(addCoordinateButton);
@@ -233,10 +233,10 @@ public class NodeRegionPanel extends JPanel {
 		deleteCoordinatesButton.setToolTipText("Delete selected coordinates");
 		deleteCoordinatesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				for(int i = verticesTable.getSelectedRows().length-1; i>=0; i--) {
-					int rowDeleted = verticesTable.getSelectedRows()[i];
-					verticesTableModel.getCoordinates().remove(rowDeleted);
-					verticesTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
+				for(int i = coordinateTable.getSelectedRows().length-1; i>=0; i--) {
+					int rowDeleted = coordinateTable.getSelectedRows()[i];
+					coordinateTableModel.getCoordinates().remove(rowDeleted);
+					coordinateTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
 				}
 			}
 		});
@@ -255,18 +255,18 @@ public class NodeRegionPanel extends JPanel {
 		descriptionText.setText(nodeRegion.getDescription());
 		layerCombo.setSelectedItem(nodeRegion.getLayer());
 		nodeTypeCombo.setSelectedItem(nodeRegion.getNodeType());
-		verticesTableModel.setCoordinates(nodeRegion.getCoordinateList());
+		coordinateTableModel.setCoordinates(nodeRegion.getCoordinateList());
 	}
 	
 	/**
 	 * Save node region command.
 	 */
 	public void saveNodeRegionCommand() {
-		if(verticesTable.isEditing()) verticesTable.getCellEditor().stopCellEditing();
+		if(coordinateTable.isEditing()) coordinateTable.getCellEditor().stopCellEditing();
 		nodeRegion.setNodeRegionType((NodeRegionType)nodeRegionTypeCombo.getSelectedItem());
 		nodeRegion.setDescription(descriptionText.getText());
 		nodeRegion.setLayer((Layer)layerCombo.getSelectedItem());
 		nodeRegion.setNodeType((NodeType)nodeTypeCombo.getSelectedItem());
-		nodeRegion.setCoordinateList(verticesTableModel.getCoordinates());
+		nodeRegion.setCoordinateList(coordinateTableModel.getCoordinates());
 	}
 }

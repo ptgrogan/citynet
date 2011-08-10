@@ -48,8 +48,8 @@ public class EdgeRegionPanel extends JPanel {
 	private EdgeRegion edgeRegion;
 	private JTextArea descriptionText;
 	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo;
-	private JTable verticesTable;
-	private VertexTableModel3D verticesTableModel;
+	private JTable coordinateTable;
+	private CoordinateTableModel3D coordinateTableModel;
 	private JButton addCoordinateButton, deleteCoordinatesButton, moveUpButton, moveDownButton;
 	
 	/**
@@ -147,13 +147,13 @@ public class EdgeRegionPanel extends JPanel {
 		c.gridy = 0;
 		c.gridx = 2;
 		c.anchor = GridBagConstraints.FIRST_LINE_END;
-		add(new JLabel("Vertices: ", JLabel.RIGHT), c);
+		add(new JLabel("Coordinates: ", JLabel.RIGHT), c);
 		c.gridx++;
 		c.gridheight = 4;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.VERTICAL;
-		verticesTableModel = new VertexTableModel3D();
-		verticesTable = new JTable(verticesTableModel) {
+		coordinateTableModel = new CoordinateTableModel3D();
+		coordinateTable = new JTable(coordinateTableModel) {
 			private static final long serialVersionUID = 1L;
 			
 			/* (non-Javadoc)
@@ -182,11 +182,11 @@ public class EdgeRegionPanel extends JPanel {
 		    	} else return super.getCellEditor(row,col);
 			}
 		};
-		verticesTable.getTableHeader().setReorderingAllowed(false);
-		verticesTable.getColumnModel().getColumn(0).setHeaderValue("X");
-		verticesTable.getColumnModel().getColumn(1).setHeaderValue("Y");
-		verticesTable.getColumnModel().getColumn(2).setHeaderValue("Layer");
-		verticesTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+		coordinateTable.getTableHeader().setReorderingAllowed(false);
+		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
+		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
+		coordinateTable.getColumnModel().getColumn(2).setHeaderValue("Layer");
+		coordinateTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = 2092491034324672219L;
 			
 			/* (non-Javadoc)
@@ -202,17 +202,17 @@ public class EdgeRegionPanel extends JPanel {
 				return this;
 			}
 		});
-		verticesTable.setPreferredScrollableViewportSize(new Dimension(200,200));
-		verticesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		coordinateTable.setPreferredScrollableViewportSize(new Dimension(200,200));
+		coordinateTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				deleteCoordinatesButton.setEnabled(verticesTable.getSelectedRowCount()>0);
-				moveUpButton.setEnabled(verticesTable.getSelectedRowCount()==1
-						&& verticesTable.getSelectedRow() > 0);
-				moveDownButton.setEnabled(verticesTable.getSelectedRowCount()==1
-						&& verticesTable.getSelectedRow() < verticesTableModel.getRowCount()-1);
+				deleteCoordinatesButton.setEnabled(coordinateTable.getSelectedRowCount()>0);
+				moveUpButton.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() > 0);
+				moveDownButton.setEnabled(coordinateTable.getSelectedRowCount()==1
+						&& coordinateTable.getSelectedRow() < coordinateTableModel.getRowCount()-1);
 			}
 		});
-		add(new JScrollPane(verticesTable), c);
+		add(new JScrollPane(coordinateTable), c);
 		c.gridx++;
 		c.weightx = 0;
 		JPanel coordinateButtonPanel = new JPanel();
@@ -222,14 +222,14 @@ public class EdgeRegionPanel extends JPanel {
 		moveUpButton.addActionListener(new ActionListener() {
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = verticesTable.getSelectedRow();
+				int selectedRow = coordinateTable.getSelectedRow();
 				if(selectedRow > 0) {
-					Coordinate coord = verticesTableModel.getCoordinates().getCoordinate(selectedRow);
-					verticesTableModel.getCoordinates().set(selectedRow,
-							verticesTableModel.getCoordinates().getCoordinate(selectedRow-1));
-					verticesTableModel.getCoordinates().set(selectedRow-1, coord);
-					verticesTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
-					verticesTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
+					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+					coordinateTableModel.getCoordinates().set(selectedRow,
+							coordinateTableModel.getCoordinates().getCoordinate(selectedRow-1));
+					coordinateTableModel.getCoordinates().set(selectedRow-1, coord);
+					coordinateTableModel.fireTableRowsUpdated(selectedRow-1, selectedRow);
+					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow-1,selectedRow-1);
 				}
 			}
 		});
@@ -239,14 +239,14 @@ public class EdgeRegionPanel extends JPanel {
 		moveDownButton.addActionListener(new ActionListener() {
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = verticesTable.getSelectedRow();
-				if(selectedRow < verticesTableModel.getRowCount()-1) {
-					Coordinate coord = verticesTableModel.getCoordinates().getCoordinate(selectedRow);
-					verticesTableModel.getCoordinates().set(selectedRow,
-							verticesTableModel.getCoordinates().getCoordinate(selectedRow+1));
-					verticesTableModel.getCoordinates().set(selectedRow+1, coord);
-					verticesTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
-					verticesTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
+				int selectedRow = coordinateTable.getSelectedRow();
+				if(selectedRow < coordinateTableModel.getRowCount()-1) {
+					Coordinate coord = coordinateTableModel.getCoordinates().getCoordinate(selectedRow);
+					coordinateTableModel.getCoordinates().set(selectedRow,
+							coordinateTableModel.getCoordinates().getCoordinate(selectedRow+1));
+					coordinateTableModel.getCoordinates().set(selectedRow+1, coord);
+					coordinateTableModel.fireTableRowsUpdated(selectedRow, selectedRow+1);
+					coordinateTable.getSelectionModel().setSelectionInterval(selectedRow+1,selectedRow+1);
 				}
 			}
 		});
@@ -255,10 +255,10 @@ public class EdgeRegionPanel extends JPanel {
 		addCoordinateButton.setToolTipText("Add new coordinate");
 		addCoordinateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				verticesTableModel.getCoordinates().add(new Coordinate(),true);
-				verticesTableModel.fireTableRowsInserted(
-						verticesTableModel.getRowCount(),
-						verticesTableModel.getRowCount());
+				coordinateTableModel.getCoordinates().add(new Coordinate(),true);
+				coordinateTableModel.fireTableRowsInserted(
+						coordinateTableModel.getRowCount(),
+						coordinateTableModel.getRowCount());
 			}
 		});
 		coordinateButtonPanel.add(addCoordinateButton);
@@ -266,10 +266,10 @@ public class EdgeRegionPanel extends JPanel {
 		deleteCoordinatesButton.setToolTipText("Delete selected coordinates");
 		deleteCoordinatesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				for(int i = verticesTable.getSelectedRows().length-1; i>=0; i--) {
-					int rowDeleted = verticesTable.getSelectedRows()[i];
-					verticesTableModel.getCoordinates().remove(rowDeleted);
-					verticesTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
+				for(int i = coordinateTable.getSelectedRows().length-1; i>=0; i--) {
+					int rowDeleted = coordinateTable.getSelectedRows()[i];
+					coordinateTableModel.getCoordinates().remove(rowDeleted);
+					coordinateTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
 				}
 			}
 		});
@@ -287,19 +287,19 @@ public class EdgeRegionPanel extends JPanel {
 		edgeRegionTypeCombo.setSelectedItem(edgeRegion.getEdgeRegionType());
 		descriptionText.setText(edgeRegion.getDescription());
 		edgeTypeCombo.setSelectedItem(edgeRegion.getEdgeType());
-		verticesTableModel.setCoordinates(edgeRegion.getCoordinateList());
-		verticesTableModel.setLayers(edgeRegion.getLayers());
+		coordinateTableModel.setCoordinates(edgeRegion.getCoordinateList());
+		coordinateTableModel.setLayers(edgeRegion.getLayers());
 	}
 	
 	/**
 	 * Save edge region command.
 	 */
 	public void saveEdgeRegionCommand() {
-		if(verticesTable.isEditing()) verticesTable.getCellEditor().stopCellEditing();
+		if(coordinateTable.isEditing()) coordinateTable.getCellEditor().stopCellEditing();
 		edgeRegion.setEdgeRegionType((EdgeRegionType)edgeRegionTypeCombo.getSelectedItem());
 		edgeRegion.setDescription(descriptionText.getText());
 		edgeRegion.setEdgeType((EdgeType)edgeTypeCombo.getSelectedItem());
-		edgeRegion.setCoordinateList(verticesTableModel.getCoordinates());
-		edgeRegion.setLayers(verticesTableModel.getLayers());
+		edgeRegion.setCoordinateList(coordinateTableModel.getCoordinates());
+		edgeRegion.setLayers(coordinateTableModel.getLayers());
 	}
 }

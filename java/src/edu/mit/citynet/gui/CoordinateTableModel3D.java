@@ -10,14 +10,14 @@ import edu.mit.citynet.core.Layer;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class VertexTableModel3D extends VertexTableModel {
+public class CoordinateTableModel3D extends CoordinateTableModel {
 	private static final long serialVersionUID = 3598861671329323732L;
 	private List<Layer> layers;
 	
 	/**
 	 * Instantiates a new vertex table model.
 	 */
-	public VertexTableModel3D() {
+	public CoordinateTableModel3D() {
 		super();
 		layers = new ArrayList<Layer>();
 	}
