@@ -95,7 +95,7 @@ public class RegionTableModel<t extends AbstractRegion> extends AbstractTableMod
 		if(columnIndex==0) {
 			return checkedRegions.contains(regions.get(rowIndex));
 		} else {
-			return regions.get(rowIndex).getDescription();
+			return regions.get(rowIndex);
 		}
 	}
 	

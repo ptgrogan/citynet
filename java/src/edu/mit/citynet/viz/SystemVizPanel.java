@@ -1,6 +1,7 @@
 package edu.mit.citynet.viz;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,10 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
@@ -106,6 +109,22 @@ public class SystemVizPanel extends AbstractVizPanel {
 		nodeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		nodeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		nodeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Node Region");
+		nodeRegionTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 2092491034324672219L;
+			
+			/* (non-Javadoc)
+			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+			 */
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof NodeRegion) {
+					setText(((NodeRegion)value).getDescription());
+					setIcon(((NodeRegion)value).getNodeType().getIcon());
+				}
+				return this;
+			}
+		});
 		nodeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
 		MouseAdapter nodeRegionMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -228,6 +247,22 @@ public class SystemVizPanel extends AbstractVizPanel {
 		edgeRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		edgeRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		edgeRegionTable.getColumnModel().getColumn(1).setHeaderValue("Edge Region");
+		edgeRegionTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 2092491034324672219L;
+			
+			/* (non-Javadoc)
+			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+			 */
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof EdgeRegion) {
+					setText(((EdgeRegion)value).getDescription());
+					setIcon(((EdgeRegion)value).getEdgeType().getIcon());
+				}
+				return this;
+			}
+		});
 		edgeRegionTable.setPreferredScrollableViewportSize(new Dimension(200,200));
 		MouseAdapter edgeRegionMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

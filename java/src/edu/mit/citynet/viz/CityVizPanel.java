@@ -1,6 +1,7 @@
 package edu.mit.citynet.viz;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,10 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeRegion;
@@ -131,6 +134,21 @@ public class CityVizPanel extends AbstractVizPanel {
 		cellRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
+		cellRegionTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 2092491034324672219L;
+			
+			/* (non-Javadoc)
+			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+			 */
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof CellRegion) {
+					setText(((CellRegion)value).getDescription());
+				}
+				return this;
+			}
+		});
 		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(200,400));
 		MouseAdapter cellRegionMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

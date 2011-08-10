@@ -1,8 +1,17 @@
 package edu.mit.citynet.core;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.ImageIcon;
+
+import edu.mit.citynet.util.CityNetIcon;
 
 /**
  * The NodeType class is used to define a classification of nodes to be used in
@@ -128,5 +137,21 @@ public class NodeType {
 	 */
 	public String toString() {
 		return "NodeType" + id;
+	}
+	
+	/**
+	 * Gets the icon.
+	 *
+	 * @return the icon
+	 */
+	public ImageIcon getIcon() {
+		ImageFilter filter = new RGBImageFilter() {
+			public int filterRGB(int x, int y, int rgb) {
+				return rgb & color.getRGB();
+			}
+		};
+		ImageProducer producer = new FilteredImageSource(
+				CityNetIcon.NODE_TYPE_BLANK.getIcon().getImage().getSource(), filter);
+		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(producer));
 	}
 }

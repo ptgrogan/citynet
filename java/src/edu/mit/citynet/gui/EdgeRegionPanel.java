@@ -1,27 +1,20 @@
 package edu.mit.citynet.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.awt.image.RGBImageFilter;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -113,15 +106,7 @@ public class EdgeRegionPanel extends JPanel {
 						isSelected, cellHasFocus);
 				if(value instanceof EdgeType) {
 					setText(((EdgeType)value).getName());
-					final Color color = ((EdgeType)value).getColor();
-					ImageFilter filter = new RGBImageFilter() {
-						public int filterRGB(int x, int y, int rgb) {
-							return rgb & color.getRGB();
-						}
-					};
-					ImageProducer producer = new FilteredImageSource(
-							CityNetIcon.EDGE_TYPE_BLANK.getIcon().getImage().getSource(), filter);
-					setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(producer)));
+					setIcon(((EdgeType)value).getIcon());
 				}
 				return this;
 			}
