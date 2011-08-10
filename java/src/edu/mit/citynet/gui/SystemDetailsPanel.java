@@ -93,7 +93,9 @@ public class SystemDetailsPanel extends JPanel {
 		c.gridx++;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.BOTH;
-		descriptionText = new JTextArea(3,20);
+		descriptionText = new JTextArea(5,20);
+		descriptionText.setLineWrap(true);
+		descriptionText.setWrapStyleWord(true);
 		descriptionText.setMargin(new Insets(2,2,2,2));
 		add(new JScrollPane(descriptionText),c);
 	}

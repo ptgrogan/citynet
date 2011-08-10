@@ -2,14 +2,18 @@ package edu.mit.citynet.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -75,21 +79,62 @@ public class CityPanel extends JPanel {
 						editSystemDetailsCommand(((SystemPanel)c).getSystem());
 				}
 			}
+			public void mousePressed(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					Component c = tabbedPane.getSelectedComponent();
+					if(c instanceof SystemPanel)
+						createSystemTabsPopupMenu(((SystemPanel)c).getSystem()).show(e.getComponent(), e.getX(), e.getY());
+					else
+						createSystemTabsPopupMenu(null).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
 		});
-		tabbedPane.addTab("+", new JPanel());
+		tabbedPane.addTab("+", null, new JPanel(), "Add a new system");
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if(tabbedPane.getSelectedIndex()==tabbedPane.getTabCount()-1) {
 					tabbedPane.setSelectedIndex(0);
-					CitySystem system = new CitySystem();
-					addSystemCommand(system);
-					editSystemDetailsCommand(system);
+					newSystemCommand();
 				}
 			}
 		});
 		add(tabbedPane, BorderLayout.CENTER);
 	}
-	
+
+	private JPopupMenu createSystemTabsPopupMenu(final CitySystem system) {
+		JPopupMenu systemTabsPopupMenu = new JPopupMenu();
+		if(system != null) {
+			JMenuItem editSystemDetailsMenuItem = new JMenuItem("Edit System Details");
+			editSystemDetailsMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editSystemDetailsCommand(system);
+				}
+			});
+			systemTabsPopupMenu.add(editSystemDetailsMenuItem);
+			JMenuItem deleteSystemMenuItem = new JMenuItem("Delete System");
+			deleteSystemMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteSystemCommand(system);
+				}
+			});
+			systemTabsPopupMenu.add(deleteSystemMenuItem);
+		} else {
+			JMenuItem newSystemMenuItem = new JMenuItem("Add New System");
+			newSystemMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					newSystemCommand();
+				}
+			});
+			systemTabsPopupMenu.add(newSystemMenuItem);
+		}
+		return systemTabsPopupMenu;
+	}
 	/**
 	 * Gets the city.
 	 *
@@ -138,6 +183,15 @@ public class CityPanel extends JPanel {
 	}
 	
 	/**
+	 * New system command.
+	 */
+	private void newSystemCommand() {
+		CitySystem system = new CitySystem();
+		addSystemCommand(system);
+		editSystemDetailsCommand(system);
+	}
+	
+	/**
 	 * Adds the system command.
 	 *
 	 * @param system the system
@@ -164,6 +218,22 @@ public class CityPanel extends JPanel {
 			tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), system.getName());
 			tabbedPane.setIconAt(tabbedPane.getSelectedIndex(), system.getType().getIcon());
 			tabbedPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), system.getDescription());
+		}
+	}
+	
+	/**
+	 * Delete system command.
+	 *
+	 * @param system the system
+	 */
+	public void deleteSystemCommand(CitySystem system) {
+		System.out.println("Delete System Details Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the " + system.getName() + " system?", 
+				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			int index = tabbedPane.getSelectedIndex();
+			tabbedPane.setSelectedIndex(index-1);
+			tabbedPane.removeTabAt(index);
 		}
 	}
 }

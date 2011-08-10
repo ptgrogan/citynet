@@ -292,4 +292,14 @@ public class City {
 			system.setId(CityNet.getInstance().getNextSystemId());
 		return systems.add(system);
 	}
+	
+	/**
+	 * Removes the system.
+	 *
+	 * @param system the system
+	 * @return true, if successful
+	 */
+	public boolean removeSystem(CitySystem system) {
+		return systems.remove(system);
+	}
 }
