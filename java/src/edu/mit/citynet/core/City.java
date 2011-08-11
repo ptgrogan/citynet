@@ -194,7 +194,7 @@ public class City {
 			try {
 				image = ImageIO.read(new FileInputStream(imageFilePath));
 			} catch (IOException ex) {
-				throw new IllegalArgumentException("Invalid image file path.");
+				image = null;
 			}
 		}
 	}
