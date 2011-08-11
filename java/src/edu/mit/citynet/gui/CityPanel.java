@@ -30,8 +30,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.util.CityNetIcon;
-import edu.mit.citynet.viz.RegionTable;
-import edu.mit.citynet.viz.RegionTableModel;
 import edu.mit.citynet.viz.VizLayeredPane;
 
 /**

@@ -1,4 +1,4 @@
-package edu.mit.citynet.viz;
+package edu.mit.citynet.gui;
 
 import java.util.ArrayList;
 import java.util.Collections;
