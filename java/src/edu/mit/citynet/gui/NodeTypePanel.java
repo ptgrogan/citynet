@@ -221,6 +221,9 @@ public class NodeTypePanel extends JPanel {
 		return attributePopupMenu;
 	}
 	
+	/**
+	 * Adds the attribute command.
+	 */
 	private void addAttributeCommand() {
 		System.out.println("Add Attribute Command");
 		attributeTableModel.getAttributes().add(new NodeTypeAttribute());
@@ -229,6 +232,9 @@ public class NodeTypePanel extends JPanel {
 				attributeTableModel.getRowCount());
 	}
 	
+	/**
+	 * Delete attributes command.
+	 */
 	private void deleteAttributesCommand() {
 		System.out.println("Delete Attributes Command");
 		for(int i = attributeTable.getSelectedRows().length-1; i>=0; i--) {
