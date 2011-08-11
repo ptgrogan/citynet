@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 
+import edu.mit.citynet.CityNet;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
@@ -331,6 +332,8 @@ public class CitySystem {
 	 * @return true, if successful
 	 */
 	public boolean addLayer(Layer layer) {
+		if(layer.getId()==0)
+			layer.setId(CityNet.getInstance().getNextLayerId());
 		return layers.add(layer);
 	}
 	
@@ -351,6 +354,8 @@ public class CitySystem {
 	 * @return true, if successful
 	 */
 	public boolean addNodeRegion(NodeRegion region) {
+		if(region.getId()==0)
+			region.setId(CityNet.getInstance().getNextNodeRegionId());
 		return nodeRegions.add(region);
 	}
 	
@@ -371,6 +376,8 @@ public class CitySystem {
 	 * @return true, if successful
 	 */
 	public boolean addEdgeRegion(EdgeRegion region) {
+		if(region.getId()==0)
+			region.setId(CityNet.getInstance().getNextEdgeRegionId());
 		return edgeRegions.add(region);
 	}
 	
@@ -391,6 +398,8 @@ public class CitySystem {
 	 * @return true, if successful
 	 */
 	public boolean addNodeType(NodeType nodeType) {
+		if(nodeType.getId()==0)
+			nodeType.setId(CityNet.getInstance().getNextNodeTypeId());
 		return nodeTypes.add(nodeType);
 	}
 	
@@ -411,6 +420,8 @@ public class CitySystem {
 	 * @return true, if successful
 	 */
 	public boolean addEdgeType(EdgeType edgeType) {
+		if(edgeType.getId()==0)
+			edgeType.setId(CityNet.getInstance().getNextEdgeTypeId());
 		return edgeTypes.add(edgeType);
 	}
 	

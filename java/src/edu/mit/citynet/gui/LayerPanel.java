@@ -1,5 +1,6 @@
 package edu.mit.citynet.gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -82,14 +83,15 @@ public class LayerPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.LINE_START;
 		displayHeightLabel = new JLabel("Display Height: ", JLabel.LEFT);
+		displayHeightLabel.setPreferredSize(new Dimension(100,20));
 		add(displayHeightLabel, c);
 		c.gridy++;
 		displayHeightSlider = new JSlider(JSlider.VERTICAL, MIN_HEIGHT, MAX_HEIGHT, 0);
-		displayHeightSlider.setPaintLabels(true);
 		displayHeightSlider.setMajorTickSpacing(5);
 		displayHeightSlider.setMinorTickSpacing(1);
 		displayHeightSlider.setSnapToTicks(true);
 		displayHeightSlider.setPaintTicks(true);
+		displayHeightSlider.setPaintLabels(true);
 		displayHeightSlider.setToolTipText("Height at which to display layer");
 		displayHeightSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -122,6 +124,18 @@ public class LayerPanel extends JPanel {
 				labelDictionary.put((int)(l.getDisplayHeight()*5), 
 						new JLabel(format.format(l.getDisplayHeight()) + ": " + l.getName()));
 			}
+		}
+		for(int i=MIN_HEIGHT; i<=MAX_HEIGHT; i+=5) {
+			if(labelDictionary.get(i)==null
+					&& labelDictionary.get(i-1)==null
+					&& labelDictionary.get(i-2)==null
+					&& labelDictionary.get(i-3)==null
+					&& labelDictionary.get(i-4)==null
+					&& labelDictionary.get(i+1)==null
+					&& labelDictionary.get(i+2)==null
+					&& labelDictionary.get(i+3)==null
+					&& labelDictionary.get(i+4)==null)
+				labelDictionary.put(i,new JLabel(format.format(i/5d)));
 		}
 		displayHeightSlider.setLabelTable(labelDictionary);
 	}
