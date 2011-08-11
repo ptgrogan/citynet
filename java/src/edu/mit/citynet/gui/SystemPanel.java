@@ -55,6 +55,7 @@ public class SystemPanel extends JSplitPane {
 	private SystemTree systemTree;
 	private LayerPanel layerPanel;
 	private NodeTypePanel nodeTypePanel;
+	private EdgeTypePanel edgeTypePanel;
 	private NodeRegionPanel nodeRegionPanel;
 	private EdgeRegionPanel edgeRegionPanel;
 	
@@ -72,6 +73,7 @@ public class SystemPanel extends JSplitPane {
 		this.system = system;
 		layerPanel = new LayerPanel(this);
 		nodeTypePanel = new NodeTypePanel();
+		edgeTypePanel = new EdgeTypePanel();
 		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel(this);
 		initializePanel();
@@ -435,7 +437,6 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void addEdgeTypeCommand() {
 		System.out.println("Add Node Type Command");
-		/*
 		EdgeType edgeType = new EdgeType();
 		edgeTypePanel.loadEdgeType(edgeType);
 		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel,
@@ -447,7 +448,6 @@ public class SystemPanel extends JSplitPane {
 			systemTree.getModel().addEdgeType(edgeType);
 			layeredPane.repaint();
 		}
-		*/
 	}
 	
 	/**
@@ -456,8 +456,7 @@ public class SystemPanel extends JSplitPane {
 	 * @param edgeType the edge type
 	 */
 	private void editEdgeTypeCommand(EdgeType edgeType) {
-		System.out.println("Edit Node Type Command");
-		/*
+		System.out.println("Edit Edge Type Command");
 		edgeTypePanel.loadEdgeType(edgeType);
 		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel, 
 				"City.Net | EdgeType", JOptionPane.OK_CANCEL_OPTION, 
@@ -466,7 +465,6 @@ public class SystemPanel extends JSplitPane {
 			edgeTypePanel.saveEdgeTypeCommand();
 			systemTree.getModel().updateEdgeType(edgeType);
 		}
-		*/
 	}
 	
 	/**

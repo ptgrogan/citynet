@@ -19,18 +19,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
- * The NodeTypePanel class.
+ * The EdgeTypePanel class.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class NodeTypePanel extends JPanel {
+public class EdgeTypePanel extends JPanel {
 	private static final long serialVersionUID = -6993531719921341469L;
 
-	private NodeType nodeType;
+	private EdgeType edgeType;
 	private JTextField nameText;
 	private JTextArea descriptionText;
 	private JButton colorButton;
@@ -40,7 +40,7 @@ public class NodeTypePanel extends JPanel {
 	 * Instantiates a new node type panel.
 	 *
 	 */
-	public NodeTypePanel() {
+	public EdgeTypePanel() {
 		initializePanel();
 	}
 	
@@ -112,23 +112,23 @@ public class NodeTypePanel extends JPanel {
 	}
 	
 	/**
-	 * Save node type command.
+	 * Save edge type command.
 	 */
-	public void saveNodeTypeCommand() {
-		nodeType.setName(nameText.getText());
-		nodeType.setDescription(descriptionText.getText());
-		nodeType.setColor(colorLabel.getBackground());
+	public void saveEdgeTypeCommand() {
+		edgeType.setName(nameText.getText());
+		edgeType.setDescription(descriptionText.getText());
+		edgeType.setColor(colorLabel.getBackground());
 	}
 	
 	/**
-	 * Load node type.
+	 * Load edge type.
 	 *
-	 * @param nodeType the node type
+	 * @param edgeType the edge type
 	 */
-	public void loadNodeType(NodeType nodeType) {
-		this.nodeType = nodeType;
-		nameText.setText(nodeType.getName());
-		descriptionText.setText(nodeType.getName());
-		colorLabel.setBackground(nodeType.getColor());
+	public void loadEdgeType(EdgeType edgeType) {
+		this.edgeType = edgeType;
+		nameText.setText(edgeType.getName());
+		descriptionText.setText(edgeType.getName());
+		colorLabel.setBackground(edgeType.getColor());
 	}
 }
