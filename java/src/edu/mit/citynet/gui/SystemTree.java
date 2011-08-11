@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
 import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
@@ -66,6 +67,20 @@ public class SystemTree extends JTree {
 	 */
 	public SystemTreeModel getModel() {
 		return model;
+	}
+	
+	/**
+	 * Gets the selected layer.
+	 *
+	 * @return the selected layer
+	 */
+	public Layer getSelectedLayer() {
+		if(getSelectionModel().getSelectionPath() != null
+				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
+				instanceof MutableLayerTreeNode) {
+			return ((MutableLayerTreeNode)
+					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
+		} else return null;
 	}
 	
 	/**

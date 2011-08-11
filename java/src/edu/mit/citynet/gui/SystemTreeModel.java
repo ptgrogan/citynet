@@ -91,6 +91,46 @@ public class SystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
+	 * Adds the layer.
+	 *
+	 * @param layer the layer
+	 */
+	public void addLayer(Layer layer) {
+		layersTreeNode.add(createTreeNode(layer));
+		nodesWereInserted(layersTreeNode, new int[]{layersTreeNode.getChildCount()-1});
+	}
+	
+	/**
+	 * Update layer.
+	 *
+	 * @param layer the layer
+	 */
+	public void updateLayer(Layer layer) {
+		for(int i = 0; i < layersTreeNode.getChildCount(); i++) {
+			if(layersTreeNode.getChildAt(i) instanceof MutableLayerTreeNode
+					&& ((MutableLayerTreeNode)layersTreeNode.getChildAt(i)).getUserObject()==layer) {
+				nodeChanged(layersTreeNode.getChildAt(i));
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Removes the layer.
+	 *
+	 * @param layer the layer
+	 */
+	public void removeLayer(Layer layer) {
+		for(int i = 0; i < layersTreeNode.getChildCount(); i++) {
+			if(layersTreeNode.getChildAt(i) instanceof MutableLayerTreeNode
+					&& ((MutableLayerTreeNode)layersTreeNode.getChildAt(i)).getUserObject()==layer) {
+				nodesWereRemoved(layersTreeNode,new int[]{i},null);
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * Adds the node region.
 	 *
 	 * @param nodeRegion the node region

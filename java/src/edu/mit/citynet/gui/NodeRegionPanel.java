@@ -38,19 +38,22 @@ import edu.mit.citynet.util.CityNetIcon;
 public class NodeRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
 	
-	private SystemPanel vizPanel;
+	private SystemPanel systemPanel;
 	private NodeRegion nodeRegion;
 	private JTextArea descriptionText;
 	private JComboBox nodeRegionTypeCombo, layerCombo, nodeTypeCombo;
 	private JTable coordinateTable;
 	private CoordinateTableModel coordinateTableModel;
-	private JButton addCoordinateButton, deleteCoordinatesButton, moveUpButton, moveDownButton;
+	private JButton addCoordinateButton, deleteCoordinatesButton, 
+		moveUpButton, moveDownButton;
 	
 	/**
 	 * Instantiates a new node region panel.
+	 *
+	 * @param systemPanel the system panel
 	 */
-	public NodeRegionPanel(SystemPanel vizPanel) {
-		this.vizPanel = vizPanel;
+	public NodeRegionPanel(SystemPanel systemPanel) {
+		this.systemPanel = systemPanel;
 		initializePanel();
 	}
 	
@@ -341,14 +344,14 @@ public class NodeRegionPanel extends JPanel {
 		this.nodeRegion = nodeRegion;
 		descriptionText.setText(nodeRegion.getDescription());
 		layerCombo.removeAllItems();
-		for(Layer layer : vizPanel.getSystem().getLayers())
+		for(Layer layer : systemPanel.getSystem().getLayers())
 			layerCombo.addItem(layer);
 		if(nodeRegion.getLayer()==null && layerCombo.getItemCount()>0)
 			layerCombo.setSelectedIndex(0);
 		else
 			layerCombo.setSelectedItem(nodeRegion.getLayer());
 		nodeTypeCombo.removeAllItems();
-		for(NodeType type : vizPanel.getSystem().getNodeTypes())
+		for(NodeType type : systemPanel.getSystem().getNodeTypes())
 			nodeTypeCombo.addItem(type);
 		if(nodeRegion.getNodeType()==null && nodeTypeCombo.getItemCount()>0)
 			nodeTypeCombo.setSelectedIndex(0);

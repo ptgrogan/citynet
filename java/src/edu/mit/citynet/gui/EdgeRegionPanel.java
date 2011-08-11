@@ -42,19 +42,22 @@ public class EdgeRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
 	private static final String DIRECTED = "Directed", UNDIRECTED = "Undirected";
 	
-	private SystemPanel vizPanel;
+	private SystemPanel systemPanel;
 	private EdgeRegion edgeRegion;
 	private JTextArea descriptionText;
 	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo;
 	private JTable coordinateTable;
 	private CoordinateTableModel3D coordinateTableModel;
-	private JButton addCoordinateButton, deleteCoordinatesButton, moveUpButton, moveDownButton;
+	private JButton addCoordinateButton, deleteCoordinatesButton, 
+		moveUpButton, moveDownButton;
 	
 	/**
 	 * Instantiates a new edge region panel.
+	 *
+	 * @param systemPanel the system panel
 	 */
-	public EdgeRegionPanel(SystemPanel vizPanel) {
-		this.vizPanel = vizPanel;
+	public EdgeRegionPanel(SystemPanel systemPanel) {
+		this.systemPanel = systemPanel;
 		initializePanel();
 	}
 	
@@ -177,7 +180,7 @@ public class EdgeRegionPanel extends JPanel {
 		    				return this;
 		    			}
 		    		});
-		    		for(Layer layer : vizPanel.getSystem().getLayers()) {
+		    		for(Layer layer : systemPanel.getSystem().getLayers()) {
 		    			comboBox.addItem(layer);
 		    		}
 		    		return new DefaultCellEditor(comboBox);
@@ -404,7 +407,7 @@ public class EdgeRegionPanel extends JPanel {
 		this.edgeRegion = edgeRegion;
 		descriptionText.setText(edgeRegion.getDescription());
 		edgeTypeCombo.removeAllItems();
-		for(EdgeType type : vizPanel.getSystem().getEdgeTypes())
+		for(EdgeType type : systemPanel.getSystem().getEdgeTypes())
 			edgeTypeCombo.addItem(type);
 		if(edgeRegion.getEdgeType()==null && edgeTypeCombo.getItemCount()>0)
 			edgeTypeCombo.setSelectedIndex(0);

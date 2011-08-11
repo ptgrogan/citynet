@@ -25,9 +25,11 @@ import javax.swing.tree.TreePath;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
 import edu.mit.citynet.util.CityNetIcon;
 import edu.mit.citynet.viz.VizLayeredPane;
@@ -47,6 +49,7 @@ public class SystemPanel extends JSplitPane {
 	private VizLayeredPane layeredPane;
 	private SystemTreeModel systemTreeModel;
 	private SystemTree systemTree;
+	private LayerPanel layerPanel;
 	private NodeRegionPanel nodeRegionPanel;
 	private EdgeRegionPanel edgeRegionPanel;
 	
@@ -62,6 +65,7 @@ public class SystemPanel extends JSplitPane {
 		}
 		this.cityPanel = cityPanel;
 		this.system = system;
+		layerPanel = new LayerPanel(this);
 		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel(this);
 		initializePanel();
@@ -104,6 +108,11 @@ public class SystemPanel extends JSplitPane {
 						addEdgeRegionCommand();
 					else if(systemTree.getSelectedEdgeRegion()!=null)
 						editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
+					else if(systemTree.getSelectionPath().getLastPathComponent() 
+							== systemTree.getModel().layersTreeNode)
+						addLayerCommand();
+					else if(systemTree.getSelectedLayer()!=null)
+						editLayerCommand(systemTree.getSelectedLayer());
 				}
 			}
 			public void mousePressed(MouseEvent e) {
@@ -163,7 +172,34 @@ public class SystemPanel extends JSplitPane {
 	private JPopupMenu createSystemTreePopupMenu(TreePath path) {
 		JPopupMenu systemTreePopupMenu = new JPopupMenu();
 		if(path==null) return systemTreePopupMenu;
-		if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
+		if(path.getLastPathComponent()==systemTree.getModel().layersTreeNode
+				|| path.getLastPathComponent() instanceof MutableLayerTreeNode) {
+			JMenuItem addLayerMenuItem = new JMenuItem("Add Layer");
+			addLayerMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addLayerCommand();
+				}
+			});
+			systemTreePopupMenu.add(addLayerMenuItem);
+			JMenuItem editLayerMenuItem = new JMenuItem("Edit Layer");
+			editLayerMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editLayerCommand(systemTree.getSelectedLayer());
+				}
+			});
+			editLayerMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableLayerTreeNode);
+			systemTreePopupMenu.add(editLayerMenuItem);
+			JMenuItem deleteLayerMenuItem = new JMenuItem("Delete Layer");
+			deleteLayerMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteLayerCommand(systemTree.getSelectedLayer());
+				}
+			});
+			deleteLayerMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableLayerTreeNode);
+			systemTreePopupMenu.add(deleteLayerMenuItem);
+		} else if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
 			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
 			addNodeRegionMenuItem.addActionListener(new ActionListener() {
@@ -190,8 +226,7 @@ public class SystemPanel extends JSplitPane {
 			deleteNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
 			systemTreePopupMenu.add(deleteNodeRegionMenuItem);
-		}
-		if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
+		} else if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
 			JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
 			addEdgeRegionMenuItem.addActionListener(new ActionListener() {
@@ -223,14 +258,65 @@ public class SystemPanel extends JSplitPane {
 	}
 	
 	/**
+	 * Adds the layer command.
+	 */
+	private void addLayerCommand() {
+		System.out.println("Add Layer Command");
+		Layer layer = new Layer();
+		layerPanel.loadLayer(layer);
+		int value = JOptionPane.showConfirmDialog(this, layerPanel,
+				"City.Net | Layer", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			layerPanel.saveLayerCommand();
+			system.addLayer(layer);
+			systemTree.getModel().addLayer(layer);
+		}
+	}
+	
+	/**
+	 * Edits the layer command.
+	 *
+	 * @param layer the layer
+	 */
+	private void editLayerCommand(Layer layer) {
+		System.out.println("Edit Layer Command");
+		layerPanel.loadLayer(layer);
+		int value = JOptionPane.showConfirmDialog(this, layerPanel, 
+				"City.Net | Layer", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			layerPanel.saveLayerCommand();
+			systemTree.getModel().updateLayer(layer);
+		}
+	}
+	
+	/**
+	 * Delete layers command.
+	 *
+	 * @param layers the layers
+	 */
+	private void deleteLayerCommand(Layer layer) {
+		System.out.println("Delete Layer Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
+				+ layer.getName() + "?", "City.Net | Warning", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			system.removeLayer(layer);
+			systemTree.getModel().removeLayer(layer);
+		}
+	}
+	
+	/**
 	 * Adds the node region command.
 	 */
 	private void addNodeRegionCommand() {
 		System.out.println("Add Node Region Command");
 		NodeRegion nodeRegion = new NodeRegion();
 		nodeRegionPanel.loadNodeRegion(nodeRegion);
-		int value = JOptionPane.showConfirmDialog(this,nodeRegionPanel,"City.Net | Node Region", 
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
+				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			nodeRegionPanel.saveNodeRegionCommand();
 			system.addNodeRegion(nodeRegion);
@@ -246,8 +332,9 @@ public class SystemPanel extends JSplitPane {
 	private void editNodeRegionCommand(NodeRegion nodeRegion) {
 		System.out.println("Edit Node Region Command");
 		nodeRegionPanel.loadNodeRegion(nodeRegion);
-		int value = JOptionPane.showConfirmDialog(this,nodeRegionPanel,"City.Net | Node Region", 
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel, 
+				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			nodeRegionPanel.saveNodeRegionCommand();
 			systemTree.getModel().updateNodeRegion(nodeRegion);
@@ -262,13 +349,14 @@ public class SystemPanel extends JSplitPane {
 	private void deleteNodeRegionCommand(NodeRegion nodeRegion) {
 		System.out.println("Delete Node Region Command");
 		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
-				+ nodeRegion.getDescription() + "?", 
-				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				+ nodeRegion.getDescription() + "?", "City.Net | Warning", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			system.removeNodeRegion(nodeRegion);
 			systemTree.getModel().removeNodeRegion(nodeRegion);
 		}
 	}
+	
 	/**
 	 * Adds the edge region command.
 	 */
@@ -309,8 +397,8 @@ public class SystemPanel extends JSplitPane {
 	private void deleteEdgeRegionCommand(EdgeRegion edgeRegion) {
 		System.out.println("Delete Edge Region Command");
 		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete "
-				+ edgeRegion.getDescription() + "?", 
-				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+				+ edgeRegion.getDescription() + "?", "City.Net | Warning", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			system.removeEdgeRegion(edgeRegion);
 			systemTree.getModel().removeEdgeRegion(edgeRegion);

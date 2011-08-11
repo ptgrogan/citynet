@@ -12,6 +12,13 @@ public class Layer {
 	private double displayHeight;
 	
 	/**
+	 * Instantiates a new layer.
+	 */
+	public Layer() {
+		name = "New Layer";
+	}
+	
+	/**
 	 * Gets the id.
 	 *
 	 * @return the id

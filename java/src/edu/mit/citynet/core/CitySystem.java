@@ -325,6 +325,26 @@ public class CitySystem {
 	}
 	
 	/**
+	 * Adds the layer.
+	 *
+	 * @param layer the layer
+	 * @return true, if successful
+	 */
+	public boolean addLayer(Layer layer) {
+		return layers.add(layer);
+	}
+	
+	/**
+	 * Removes the layer.
+	 *
+	 * @param layer the layer
+	 * @return true, if successful
+	 */
+	public boolean removeLayer(Layer layer) {
+		return layers.remove(layer);
+	}
+	
+	/**
 	 * Adds the node region.
 	 *
 	 * @param region the region
