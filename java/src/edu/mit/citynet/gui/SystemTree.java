@@ -41,7 +41,7 @@ public class SystemTree extends JTree {
 				super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 				if(value instanceof MutableLayerTreeNode) {
 					// TODO define setIcon(((MutableLayerTreeNode)value).getUserObject().getIcon());
-					setText(((MutableLayerTreeNode)value).getUserObject().getDescription());
+					setText(((MutableLayerTreeNode)value).getUserObject().getName());
 				} else if(value instanceof MutableNodeRegionTreeNode) {
 					setIcon(((MutableNodeRegionTreeNode)value).getUserObject().getNodeType().getIcon());
 					setText(((MutableNodeRegionTreeNode)value).getUserObject().getDescription());
