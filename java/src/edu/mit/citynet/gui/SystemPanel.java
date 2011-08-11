@@ -22,7 +22,7 @@ import edu.mit.citynet.viz.SystemVizPanel;
 public class SystemPanel extends JPanel {
 	private static final long serialVersionUID = -2586548029906436001L;
 
-	private CityPanel cityPanel;
+	private CityTabbedPane cityPanel;
 	private CitySystem system;
 	private SystemVizPanel systemVizPanel;
 	
@@ -32,7 +32,7 @@ public class SystemPanel extends JPanel {
 	 * @param cityPanel the city panel
 	 * @param system the system
 	 */
-	public SystemPanel(CityPanel cityPanel, CitySystem system) {
+	public SystemPanel(CityTabbedPane cityPanel, CitySystem system) {
 		if (system==null) {
 			throw new IllegalArgumentException("System cannot be null.");
 		}
@@ -56,7 +56,7 @@ public class SystemPanel extends JPanel {
 	 *
 	 * @return the city panel
 	 */
-	public CityPanel getCityPanel() {
+	public CityTabbedPane getCityPanel() {
 		return cityPanel;
 	}
 	

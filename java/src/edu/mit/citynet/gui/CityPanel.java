@@ -2,84 +2,165 @@ package edu.mit.citynet.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 
-import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
-import edu.mit.citynet.core.City;
-import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.util.CityNetIcon;
-import edu.mit.citynet.viz.CityVizPanel;
+import edu.mit.citynet.viz.RegionTable;
+import edu.mit.citynet.viz.RegionTableModel;
+import edu.mit.citynet.viz.VizLayeredPane;
 
 /**
- * The CityPanel class is a panel to display city information.
+ * The CityVizPanel class provides a city-level visualization of cells and
+ * cell regions. The cell region visibility can be toggled using a tables.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class CityPanel extends JPanel {
-	private static final long serialVersionUID = -9157294901016405959L;
-
-	private CityNetFrame cityNetFrame;
-	private City city;
-	private SystemDetailsPanel systemDetailsPanel;
-	private JTabbedPane tabbedPane;
-	private CityVizPanel cityVizPanel;
+public class CityPanel extends JSplitPane {
+	private static final long serialVersionUID = 3994034732879260199L;
+	
+	private CellRegionPanel cellRegionPanel;
+	private CityTabbedPane cityPanel;
+	private VizLayeredPane layeredPane;
+	private RegionTableModel<CellRegion> cellRegionTableModel;
+	private RegionTable<CellRegion> cellRegionTable;
+	private JButton editCellRegionButton, deleteCellRegionsButton;
 	
 	/**
-	 * Instantiates a new city panel.
+	 * Instantiates a new city viz panel.
 	 *
-	 * @param cityNetFrame the city net frame
-	 * @param city the city
+	 * @param cityPanel the city panel
 	 */
-	public CityPanel(CityNetFrame cityNetFrame, City city) {
-		if (city==null) {
-			throw new IllegalArgumentException("City cannot be null.");
+	public CityPanel(final CityTabbedPane cityPanel) {
+		if (cityPanel==null) {
+			throw new IllegalArgumentException("City Panel cannot be null.");
 		}
-		this.cityNetFrame = cityNetFrame;
-		this.city = city;
-		systemDetailsPanel = new SystemDetailsPanel();
+		this.cityPanel = cityPanel;
+		cellRegionPanel = new CellRegionPanel();
 		initializePanel();
+	}
+	
+	/**
+	 * Creates the cell region popup menu.
+	 *
+	 * @param regions the regions
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createCellRegionPopupMenu(Set<CellRegion> regions) {
+		JPopupMenu cellRegionPopupMenu = new JPopupMenu();
+		if(regions.size()>0) {
+			JMenuItem editCellRegionMenuItem = new JMenuItem("Edit Cell Region");
+			editCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editCellRegionCommand();
+				}
+			});
+			editCellRegionMenuItem.setEnabled(regions.size()==1);
+			cellRegionPopupMenu.add(editCellRegionMenuItem);
+			JMenuItem deleteCellRegionMenuItem = new JMenuItem("Delete Cell Region" + (regions.size()>1?"s":""));
+			deleteCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteCellRegionsCommand();
+				}
+			});
+			cellRegionPopupMenu.add(deleteCellRegionMenuItem);
+		} else {
+			JMenuItem addCellRegionMenuItem = new JMenuItem("Add Cell Region");
+			addCellRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addCellRegionCommand();
+				}
+			});
+			cellRegionPopupMenu.add(addCellRegionMenuItem);
+		}
+		return cellRegionPopupMenu;
 	}
 	
 	/**
 	 * Initializes the panel.
 	 */
 	private void initializePanel() {
-		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-		tabbedPane = new JTabbedPane();
-		cityVizPanel = new CityVizPanel(this);
-		tabbedPane.addTab("City", CityNetIcon.CITY.getIcon(), cityVizPanel);
-		for(CitySystem system : city.getSystems()) {
-			SystemPanel systemPanel = new SystemPanel(this, system);
-			tabbedPane.addTab(system.getName(), system.getType().getIcon(), 
-					systemPanel, system.getDescription());
-		}
-		tabbedPane.addMouseListener(new MouseAdapter() {
+		setResizeWeight(0);
+		setDividerLocation(200);
+		setOneTouchExpandable(true);
+		JPanel leftPanel = new JPanel();
+		leftPanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.BOTH;
+		cellRegionTableModel = new RegionTableModel<CellRegion>();
+		cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+		cellRegionTableModel.addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				layeredPane.repaint();
+			}
+		});
+		cellRegionTable = new RegionTable<CellRegion>(cellRegionTableModel);
+		cellRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				layeredPane.setSelectedCellRegion(cellRegionTable.getSelectedRegion());
+			}
+		});
+		cellRegionTable.getTableHeader().setReorderingAllowed(false);
+		cellRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
+		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
+		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
+		cellRegionTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 2092491034324672219L;
+			
+			/* (non-Javadoc)
+			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
+			 */
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof CellRegion) {
+					setText(((CellRegion)value).getDescription());
+				}
+				return this;
+			}
+		});
+		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(200,400));
+		MouseAdapter cellRegionMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2) {
-					Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
-					if(c instanceof CityVizPanel)
-						cityNetFrame.editCityDetailsCommand();
-					else if(c instanceof SystemPanel)
-						editSystemDetailsCommand(((SystemPanel)c).getSystem());
+					if(cellRegionTable.getSelectionModel().isSelectionEmpty())
+						addCellRegionCommand();
+					else
+						editCellRegionCommand();
 				}
 			}
 			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=cellRegionTable)
+					cellRegionTable.getSelectionModel().clearSelection();
 				maybeShowPopup(e);
 			}
 			public void mouseReleased(MouseEvent e) {
@@ -87,159 +168,151 @@ public class CityPanel extends JPanel {
 			}
 			private void maybeShowPopup(MouseEvent e) {
 				if(e.isPopupTrigger()) {
-					Component c = tabbedPane.getSelectedComponent();
-					if(c instanceof SystemPanel)
-						createSystemTabsPopupMenu(((SystemPanel)c).getSystem()).show(e.getComponent(), e.getX(), e.getY());
-					else
-						createSystemTabsPopupMenu(null).show(e.getComponent(), e.getX(), e.getY());
+					int row = cellRegionTable.rowAtPoint(e.getPoint());
+					CellRegion region = (CellRegion)cellRegionTableModel.getRegionAt(row);
+					if(!cellRegionTable.getSelectedRegions().contains(region)) {
+						cellRegionTable.getSelectionModel().addSelectionInterval(row, row);
+					}
+					createCellRegionPopupMenu(cellRegionTable.getSelectedRegions()).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		cellRegionTable.addMouseListener(cellRegionMouseAdapter);
+		cellRegionTable.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
+					deleteCellRegionsCommand();
+				} else if(e.getKeyCode()==KeyEvent.VK_ENTER && cellRegionTable.getSelectedRowCount()==1){
+					editCellRegionCommand();
 				}
 			}
 		});
-		tabbedPane.addTab("+", null, new JPanel(), "Add a new system");
-		tabbedPane.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(tabbedPane.getSelectedIndex()==tabbedPane.getTabCount()-1) {
-					tabbedPane.setSelectedIndex(0);
-					newSystemCommand();
-				}
+		cellRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				editCellRegionButton.setEnabled(cellRegionTable.getSelectedRowCount()==1);
+				deleteCellRegionsButton.setEnabled(cellRegionTable.getSelectedRowCount()>0);
 			}
 		});
-		add(tabbedPane, BorderLayout.CENTER);
-	}
-
-	/**
-	 * Creates the system tabs popup menu.
-	 *
-	 * @param system the system
-	 * @return the j popup menu
-	 */
-	private JPopupMenu createSystemTabsPopupMenu(final CitySystem system) {
-		JPopupMenu systemTabsPopupMenu = new JPopupMenu();
-		if(system != null) {
-			JMenuItem editSystemDetailsMenuItem = new JMenuItem("Edit System Details");
-			editSystemDetailsMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editSystemDetailsCommand(system);
-				}
-			});
-			systemTabsPopupMenu.add(editSystemDetailsMenuItem);
-			JMenuItem deleteSystemMenuItem = new JMenuItem("Delete System");
-			deleteSystemMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					deleteSystemCommand(system);
-				}
-			});
-			systemTabsPopupMenu.add(deleteSystemMenuItem);
-		} else {
-			JMenuItem newSystemMenuItem = new JMenuItem("Add New System");
-			newSystemMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					newSystemCommand();
-				}
-			});
-			systemTabsPopupMenu.add(newSystemMenuItem);
-		}
-		return systemTabsPopupMenu;
-	}
-	/**
-	 * Gets the city.
-	 *
-	 * @return the city
-	 */
-	public City getCity() {
-		return city;
-	}
-	
-	/**
-	 * Gets the city net frame.
-	 *
-	 * @return the city net frame
-	 */
-	public CityNetFrame getCityNetFrame() {
-		return cityNetFrame;
-	}
-
-	/**
-	 * Clear cells command.
-	 */
-	public void clearCellsCommand() {
-		System.out.println("Clear Cells Command");
-		for(Component c : tabbedPane.getComponents()) {
-			if(c instanceof SystemPanel) {
-				SystemPanel p = (SystemPanel)c;
-				if(!p.getSystem().getEdges().isEmpty())
-					p.clearEdgesCommand();
-				if(!p.getSystem().getNodes().isEmpty())
-					p.clearNodesCommand();
+		JScrollPane cellRegionScroll = new JScrollPane(cellRegionTable);
+		cellRegionScroll.addMouseListener(cellRegionMouseAdapter);
+		leftPanel.add(cellRegionScroll,c);
+		c.gridy++;
+		c.fill = GridBagConstraints.NONE;
+		c.weighty = 0;
+		JPanel cellRegionButtonPanel = new JPanel();
+		cellRegionButtonPanel.setLayout(new BoxLayout(cellRegionButtonPanel,BoxLayout.LINE_AXIS));
+		JButton addCellRegionButton = new JButton("Add");
+		addCellRegionButton.setToolTipText("Add a new cell region");
+		addCellRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addCellRegionCommand();
 			}
-		}
-		city.setCells(new HashSet<Cell>());
+		});
+		cellRegionButtonPanel.add(addCellRegionButton);
+		editCellRegionButton = new JButton("Edit");
+		editCellRegionButton.setToolTipText("Edit an existing cell region");
+		editCellRegionButton.setEnabled(false);
+		editCellRegionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editCellRegionCommand();
+			}
+		});
+		cellRegionButtonPanel.add(editCellRegionButton);
+		deleteCellRegionsButton = new JButton("Delete");
+		deleteCellRegionsButton.setToolTipText("Delete an existing cell region");
+		deleteCellRegionsButton.setEnabled(false);
+		deleteCellRegionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteCellRegionsCommand();
+			}
+		});
+		cellRegionButtonPanel.add(deleteCellRegionsButton);
+		leftPanel.add(cellRegionButtonPanel, c);
+		c.gridy++;
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
+		JButton generateCellsButton = new JButton("Generate",CityNetIcon.GENERATE.getIcon());
+		generateCellsButton.setToolTipText("Generate cells in cell regions");
+		generateCellsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cityPanel.generateCellsCommand(cellRegionTableModel.getCheckedRegions());
+				repaint();
+			}
+		});
+		buttonPanel.add(generateCellsButton);
+		JButton clearCellsButton = new JButton("Clear",CityNetIcon.DELETE.getIcon());
+		clearCellsButton.setToolTipText("Clear cells in cell regions");
+		clearCellsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cityPanel.clearCellsCommand();
+				repaint();
+			}
+		});
+		buttonPanel.add(clearCellsButton);
+		leftPanel.add(buttonPanel, c);
+		setLeftComponent(leftPanel);
+		JPanel rightPanel = new JPanel(new BorderLayout());
+		layeredPane = new VizLayeredPane(cityPanel.getCity(), null);
+		rightPanel.add(layeredPane,BorderLayout.CENTER);
+		setRightComponent(rightPanel);
 	}
 	
 	/**
-	 * Generate cells command.
+	 * Adds the cell region command.
 	 */
-	public void generateCellsCommand(Set<CellRegion> cellRegions) {
-		System.out.println("Generate Cells Command");
-		if(!city.getCells().isEmpty())
-			clearCellsCommand();
-		for(CellRegion r : cellRegions) {
-			r.generateCells();
-		}
-	}
-	
-	/**
-	 * New system command.
-	 */
-	private void newSystemCommand() {
-		CitySystem system = new CitySystem();
-		addSystemCommand(system);
-		editSystemDetailsCommand(system);
-	}
-	
-	/**
-	 * Adds the system command.
-	 *
-	 * @param system the system
-	 */
-	public void addSystemCommand(CitySystem system) {
-		System.out.println("Add System Command");
-		city.addSystem(system);
-		SystemPanel systemPanel = new SystemPanel(this, system);
-		tabbedPane.insertTab(system.getName(), system.getType().getIcon(), 
-				systemPanel, system.getDescription(), tabbedPane.getTabCount()-1);
-		tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-2);
-	}
-	
-	/**
-	 * Command to edit the system details.
-	 */
-	public void editSystemDetailsCommand(CitySystem system) {
-		System.out.println("Edit System Details Command");
-		systemDetailsPanel.loadSystemDetails(system);
-		int value = JOptionPane.showConfirmDialog(this,systemDetailsPanel,"City.Net | System Details", 
+	private void addCellRegionCommand() {
+		System.out.println("Add Cell Region Command");
+		CellRegion cellRegion = new CellRegion();
+		cellRegionPanel.loadCellRegion(cellRegion);
+		int value = JOptionPane.showConfirmDialog(this,cellRegionPanel,"City.Net | Cell Region", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			systemDetailsPanel.saveSystemDetailsCommand();
-			tabbedPane.setTitleAt(tabbedPane.getSelectedIndex(), system.getName());
-			tabbedPane.setIconAt(tabbedPane.getSelectedIndex(), system.getType().getIcon());
-			tabbedPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), system.getDescription());
+			cellRegionPanel.saveCellRegionCommand();
+			cityPanel.getCity().addCellRegion(cellRegion);
+			// TODO: should only add new cell region to table model and update
+			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+			repaint();
 		}
 	}
 	
 	/**
-	 * Delete system command.
-	 *
-	 * @param system the system
+	 * Edits the cell region command.
 	 */
-	public void deleteSystemCommand(CitySystem system) {
-		System.out.println("Delete System Details Command");
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the " + system.getName() + " system?", 
+	private void editCellRegionCommand() {
+		System.out.println("Edit Cell Region Command");
+		cellRegionPanel.loadCellRegion(cellRegionTable.getSelectedRegion());
+		int value = JOptionPane.showConfirmDialog(this,cellRegionPanel,"City.Net | Cell Region", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			cellRegionPanel.saveCellRegionCommand();
+			repaint();
+		}
+	}
+	
+	/**
+	 * Delete cell regions command.
+	 */
+	private void deleteCellRegionsCommand() {
+		System.out.println("Delete Cell Regions Command");
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these cell regions?", 
 				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			int index = tabbedPane.getSelectedIndex();
-			tabbedPane.setSelectedIndex(index-1);
-			tabbedPane.removeTabAt(index);
+			Set<CellRegion> regions = cityPanel.getCity().getCellRegions();
+			regions.removeAll(cellRegionTable.getSelectedRegions());
+			// TODO: should move removeAll method to the city
+			cityPanel.getCity().setCellRegions(regions);
+			// TODO: should remove cell region from table model and update
+			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
+			repaint();
 		}
+	}
+	
+	/**
+	 * Gets the city panel.
+	 *
+	 * @return the city panel
+	 */
+	public CityTabbedPane getCityPanel() {
+		return cityPanel;
 	}
 }

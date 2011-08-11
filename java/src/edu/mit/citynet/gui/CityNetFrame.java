@@ -31,7 +31,7 @@ public class CityNetFrame extends JFrame {
 	private static final long serialVersionUID = -4707459231955143750L;
 	private CityNetMenuBar menuBar;
 	private JPanel backgroundPanel;
-	private CityPanel cityPanel;
+	private CityTabbedPane cityPanel;
 	private JFileChooser fileChooser;
 	private CityDetailsPanel cityDetailsPanel;
 	private SystemImportPanel systemImportPanel;
@@ -179,7 +179,7 @@ public class CityNetFrame extends JFrame {
 	 */
 	private void openCityCommand(City city) {
 		CityNet.getInstance().setCity(city);
-		cityPanel = new CityPanel(this,city);
+		cityPanel = new CityTabbedPane(this,city);
 		setContentPane(cityPanel);
 		validate();
 		repaint();
