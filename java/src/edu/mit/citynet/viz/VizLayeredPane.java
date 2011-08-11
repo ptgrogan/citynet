@@ -22,8 +22,11 @@ import javax.swing.JPopupMenu;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.util.CityNetCursor;
 
 /**
@@ -36,7 +39,6 @@ import edu.mit.citynet.util.CityNetCursor;
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
 	private static final double MIN_SCALE = 10, MAX_SCALE = 1000, MAX_X = 50, MAX_Y = 50;
-	private AbstractVizPanel vizPanel;
 	private GridLayer gridLayer;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
@@ -50,6 +52,9 @@ public class VizLayeredPane extends JLayeredPane {
 	private double viewScale;
 	private Coordinate viewOrigin;
 	private Point previousDrag;
+	private CellRegion selectedCellRegion;
+	private NodeRegion selectedNodeRegion;
+	private EdgeRegion selectedEdgeRegion;
 	
 	/**
 	 * Instantiates a new viz layered pane.
@@ -58,11 +63,10 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @param city the city
 	 * @param system the system
 	 */
-	public VizLayeredPane(AbstractVizPanel vizPanel, City city, CitySystem system) {
+	public VizLayeredPane(City city, CitySystem system) {
 		if (city==null) {
 			throw new IllegalArgumentException("City cannot be null.");
 		}
-		this.vizPanel = vizPanel;
 		this.city = city;
 		this.system = system;
 		this.viewScale = 100d;	// default: 100 px/km
@@ -231,15 +235,6 @@ public class VizLayeredPane extends JLayeredPane {
 	}
 	
 	/**
-	 * Gets the viz panel.
-	 *
-	 * @return the viz panel
-	 */
-	public AbstractVizPanel getVizPanel() {
-		return vizPanel;
-	}
-	
-	/**
 	 * Gets the point.
 	 *
 	 * @param coordinate the coordinate
@@ -383,5 +378,62 @@ public class VizLayeredPane extends JLayeredPane {
 		} else {
 			setCursor(CityNetCursor.OPEN_HAND.getCursor());
 		}
+	}
+	
+	/**
+	 * Gets the selected cell region.
+	 *
+	 * @return the selected cell region
+	 */
+	public CellRegion getSelectedCellRegion() {
+		return selectedCellRegion;
+	}
+	
+	/**
+	 * Sets the selected cell region.
+	 *
+	 * @param cellRegion the new selected cell region
+	 */
+	public void setSelectedCellRegion(CellRegion cellRegion) {
+		this.selectedCellRegion = cellRegion;
+		repaint();
+	}
+	
+	/**
+	 * Gets the selected node region.
+	 *
+	 * @return the selected node region
+	 */
+	public NodeRegion getSelectedNodeRegion() {
+		return selectedNodeRegion;
+	}
+	
+	/**
+	 * Sets the selected node region.
+	 *
+	 * @param nodeRegion the new selected node region
+	 */
+	public void setSelectedNodeRegion(NodeRegion nodeRegion) {
+		this.selectedNodeRegion = nodeRegion;
+		repaint();
+	}
+	
+	/**
+	 * Gets the selected edge region.
+	 *
+	 * @return the selected edge region
+	 */
+	public EdgeRegion getSelectedEdgeRegion() {
+		return selectedEdgeRegion;
+	}
+	
+	/**
+	 * Sets the selected edge region.
+	 *
+	 * @param edgeRegion the new selected edge region
+	 */
+	public void setSelectedEdgeRegion(EdgeRegion edgeRegion) {
+		this.selectedEdgeRegion = edgeRegion;
+		repaint();
 	}
 }

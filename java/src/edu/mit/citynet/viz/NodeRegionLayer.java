@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -40,10 +39,8 @@ public class NodeRegionLayer extends JPanel {
 		super.paintComponent(g);
 		if(vizPane.getSystem() == null) return;
 		
-		Set<NodeRegion> nodeRegions = vizPane.getVizPanel().getCheckedNodeRegions();
-		
-		for(NodeRegion nodeRegion : nodeRegions) {
-			boolean selected = vizPane.getVizPanel().getSelectedNodeRegions().contains(nodeRegion);
+		for(NodeRegion nodeRegion : vizPane.getSystem().getNodeRegions()) {
+			boolean selected = nodeRegion.equals(vizPane.getSelectedNodeRegion());
 			int[] xPoints = new int[nodeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[nodeRegion.getCoordinateList().size()];
 			for(int i=0; i<nodeRegion.getCoordinateList().size(); i++) {

@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -39,10 +38,8 @@ public class CellRegionLayer extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		Set<CellRegion> cellRegions = vizPane.getVizPanel().getCheckedCellRegions();
-		
-		for(CellRegion cellRegion : cellRegions) {
-			boolean selected = vizPane.getVizPanel().getSelectedCellRegions().contains(cellRegion);
+		for(CellRegion cellRegion : vizPane.getCity().getCellRegions()) {
+			boolean selected = cellRegion.equals(vizPane.getSelectedCellRegion());
 			int[] xPoints = new int[cellRegion.getCoordinateList().size()];
 			int[] yPoints = new int[cellRegion.getCoordinateList().size()];
 			for(int i=0; i<cellRegion.getCoordinateList().size(); i++) {

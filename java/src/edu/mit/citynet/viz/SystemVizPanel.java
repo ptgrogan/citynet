@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,11 +15,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
@@ -39,7 +37,7 @@ import edu.mit.citynet.viz.SystemTreeModel.MutableNodeRegionTreeNode;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class SystemVizPanel extends AbstractVizPanel {
+public class SystemVizPanel extends JSplitPane {
 	private static final long serialVersionUID = -3650203268180181634L;
 	
 	private SystemPanel systemPanel;
@@ -87,7 +85,8 @@ public class SystemVizPanel extends AbstractVizPanel {
 		systemTree = new SystemTree(systemTreeModel);
 		systemTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
-				layeredPane.repaint();
+				layeredPane.setSelectedNodeRegion(systemTree.getSelectedNodeRegion());
+				layeredPane.setSelectedEdgeRegion(systemTree.getSelectedEdgeRegion());
 			}
 		});
 		systemTree.addMouseListener(new MouseAdapter() {
@@ -115,7 +114,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 			}
 			private void maybeShowPopup(MouseEvent e) {
 				if(e.isPopupTrigger()) {
-					createSystemTreePopupMenu(systemTree.getSelectionPaths()).show(
+					createSystemTreePopupMenu(systemTree.getSelectionPath()).show(
 							e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -148,7 +147,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		leftPanel.add(generationButtonPanel, c);
 		setLeftComponent(leftPanel);
 		JPanel rightPanel = new JPanel(new BorderLayout());
-		layeredPane = new VizLayeredPane(this, systemPanel.getCityPanel().getCity(), system);
+		layeredPane = new VizLayeredPane(systemPanel.getCityPanel().getCity(), system);
 		rightPanel.add(layeredPane,BorderLayout.CENTER);
 		setRightComponent(rightPanel);
 	}
@@ -159,66 +158,64 @@ public class SystemVizPanel extends AbstractVizPanel {
 	 * @param regions the regions
 	 * @return the j popup menu
 	 */
-	private JPopupMenu createSystemTreePopupMenu(TreePath[] paths) {
+	private JPopupMenu createSystemTreePopupMenu(TreePath path) {
 		JPopupMenu systemTreePopupMenu = new JPopupMenu();
-		if(paths.length==1) {
-			TreePath path = paths[0];
-			if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
-					|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
-				JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
-				addNodeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						addNodeRegionCommand();
-					}
-				});
-				systemTreePopupMenu.add(addNodeRegionMenuItem);
-				JMenuItem editNodeRegionMenuItem = new JMenuItem("Edit Node Region");
-				editNodeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						editNodeRegionCommand(systemTree.getSelectedNodeRegion());
-					}
-				});
-				editNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
-						instanceof MutableNodeRegionTreeNode);
-				systemTreePopupMenu.add(editNodeRegionMenuItem);
-				JMenuItem deleteNodeRegionMenuItem = new JMenuItem("Delete Node Region");
-				deleteNodeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						deleteNodeRegionCommand(systemTree.getSelectedNodeRegion());
-					}
-				});
-				deleteNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
-						instanceof MutableNodeRegionTreeNode);
-				systemTreePopupMenu.add(deleteNodeRegionMenuItem);
-			}
-			if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
-					|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
-				JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
-				addEdgeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						addEdgeRegionCommand();
-					}
-				});
-				systemTreePopupMenu.add(addEdgeRegionMenuItem);
-				JMenuItem editEdgeRegionMenuItem = new JMenuItem("Edit Edge Region");
-				editEdgeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-					}
-				});
-				editEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
-						instanceof MutableEdgeRegionTreeNode);
-				systemTreePopupMenu.add(editEdgeRegionMenuItem);
-				JMenuItem deleteEdgeRegionMenuItem = new JMenuItem("Delete Edge Region");
-				deleteEdgeRegionMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						deleteEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-					}
-				});
-				deleteEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
-						instanceof MutableEdgeRegionTreeNode);
-				systemTreePopupMenu.add(deleteEdgeRegionMenuItem);
-			}
+		if(path==null) return systemTreePopupMenu;
+		if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
+				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
+			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
+			addNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addNodeRegionCommand();
+				}
+			});
+			systemTreePopupMenu.add(addNodeRegionMenuItem);
+			JMenuItem editNodeRegionMenuItem = new JMenuItem("Edit Node Region");
+			editNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editNodeRegionCommand(systemTree.getSelectedNodeRegion());
+				}
+			});
+			editNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeRegionTreeNode);
+			systemTreePopupMenu.add(editNodeRegionMenuItem);
+			JMenuItem deleteNodeRegionMenuItem = new JMenuItem("Delete Node Region");
+			deleteNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteNodeRegionCommand(systemTree.getSelectedNodeRegion());
+				}
+			});
+			deleteNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeRegionTreeNode);
+			systemTreePopupMenu.add(deleteNodeRegionMenuItem);
+		}
+		if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
+				|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
+			JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
+			addEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addEdgeRegionCommand();
+				}
+			});
+			systemTreePopupMenu.add(addEdgeRegionMenuItem);
+			JMenuItem editEdgeRegionMenuItem = new JMenuItem("Edit Edge Region");
+			editEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
+				}
+			});
+			editEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeRegionTreeNode);
+			systemTreePopupMenu.add(editEdgeRegionMenuItem);
+			JMenuItem deleteEdgeRegionMenuItem = new JMenuItem("Delete Edge Region");
+			deleteEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
+				}
+			});
+			deleteEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeRegionTreeNode);
+			systemTreePopupMenu.add(deleteEdgeRegionMenuItem);
 		}
 		return systemTreePopupMenu;
 	}
@@ -316,52 +313,6 @@ public class SystemVizPanel extends AbstractVizPanel {
 			systemPanel.getSystem().removeEdgeRegion(edgeRegion);
 			systemTree.getModel().removeEdgeRegion(edgeRegion);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
-	 */
-	public Set<CellRegion> getCheckedCellRegions() {
-		return new HashSet<CellRegion>();
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz2.AbstractVizPanel#getSelectedNodeRegions()
-	 */
-	public Set<NodeRegion> getCheckedNodeRegions() {
-		return system.getNodeRegions();
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
-	 */
-	public Set<EdgeRegion> getCheckedEdgeRegions() {
-		return system.getEdgeRegions();
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
-	 */
-	public Set<CellRegion> getSelectedCellRegions() {
-		return new HashSet<CellRegion>();
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedNodeRegions()
-	 */
-	public Set<NodeRegion> getSelectedNodeRegions() {
-		Set<NodeRegion> nodeRegions = new HashSet<NodeRegion>();
-		nodeRegions.add(systemTree.getSelectedNodeRegion());
-		return nodeRegions;
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
-	 */
-	public Set<EdgeRegion> getSelectedEdgeRegions() {
-		Set<EdgeRegion> edgeRegions = new HashSet<EdgeRegion>();
-		edgeRegions.add(systemTree.getSelectedEdgeRegion());
-		return edgeRegions;
 	}
 	
 	/**

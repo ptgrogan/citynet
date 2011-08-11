@@ -11,7 +11,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -21,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -29,8 +29,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
-import edu.mit.citynet.core.EdgeRegion;
-import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.gui.CellRegionPanel;
 import edu.mit.citynet.gui.CityPanel;
 import edu.mit.citynet.util.CityNetIcon;
@@ -41,7 +39,7 @@ import edu.mit.citynet.util.CityNetIcon;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class CityVizPanel extends AbstractVizPanel {
+public class CityVizPanel extends JSplitPane {
 	private static final long serialVersionUID = 3994034732879260199L;
 	
 	private CellRegionPanel cellRegionPanel;
@@ -127,7 +125,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		cellRegionTable = new RegionTable<CellRegion>(cellRegionTableModel);
 		cellRegionTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				repaint();
+				layeredPane.setSelectedCellRegion(cellRegionTable.getSelectedRegion());
 			}
 		});
 		cellRegionTable.getTableHeader().setReorderingAllowed(false);
@@ -253,7 +251,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		leftPanel.add(buttonPanel, c);
 		setLeftComponent(leftPanel);
 		JPanel rightPanel = new JPanel(new BorderLayout());
-		layeredPane = new VizLayeredPane(this, cityPanel.getCity(), null);
+		layeredPane = new VizLayeredPane(cityPanel.getCity(), null);
 		rightPanel.add(layeredPane,BorderLayout.CENTER);
 		setRightComponent(rightPanel);
 	}
@@ -315,50 +313,5 @@ public class CityVizPanel extends AbstractVizPanel {
 	 */
 	public CityPanel getCityPanel() {
 		return cityPanel;
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
-	 */
-	public Set<CellRegion> getCheckedCellRegions() {
-		// display all cell regions selected in table
-		return new HashSet<CellRegion>(cellRegionTableModel.getCheckedRegions());
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz2.AbstractVizPanel#getSelectedNodeRegions()
-	 */
-	public Set<NodeRegion> getCheckedNodeRegions() {
-		// presently do not display any node regions
-		return new HashSet<NodeRegion>();
-	}
-	
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
-	 */
-	public Set<EdgeRegion> getCheckedEdgeRegions() {
-		// presently do not display any edge regions
-		return new HashSet<EdgeRegion>();
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedCellRegions()
-	 */
-	public Set<CellRegion> getSelectedCellRegions() {
-		return cellRegionTable.getSelectedRegions();
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedNodeRegions()
-	 */
-	public Set<NodeRegion> getSelectedNodeRegions() {
-		return new HashSet<NodeRegion>();
-	}
-
-	/* (non-Javadoc)
-	 * @see edu.mit.citynet.viz.AbstractVizPanel#getSelectedEdgeRegions()
-	 */
-	public Set<EdgeRegion> getSelectedEdgeRegions() {
-		return new HashSet<EdgeRegion>();
 	}
 }

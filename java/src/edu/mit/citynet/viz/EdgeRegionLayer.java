@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -40,10 +39,8 @@ public class EdgeRegionLayer extends JPanel {
 		super.paintComponent(g);
 		if(vizPane.getSystem() == null) return;
 		
-		Set<EdgeRegion> edgeRegions = vizPane.getVizPanel().getCheckedEdgeRegions();
-		
-		for(EdgeRegion edgeRegion : edgeRegions) {
-			boolean selected = vizPane.getVizPanel().getSelectedEdgeRegions().contains(edgeRegion);
+		for(EdgeRegion edgeRegion : vizPane.getSystem().getEdgeRegions()) {
+			boolean selected = edgeRegion.equals(vizPane.getSelectedEdgeRegion());
 			int[] xPoints = new int[edgeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[edgeRegion.getCoordinateList().size()];
 			for(int i=0; i<edgeRegion.getCoordinateList().size(); i++) {
