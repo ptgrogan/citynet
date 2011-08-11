@@ -37,13 +37,12 @@ import edu.mit.citynet.core.EdgeRegion.EdgeRegionType;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.util.CityNetIcon;
-import edu.mit.citynet.viz.SystemVizPanel;
 
 public class EdgeRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
 	private static final String DIRECTED = "Directed", UNDIRECTED = "Undirected";
 	
-	private SystemVizPanel vizPanel;
+	private SystemPanel vizPanel;
 	private EdgeRegion edgeRegion;
 	private JTextArea descriptionText;
 	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo;
@@ -54,7 +53,7 @@ public class EdgeRegionPanel extends JPanel {
 	/**
 	 * Instantiates a new edge region panel.
 	 */
-	public EdgeRegionPanel(SystemVizPanel vizPanel) {
+	public EdgeRegionPanel(SystemPanel vizPanel) {
 		this.vizPanel = vizPanel;
 		initializePanel();
 	}
@@ -178,7 +177,7 @@ public class EdgeRegionPanel extends JPanel {
 		    				return this;
 		    			}
 		    		});
-		    		for(Layer layer : vizPanel.getSystemPanel().getSystem().getLayers()) {
+		    		for(Layer layer : vizPanel.getSystem().getLayers()) {
 		    			comboBox.addItem(layer);
 		    		}
 		    		return new DefaultCellEditor(comboBox);
@@ -405,7 +404,7 @@ public class EdgeRegionPanel extends JPanel {
 		this.edgeRegion = edgeRegion;
 		descriptionText.setText(edgeRegion.getDescription());
 		edgeTypeCombo.removeAllItems();
-		for(EdgeType type : vizPanel.getSystemPanel().getSystem().getEdgeTypes())
+		for(EdgeType type : vizPanel.getSystem().getEdgeTypes())
 			edgeTypeCombo.addItem(type);
 		if(edgeRegion.getEdgeType()==null && edgeTypeCombo.getItemCount()>0)
 			edgeTypeCombo.setSelectedIndex(0);
