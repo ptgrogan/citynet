@@ -188,6 +188,7 @@ public class EdgeRegionPanel extends JPanel {
 		    		for(Layer layer : systemPanel.getSystem().getLayers()) {
 		    			comboBox.addItem(layer);
 		    		}
+		    		comboBox.setSelectedItem(getValueAt(row,col));
 		    		return new DefaultCellEditor(comboBox);
 		    	} else return super.getCellEditor(row,col);
 			}
