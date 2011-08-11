@@ -1,6 +1,7 @@
 package edu.mit.citynet.gui;
 
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -42,6 +43,7 @@ public class SystemTree extends JTree {
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, 
 					boolean expanded, boolean leaf, int row, boolean hasFocus) {
 				super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+				setFont(getFont().deriveFont(Font.PLAIN));
 				if(value instanceof MutableLayerTreeNode) {
 					// TODO define setIcon(((MutableLayerTreeNode)value).getUserObject().getIcon());
 					setText(((MutableLayerTreeNode)value).getUserObject().getName());
@@ -57,6 +59,8 @@ public class SystemTree extends JTree {
 				} else if(value instanceof MutableEdgeTypeTreeNode) {
 					setIcon(((MutableEdgeTypeTreeNode)value).getUserObject().getIcon());
 					setText(((MutableEdgeTypeTreeNode)value).getUserObject().getName());
+				} else {
+					setFont(getFont().deriveFont(Font.BOLD));
 				}
 				return this;
 			}
