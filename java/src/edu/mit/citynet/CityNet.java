@@ -5,12 +5,21 @@
  */
 package edu.mit.citynet;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import net.infonode.gui.laf.InfoNodeLookAndFeel;
 import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
@@ -297,26 +306,45 @@ public class CityNet {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
+		// set default unhandled exception handler
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				JPanel errorPanel = new JPanel(new BorderLayout());
+				errorPanel.add(new JLabel("<html><p>An exception of type " + e.getClass().getSimpleName() 
+			    		+ " occurred.</p><p>" + e.getClass() + ": " + e.getMessage() 
+			    		+ "</p><p>Stack trace (for debug purposes):</p></html>"), BorderLayout.NORTH);
+				errorPanel.add(new JScrollPane(new JList(e.getStackTrace())), BorderLayout.CENTER);
+			    JOptionPane.showMessageDialog(findActiveFrame(), errorPanel, 
+			    		"CityNet | Error", JOptionPane.ERROR_MESSAGE);
+			    	e.printStackTrace();
+		    }
+		});
 		// use a separate thread for the GUI
 		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
             	try {
 					UIManager.setLookAndFeel(new InfoNodeLookAndFeel(
 							InfoNodeLookAndFeelThemes.getSoftGrayTheme()));
-					System.out.println("Launching City.Net...");
-					CityNetFrame f = new CityNetFrame();
-					f.setSize(new Dimension(800,600));
-					f.setLocationRelativeTo(null);
-					f.setVisible(true);
-            	} catch(Exception e) {
-            		JOptionPane.showMessageDialog(null, 
-            				"A fatal exception of type " + 
-            				e.getClass().getSimpleName() + "occurred while " + 
-            				"launching City.Net.\nPlease consult the stack " + 
-            				"trace for more information.");
+            	} catch(UnsupportedLookAndFeelException e) {
+            		JOptionPane.showMessageDialog(findActiveFrame(), 
+            				"The look and feel could not be loaded." +
+            				"\nPlease consult the stack " + 
+            				"trace for more information.",
+    			    		"CityNet | Error", JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
+				System.out.println("Launching City.Net...");
+				CityNetFrame f = new CityNetFrame();
+				f.setSize(new Dimension(800,600));
+				f.setLocationRelativeTo(null);
+				f.setVisible(true);
             }
 		});
+	}
+	private static Frame findActiveFrame() {
+		for(Frame frame : JFrame.getFrames()) {
+			if(frame.isVisible()) return frame;
+		}
+		return null;
 	}
 }
