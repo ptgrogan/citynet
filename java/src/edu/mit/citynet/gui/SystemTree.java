@@ -7,8 +7,10 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
 import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
@@ -51,10 +53,10 @@ public class SystemTree extends JTree {
 					setText(((MutableEdgeRegionTreeNode)value).getUserObject().getDescription());
 				} else if(value instanceof MutableNodeTypeTreeNode) {
 					setIcon(((MutableNodeTypeTreeNode)value).getUserObject().getIcon());
-					setText(((MutableNodeTypeTreeNode)value).getUserObject().getDescription());
+					setText(((MutableNodeTypeTreeNode)value).getUserObject().getName());
 				} else if(value instanceof MutableEdgeTypeTreeNode) {
 					setIcon(((MutableEdgeTypeTreeNode)value).getUserObject().getIcon());
-					setText(((MutableEdgeTypeTreeNode)value).getUserObject().getDescription());
+					setText(((MutableEdgeTypeTreeNode)value).getUserObject().getName());
 				}
 				return this;
 			}
@@ -79,6 +81,34 @@ public class SystemTree extends JTree {
 				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
 				instanceof MutableLayerTreeNode) {
 			return ((MutableLayerTreeNode)
+					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
+		} else return null;
+	}
+	
+	/**
+	 * Gets the selected node type.
+	 *
+	 * @return the selected node type
+	 */
+	public NodeType getSelectedNodeType() {
+		if(getSelectionModel().getSelectionPath() != null
+				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
+				instanceof MutableNodeTypeTreeNode) {
+			return ((MutableNodeTypeTreeNode)
+					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
+		} else return null;
+	}
+	
+	/**
+	 * Gets the selected edge type.
+	 *
+	 * @return the selected edge type
+	 */
+	public EdgeType getSelectedEdgeType() {
+		if(getSelectionModel().getSelectionPath() != null
+				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
+				instanceof MutableEdgeTypeTreeNode) {
+			return ((MutableEdgeTypeTreeNode)
 					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
 		} else return null;
 	}

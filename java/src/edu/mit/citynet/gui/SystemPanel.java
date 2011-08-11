@@ -25,12 +25,16 @@ import javax.swing.tree.TreePath;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
+import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableNodeTypeTreeNode;
 import edu.mit.citynet.util.CityNetIcon;
 import edu.mit.citynet.viz.VizLayeredPane;
 
@@ -50,6 +54,7 @@ public class SystemPanel extends JSplitPane {
 	private SystemTreeModel systemTreeModel;
 	private SystemTree systemTree;
 	private LayerPanel layerPanel;
+	private NodeTypePanel nodeTypePanel;
 	private NodeRegionPanel nodeRegionPanel;
 	private EdgeRegionPanel edgeRegionPanel;
 	
@@ -66,6 +71,7 @@ public class SystemPanel extends JSplitPane {
 		this.cityPanel = cityPanel;
 		this.system = system;
 		layerPanel = new LayerPanel(this);
+		nodeTypePanel = new NodeTypePanel();
 		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel(this);
 		initializePanel();
@@ -113,6 +119,16 @@ public class SystemPanel extends JSplitPane {
 						addLayerCommand();
 					else if(systemTree.getSelectedLayer()!=null)
 						editLayerCommand(systemTree.getSelectedLayer());
+					else if(systemTree.getSelectionPath().getLastPathComponent() 
+							== systemTree.getModel().nodeTypesTreeNode)
+						addNodeTypeCommand();
+					else if(systemTree.getSelectedNodeType()!=null)
+						editNodeTypeCommand(systemTree.getSelectedNodeType());
+					else if(systemTree.getSelectionPath().getLastPathComponent() 
+							== systemTree.getModel().edgeTypesTreeNode)
+						addEdgeTypeCommand();
+					else if(systemTree.getSelectedEdgeType()!=null)
+						editEdgeTypeCommand(systemTree.getSelectedEdgeType());
 				}
 			}
 			public void mousePressed(MouseEvent e) {
@@ -199,6 +215,60 @@ public class SystemPanel extends JSplitPane {
 			deleteLayerMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableLayerTreeNode);
 			systemTreePopupMenu.add(deleteLayerMenuItem);
+		} else if(path.getLastPathComponent()==systemTree.getModel().nodeTypesTreeNode
+				|| path.getLastPathComponent() instanceof MutableNodeTypeTreeNode) {
+			JMenuItem addNodeTypeMenuItem = new JMenuItem("Add Node Type");
+			addNodeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addNodeTypeCommand();
+				}
+			});
+			systemTreePopupMenu.add(addNodeTypeMenuItem);
+			JMenuItem editNodeTypeMenuItem = new JMenuItem("Edit Node Type");
+			editNodeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editNodeTypeCommand(systemTree.getSelectedNodeType());
+				}
+			});
+			editNodeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeTypeTreeNode);
+			systemTreePopupMenu.add(editNodeTypeMenuItem);
+			JMenuItem deleteNodeTypeMenuItem = new JMenuItem("Delete Node Type");
+			deleteNodeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteNodeTypeCommand(systemTree.getSelectedNodeType());
+				}
+			});
+			deleteNodeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeTypeTreeNode);
+			systemTreePopupMenu.add(deleteNodeTypeMenuItem);
+		} else if(path.getLastPathComponent()==systemTree.getModel().edgeTypesTreeNode
+				|| path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode) {
+			JMenuItem addEdgeTypeMenuItem = new JMenuItem("Add Edge Type");
+			addEdgeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addEdgeTypeCommand();
+				}
+			});
+			systemTreePopupMenu.add(addEdgeTypeMenuItem);
+			JMenuItem editEdgeTypeMenuItem = new JMenuItem("Edit Edge Type");
+			editEdgeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editEdgeTypeCommand(systemTree.getSelectedEdgeType());
+				}
+			});
+			editEdgeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeTypeTreeNode);
+			systemTreePopupMenu.add(editEdgeTypeMenuItem);
+			JMenuItem deleteEdgeTypeMenuItem = new JMenuItem("Delete Edge Type");
+			deleteEdgeTypeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteEdgeTypeCommand(systemTree.getSelectedEdgeType());
+				}
+			});
+			deleteEdgeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeTypeTreeNode);
+			systemTreePopupMenu.add(deleteEdgeTypeMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
 			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
@@ -298,12 +368,121 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteLayerCommand(Layer layer) {
 		System.out.println("Delete Layer Command");
+		// TODO: check if used in any node region or edge region
 		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
 				+ layer.getName() + "?", "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			system.removeLayer(layer);
 			systemTree.getModel().removeLayer(layer);
+		}
+	}
+	
+	/**
+	 * Adds the node type command.
+	 */
+	private void addNodeTypeCommand() {
+		System.out.println("Add Node Type Command");
+		NodeType nodeType = new NodeType();
+		nodeTypePanel.loadNodeType(nodeType);
+		int value = JOptionPane.showConfirmDialog(this, nodeTypePanel,
+				"City.Net | NodeType", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeTypePanel.saveNodeTypeCommand();
+			system.addNodeType(nodeType);
+			systemTree.getModel().addNodeType(nodeType);
+		}
+	}
+	
+	/**
+	 * Edits the node type command.
+	 *
+	 * @param nodeType the node type
+	 */
+	private void editNodeTypeCommand(NodeType nodeType) {
+		System.out.println("Edit Node Type Command");
+		nodeTypePanel.loadNodeType(nodeType);
+		int value = JOptionPane.showConfirmDialog(this, nodeTypePanel, 
+				"City.Net | NodeType", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeTypePanel.saveNodeTypeCommand();
+			systemTree.getModel().updateNodeType(nodeType);
+			layeredPane.repaint();
+		}
+	}
+	
+	/**
+	 * Delete node type command.
+	 *
+	 * @param nodeTypes the node types
+	 */
+	private void deleteNodeTypeCommand(NodeType nodeType) {
+		System.out.println("Delete Node Type Command");
+		// TODO: check if used in any node region or edge region
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
+				+ nodeType.getName() + "?", "City.Net | Warning", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			system.removeNodeType(nodeType);
+			systemTree.getModel().removeNodeType(nodeType);
+		}
+	}
+	
+	/**
+	 * Adds the edge type command.
+	 */
+	private void addEdgeTypeCommand() {
+		System.out.println("Add Node Type Command");
+		/*
+		EdgeType edgeType = new EdgeType();
+		edgeTypePanel.loadEdgeType(edgeType);
+		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel,
+				"City.Net | EdgeType", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeTypePanel.saveEdgeTypeCommand();
+			system.addEdgeType(edgeType);
+			systemTree.getModel().addEdgeType(edgeType);
+			layeredPane.repaint();
+		}
+		*/
+	}
+	
+	/**
+	 * Edits the edge type command.
+	 *
+	 * @param edgeType the edge type
+	 */
+	private void editEdgeTypeCommand(EdgeType edgeType) {
+		System.out.println("Edit Node Type Command");
+		/*
+		edgeTypePanel.loadEdgeType(edgeType);
+		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel, 
+				"City.Net | EdgeType", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeTypePanel.saveEdgeTypeCommand();
+			systemTree.getModel().updateEdgeType(edgeType);
+		}
+		*/
+	}
+	
+	/**
+	 * Delete edge types command.
+	 *
+	 * @param edgeTypes the edge types
+	 */
+	private void deleteEdgeTypeCommand(EdgeType edgeType) {
+		System.out.println("Delete Edge Type Command");
+		// TODO: check if used in any node region or edge region
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
+				+ edgeType.getName() + "?", "City.Net | Warning", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			system.removeEdgeType(edgeType);
+			systemTree.getModel().removeEdgeType(edgeType);
 		}
 	}
 	

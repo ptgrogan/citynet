@@ -30,6 +30,7 @@ public class NodeType {
 	 * set.
 	 */
 	public NodeType() {
+		name = "New Node Type";
 		attributes = new HashSet<NodeTypeAttribute>();
 	}
 

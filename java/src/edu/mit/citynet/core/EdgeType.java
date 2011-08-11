@@ -30,6 +30,7 @@ public class EdgeType {
 	 * set.
 	 */
 	public EdgeType() {
+		name = "New Edge Type";
 		attributes = new HashSet<EdgeTypeAttribute>();
 	}
 

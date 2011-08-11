@@ -384,6 +384,46 @@ public class CitySystem {
 		return edgeRegions.remove(region);
 	}
 	
+	/**
+	 * Adds the node type.
+	 *
+	 * @param nodeType the node type
+	 * @return true, if successful
+	 */
+	public boolean addNodeType(NodeType nodeType) {
+		return nodeTypes.add(nodeType);
+	}
+	
+	/**
+	 * Removes the node type.
+	 *
+	 * @param nodeType the node type
+	 * @return true, if successful
+	 */
+	public boolean removeNodeType(NodeType nodeType) {
+		return nodeTypes.remove(nodeType);
+	}
+	
+	/**
+	 * Adds the edge type.
+	 *
+	 * @param edgeType the edge type
+	 * @return true, if successful
+	 */
+	public boolean addEdgeType(EdgeType edgeType) {
+		return edgeTypes.add(edgeType);
+	}
+	
+	/**
+	 * Removes the edge type.
+	 *
+	 * @param edgeType the edge type
+	 * @return true, if successful
+	 */
+	public boolean removeEdgeType(EdgeType edgeType) {
+		return edgeTypes.remove(edgeTypes);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

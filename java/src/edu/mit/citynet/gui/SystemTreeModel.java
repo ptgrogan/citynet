@@ -131,6 +131,86 @@ public class SystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
+	 * Adds the node type.
+	 *
+	 * @param nodeType the nodeType
+	 */
+	public void addNodeType(NodeType nodeType) {
+		nodeTypesTreeNode.add(createTreeNode(nodeType));
+		nodesWereInserted(nodeTypesTreeNode, new int[]{nodeTypesTreeNode.getChildCount()-1});
+	}
+	
+	/**
+	 * Update node type.
+	 *
+	 * @param nodeType the nodeType
+	 */
+	public void updateNodeType(NodeType nodeType) {
+		for(int i = 0; i < nodeTypesTreeNode.getChildCount(); i++) {
+			if(nodeTypesTreeNode.getChildAt(i) instanceof MutableNodeTypeTreeNode
+					&& ((MutableNodeTypeTreeNode)nodeTypesTreeNode.getChildAt(i)).getUserObject()==nodeType) {
+				nodeChanged(nodeTypesTreeNode.getChildAt(i));
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Removes the node type.
+	 *
+	 * @param nodeType the nodeType
+	 */
+	public void removeNodeType(NodeType nodeType) {
+		for(int i = 0; i < nodeTypesTreeNode.getChildCount(); i++) {
+			if(nodeTypesTreeNode.getChildAt(i) instanceof MutableNodeTypeTreeNode
+					&& ((MutableNodeTypeTreeNode)nodeTypesTreeNode.getChildAt(i)).getUserObject()==nodeType) {
+				nodesWereRemoved(nodeTypesTreeNode,new int[]{i},null);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Adds the edge type.
+	 *
+	 * @param edgeType the edgeType
+	 */
+	public void addEdgeType(EdgeType edgeType) {
+		edgeTypesTreeNode.add(createTreeNode(edgeType));
+		nodesWereInserted(edgeTypesTreeNode, new int[]{edgeTypesTreeNode.getChildCount()-1});
+	}
+	
+	/**
+	 * Update edge type.
+	 *
+	 * @param edgeType the edgeType
+	 */
+	public void updateEdgeType(EdgeType edgeType) {
+		for(int i = 0; i < edgeTypesTreeNode.getChildCount(); i++) {
+			if(edgeTypesTreeNode.getChildAt(i) instanceof MutableEdgeTypeTreeNode
+					&& ((MutableEdgeTypeTreeNode)edgeTypesTreeNode.getChildAt(i)).getUserObject()==edgeType) {
+				nodeChanged(edgeTypesTreeNode.getChildAt(i));
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Removes the edge type.
+	 *
+	 * @param edgeType the edgeType
+	 */
+	public void removeEdgeType(EdgeType edgeType) {
+		for(int i = 0; i < edgeTypesTreeNode.getChildCount(); i++) {
+			if(edgeTypesTreeNode.getChildAt(i) instanceof MutableEdgeTypeTreeNode
+					&& ((MutableEdgeTypeTreeNode)edgeTypesTreeNode.getChildAt(i)).getUserObject()==edgeType) {
+				nodesWereRemoved(edgeTypesTreeNode,new int[]{i},null);
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * Adds the node region.
 	 *
 	 * @param nodeRegion the node region
