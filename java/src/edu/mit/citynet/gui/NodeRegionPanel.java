@@ -84,9 +84,6 @@ public class NodeRegionPanel extends JPanel {
 		add(new JLabel("Layer: ", JLabel.RIGHT), c);
 		c.gridx++;
 		layerCombo = new JComboBox();
-		for(Layer layer : vizPanel.getSystemPanel().getSystem().getLayers()) {
-			layerCombo.addItem(layer);
-		}
 		layerCombo.setRenderer(new DefaultListCellRenderer() {
 			private static final long serialVersionUID = 2820843521395503530L;
 			public Component getListCellRendererComponent(JList list,
@@ -106,9 +103,6 @@ public class NodeRegionPanel extends JPanel {
 		add(new JLabel("Node Type: ", JLabel.RIGHT), c);
 		c.gridx++;
 		nodeTypeCombo = new JComboBox();
-		for(NodeType type : vizPanel.getSystemPanel().getSystem().getNodeTypes()) {
-			nodeTypeCombo.addItem(type);
-		}
 		nodeTypeCombo.setRenderer(new DefaultListCellRenderer() {
 			private static final long serialVersionUID = 2820843521395503530L;
 			public Component getListCellRendererComponent(JList list,
@@ -346,10 +340,25 @@ public class NodeRegionPanel extends JPanel {
 	 */
 	public void loadNodeRegion(NodeRegion nodeRegion) {
 		this.nodeRegion = nodeRegion;
-		nodeRegionTypeCombo.setSelectedItem(nodeRegion.getNodeRegionType());
 		descriptionText.setText(nodeRegion.getDescription());
-		layerCombo.setSelectedItem(nodeRegion.getLayer());
-		nodeTypeCombo.setSelectedItem(nodeRegion.getNodeType());
+		layerCombo.removeAllItems();
+		for(Layer layer : vizPanel.getSystemPanel().getSystem().getLayers())
+			layerCombo.addItem(layer);
+		if(nodeRegion.getLayer()==null && layerCombo.getItemCount()>0)
+			layerCombo.setSelectedIndex(0);
+		else
+			layerCombo.setSelectedItem(nodeRegion.getLayer());
+		nodeTypeCombo.removeAllItems();
+		for(NodeType type : vizPanel.getSystemPanel().getSystem().getNodeTypes())
+			nodeTypeCombo.addItem(type);
+		if(nodeRegion.getNodeType()==null && nodeTypeCombo.getItemCount()>0)
+			nodeTypeCombo.setSelectedIndex(0);
+		else
+			nodeTypeCombo.setSelectedItem(nodeRegion.getNodeType());
+		if(nodeRegion.getNodeRegionType()==null)
+			nodeRegionTypeCombo.setSelectedIndex(0);
+		else
+			nodeRegionTypeCombo.setSelectedItem(nodeRegion.getNodeRegionType());
 		coordinateTableModel.setCoordinates(nodeRegion.getCoordinateList());
 	}
 	

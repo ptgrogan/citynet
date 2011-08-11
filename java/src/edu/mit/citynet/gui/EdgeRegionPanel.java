@@ -109,9 +109,6 @@ public class EdgeRegionPanel extends JPanel {
 		add(new JLabel("Edge Type: ", JLabel.RIGHT), c);
 		c.gridx++;
 		edgeTypeCombo = new JComboBox();
-		for(EdgeType type : vizPanel.getSystemPanel().getSystem().getEdgeTypes()) {
-			edgeTypeCombo.addItem(type);
-		}
 		edgeTypeCombo.setRenderer(new DefaultListCellRenderer() {
 			private static final long serialVersionUID = 2820843521395503530L;
 			public Component getListCellRendererComponent(JList list,
@@ -406,10 +403,19 @@ public class EdgeRegionPanel extends JPanel {
 	 */
 	public void loadEdgeRegion(EdgeRegion edgeRegion) {
 		this.edgeRegion = edgeRegion;
-		edgeRegionTypeCombo.setSelectedItem(edgeRegion.getEdgeRegionType());
 		descriptionText.setText(edgeRegion.getDescription());
-		edgeTypeCombo.setSelectedItem(edgeRegion.getEdgeType());
+		edgeTypeCombo.removeAllItems();
+		for(EdgeType type : vizPanel.getSystemPanel().getSystem().getEdgeTypes())
+			edgeTypeCombo.addItem(type);
+		if(edgeRegion.getEdgeType()==null && edgeTypeCombo.getItemCount()>0)
+			edgeTypeCombo.setSelectedIndex(0);
+		else
+			edgeTypeCombo.setSelectedItem(edgeRegion.getEdgeType());
 		directedCombo.setSelectedItem(edgeRegion.isDirected()?DIRECTED:UNDIRECTED);
+		if(edgeRegion.getEdgeRegionType()==null)
+			edgeRegionTypeCombo.setSelectedIndex(0);
+		else
+			edgeRegionTypeCombo.setSelectedItem(edgeRegion.getEdgeRegionType());
 		coordinateTableModel.setCoordinates(edgeRegion.getCoordinateList());
 		coordinateTableModel.setLayers(edgeRegion.getLayers());
 	}
