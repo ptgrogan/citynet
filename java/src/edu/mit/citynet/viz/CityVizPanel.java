@@ -232,7 +232,7 @@ public class CityVizPanel extends AbstractVizPanel {
 		c.gridy++;
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.LINE_AXIS));
-		JButton generateCellsButton = new JButton("Generate",CityNetIcon.CELL_REGIONS.getIcon());
+		JButton generateCellsButton = new JButton("Generate",CityNetIcon.GENERATE.getIcon());
 		generateCellsButton.setToolTipText("Generate cells in cell regions");
 		generateCellsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

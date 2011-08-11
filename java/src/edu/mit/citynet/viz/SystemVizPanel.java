@@ -210,7 +210,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.weighty = 0;
 		JPanel nodeButtonPanel = new JPanel();
 		nodeButtonPanel.setLayout(new BoxLayout(nodeButtonPanel,BoxLayout.LINE_AXIS));
-		JButton generateNodesButton = new JButton("Generate",CityNetIcon.NODE_REGIONS.getIcon());
+		JButton generateNodesButton = new JButton("Generate",CityNetIcon.GENERATE.getIcon());
 		generateNodesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateNodesCommand(nodeRegionTableModel.getCheckedRegions());
@@ -348,7 +348,7 @@ public class SystemVizPanel extends AbstractVizPanel {
 		c.weighty = 0;
 		JPanel edgeButtonPanel = new JPanel();
 		edgeButtonPanel.setLayout(new BoxLayout(edgeButtonPanel,BoxLayout.LINE_AXIS));
-		JButton generateEdgesButton = new JButton("Generate",CityNetIcon.EDGE_REGIONS.getIcon());
+		JButton generateEdgesButton = new JButton("Generate",CityNetIcon.GENERATE.getIcon());
 		generateEdgesButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				systemPanel.generateEdgesCommand(edgeRegionTableModel.getCheckedRegions());

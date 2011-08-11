@@ -14,21 +14,19 @@ public enum CityNetIcon {
 	WASTE_SYSTEM("resources/bin.png"),
 	WATER_SYSTEM("resources/paintcan.png"),
 	UNDEFINED_SYSTEM("resources/brick.png"),
-	EDGE_REGIONS("resources/chart_line.png"),
-	NODE_REGIONS("resources/map.png"),
 	NODE_TYPE_BLANK("resources/bullet_white.png"),
 	EDGE_TYPE_BLANK("resources/edge_blank.png"),
 	POLYPOINT_REGION("resources/bullet_red.png"),
 	POLYLINE_REGION("resources/chart_line.png"),
 	POLYGON_REGION("resources/shape_handles.png"),
 	UNDEFINED_REGION("resources/bullet_error.png"),
-	CELL_REGIONS("resources/shape_handles.png"),
 	ADD_COORDINATE("resources/bullet_add.png"),
 	DELETE_COORDINATE("resources/bullet_delete.png"),
 	MOVE_UP("resources/bullet_arrow_up.png"),
 	MOVE_DOWN("resources/bullet_arrow_down.png"),
 	UNDIRECTED("resources/arrow_both.png"),
 	DIRECTED("resources/arrow_right.png"),
+	GENERATE("resources/lightning.png"),
 	DELETE("resources/delete.png");
 	
 	private String filePath;
