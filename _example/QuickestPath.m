@@ -36,7 +36,7 @@ classdef QuickestPath < Behavior
     end
     methods(Access=protected)
         %% EvaluateImpl Function
-        % Evalutaes the behavior for a specified system. Note: the
+        % Evaluates the behavior for a specified system. Note: the
         % superclass Evaluate function should be used for evaluation during
         % execution.
         %
