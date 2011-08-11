@@ -339,6 +339,7 @@ public class EdgeRegionPanel extends JPanel {
 	 * Adds the coordinate command.
 	 */
 	private void addCoordinateCommand() {
+		System.out.println("Add Coordinate Command");
 		coordinateTableModel.getCoordinates().add(new Coordinate(),true);
 		coordinateTableModel.getLayers().add(null);
 		coordinateTableModel.fireTableRowsInserted(
@@ -350,6 +351,7 @@ public class EdgeRegionPanel extends JPanel {
 	 * Delete coordinates command.
 	 */
 	private void deleteCoordinatesCommand() {
+		System.out.println("Delete Coordinates Command");
 		for(int i = coordinateTable.getSelectedRows().length-1; i>=0; i--) {
 			int rowDeleted = coordinateTable.getSelectedRows()[i];
 			coordinateTableModel.getCoordinates().remove(rowDeleted);

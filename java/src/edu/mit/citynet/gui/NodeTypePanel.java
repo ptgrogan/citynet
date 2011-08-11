@@ -10,17 +10,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.core.NodeTypeAttribute;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
@@ -36,6 +45,9 @@ public class NodeTypePanel extends JPanel {
 	private JTextArea descriptionText;
 	private JButton colorButton;
 	private JLabel colorLabel;
+	private AttributeTableModel<NodeTypeAttribute> attributeTableModel;
+	private JTable attributeTable;
+	private JButton addAttributeButton, deleteAttributesButton;
 	
 	/**
 	 * Instantiates a new node type panel.
@@ -102,6 +114,128 @@ public class NodeTypePanel extends JPanel {
 		});
 		colorPanel.add(colorButton);
 		add(colorPanel, c);
+		c.gridy++;
+		c.gridx = 0;
+		c.anchor = GridBagConstraints.FIRST_LINE_END;
+		add(new JLabel("Attributes: ", JLabel.RIGHT), c);
+		c.gridx++;
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.CENTER;
+		attributeTableModel = new AttributeTableModel<NodeTypeAttribute>();
+		attributeTable = new JTable(attributeTableModel);
+		attributeTable.getTableHeader().setReorderingAllowed(false);
+		attributeTable.getColumnModel().getColumn(0).setHeaderValue("Name");
+		attributeTable.getColumnModel().getColumn(0).setPreferredWidth(75);
+		attributeTable.getColumnModel().getColumn(1).setHeaderValue("Description");
+		attributeTable.getColumnModel().getColumn(1).setPreferredWidth(125);
+		attributeTable.getColumnModel().getColumn(2).setHeaderValue("Units");
+		attributeTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+		attributeTable.getColumnModel().getColumn(3).setHeaderValue("Bounds");
+		attributeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+		attributeTable.getColumnModel().getColumn(4).setHeaderValue("Value");
+		attributeTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+		attributeTable.setPreferredScrollableViewportSize(new Dimension(400,150));
+		MouseAdapter attributeMouseAdapter = new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2 && e.getComponent()!=attributeTable)
+					addAttributeCommand();
+			}
+			public void mousePressed(MouseEvent e) {
+				if(e.getComponent()!=attributeTable)
+					attributeTable.getSelectionModel().clearSelection();
+				maybeShowPopup(e);
+			}
+			public void mouseReleased(MouseEvent e) {
+				maybeShowPopup(e);
+			}
+			private void maybeShowPopup(MouseEvent e) {
+				if(e.isPopupTrigger()) {
+					int row = attributeTable.rowAtPoint(e.getPoint());
+					attributeTable.getSelectionModel().addSelectionInterval(row, row);
+					Set<NodeTypeAttribute> attributes = new HashSet<NodeTypeAttribute>();
+					for(int i : attributeTable.getSelectedRows()) 
+						attributes.add(attributeTableModel.getAttributes().get(i));
+					createAttributePopupMenu(attributes).show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+		attributeTable.addMouseListener(attributeMouseAdapter);
+		attributeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				deleteAttributesButton.setEnabled(attributeTable.getSelectedRowCount()>0);
+			}
+		});
+		JScrollPane attributeScroll = new JScrollPane(attributeTable);
+		attributeScroll.addMouseListener(attributeMouseAdapter);
+		add(attributeScroll, c);
+		c.gridy++;
+		c.weighty = 0;
+		c.anchor = GridBagConstraints.LINE_START;
+		JPanel attributeButtonPanel = new JPanel();
+		attributeButtonPanel.setLayout(new BoxLayout(attributeButtonPanel, BoxLayout.LINE_AXIS));
+		addAttributeButton = new JButton(CityNetIcon.ADD_COORDINATE.getIcon());
+		addAttributeButton.setToolTipText("Add new attribute");
+		addAttributeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addAttributeCommand();
+			}
+		});
+		attributeButtonPanel.add(addAttributeButton);
+		deleteAttributesButton = new JButton(CityNetIcon.DELETE_COORDINATE.getIcon());
+		deleteAttributesButton.setToolTipText("Delete selected attributes");
+		deleteAttributesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteAttributesCommand();
+			}
+		});
+		deleteAttributesButton.setEnabled(false);
+		attributeButtonPanel.add(deleteAttributesButton);
+		add(attributeButtonPanel, c);
+	}
+	
+	/**
+	 * Creates the attribute popup menu.
+	 *
+	 * @param attributes the attributes
+	 * @return the j popup menu
+	 */
+	private JPopupMenu createAttributePopupMenu(final Set<NodeTypeAttribute> attributes) {
+		JPopupMenu attributePopupMenu = new JPopupMenu();
+		if(attributes.size()>0) {
+			JMenuItem deleteAttributesMenuItem = new JMenuItem("Delete Attribute" + (attributes.size()>1?"s":""));
+			deleteAttributesMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					deleteAttributesCommand();
+				}
+			});
+			attributePopupMenu.add(deleteAttributesMenuItem);
+		} else {
+			JMenuItem addAttributeMenuItem = new JMenuItem("Add Attribute");
+			addAttributeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addAttributeCommand();
+				}
+			});
+			attributePopupMenu.add(addAttributeMenuItem);
+		}
+		return attributePopupMenu;
+	}
+	
+	private void addAttributeCommand() {
+		System.out.println("Add Attribute Command");
+		attributeTableModel.getAttributes().add(new NodeTypeAttribute());
+		attributeTableModel.fireTableRowsInserted(
+				attributeTableModel.getRowCount(),
+				attributeTableModel.getRowCount());
+	}
+	
+	private void deleteAttributesCommand() {
+		System.out.println("Delete Attributes Command");
+		for(int i = attributeTable.getSelectedRows().length-1; i>=0; i--) {
+			int rowDeleted = attributeTable.getSelectedRows()[i];
+			attributeTableModel.getAttributes().remove(rowDeleted);
+			attributeTableModel.fireTableRowsDeleted(rowDeleted, rowDeleted);
+		}
 	}
 	
 	/**
@@ -114,15 +248,6 @@ public class NodeTypePanel extends JPanel {
 	}
 	
 	/**
-	 * Save node type command.
-	 */
-	public void saveNodeTypeCommand() {
-		nodeType.setName(nameText.getText());
-		nodeType.setDescription(descriptionText.getText());
-		nodeType.setColor(colorLabel.getBackground());
-	}
-	
-	/**
 	 * Load node type.
 	 *
 	 * @param nodeType the node type
@@ -132,5 +257,19 @@ public class NodeTypePanel extends JPanel {
 		nameText.setText(nodeType.getName());
 		descriptionText.setText(nodeType.getDescription());
 		colorLabel.setBackground(nodeType.getColor());
+		attributeTableModel.setAttributes(nodeType.getAttributes());
+	}
+	
+	/**
+	 * Save node type command.
+	 */
+	public void saveNodeTypeCommand() {
+		if(attributeTable.isEditing()) attributeTable.getCellEditor().stopCellEditing();
+		nodeType.setName(nameText.getText());
+		nodeType.setDescription(descriptionText.getText());
+		nodeType.setColor(colorLabel.getBackground());
+		Set<NodeTypeAttribute> attributes = new HashSet<NodeTypeAttribute>();
+		attributes.addAll(attributeTableModel.getAttributes());
+		nodeType.setAttributes(attributes);
 	}
 }

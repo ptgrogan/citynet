@@ -1,6 +1,5 @@
 package edu.mit.citynet.core;
 
-// TODO: Auto-generated Javadoc
 /**
  * The NodeTypeAttribute class is used to describe an aspect of a particular 
  * EdgeType. Each EdgeTypeAttribute is given a name and numeric value.
@@ -8,9 +7,16 @@ package edu.mit.citynet.core;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class EdgeTypeAttribute extends AbstractAttribute {
-	
-	/** The id. */
 	private int id;
+	
+	/**
+	 * Instantiates a new edge type attribute.
+	 */
+	public EdgeTypeAttribute() {
+		setName("New Edge Type Attribute");
+		setUnits("-");
+		setBounds("[0,inf)");
+	}
 	
 	/**
 	 * Gets the id.
