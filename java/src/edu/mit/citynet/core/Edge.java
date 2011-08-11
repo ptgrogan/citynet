@@ -7,24 +7,15 @@ package edu.mit.citynet.core;
 
 import com.vividsolutions.jts.geom.LineSegment;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Edge class is used to define connections between nodes within a system.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class Edge {
-	
-	/** The id. */
 	private int id;
-	
-	/** The destination. */
 	private Node origin, destination;
-	
-	/** The edge type. */
 	private EdgeType edgeType;
-	
-	/** The directed. */
 	private boolean directed;
 	
 	/**
