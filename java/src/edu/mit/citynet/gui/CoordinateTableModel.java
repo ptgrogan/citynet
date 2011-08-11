@@ -1,3 +1,8 @@
+/*
+ * CityNet: Integrated Urban Development Decision Support Tool
+ * 
+ * Copyright (c) 2011 MIT Strategic Engineering Research Group
+ */
 package edu.mit.citynet.gui;
 
 import javax.swing.table.AbstractTableModel;
