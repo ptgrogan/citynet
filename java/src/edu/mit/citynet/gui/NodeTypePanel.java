@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
 import edu.mit.citynet.util.CityNetIcon;
@@ -226,7 +227,9 @@ public class NodeTypePanel extends JPanel {
 	 */
 	private void addAttributeCommand() {
 		System.out.println("Add Attribute Command");
-		attributeTableModel.getAttributes().add(new NodeTypeAttribute());
+		NodeTypeAttribute attribute = new NodeTypeAttribute();
+		attribute.setId(CityNet.getInstance().getNextNodeTypeAttributeId());
+		attributeTableModel.getAttributes().add(attribute);
 		attributeTableModel.fireTableRowsInserted(
 				attributeTableModel.getRowCount(),
 				attributeTableModel.getRowCount());

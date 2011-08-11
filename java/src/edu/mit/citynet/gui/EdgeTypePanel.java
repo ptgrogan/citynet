@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.EdgeTypeAttribute;
 import edu.mit.citynet.util.CityNetIcon;
@@ -226,7 +227,9 @@ public class EdgeTypePanel extends JPanel {
 	 */
 	private void addAttributeCommand() {
 		System.out.println("Add Attribute Command");
-		attributeTableModel.getAttributes().add(new EdgeTypeAttribute());
+		EdgeTypeAttribute attribute = new EdgeTypeAttribute();
+		attribute.setId(CityNet.getInstance().getNextEdgeTypeAttributeId());
+		attributeTableModel.getAttributes().add(attribute);
 		attributeTableModel.fireTableRowsInserted(
 				attributeTableModel.getRowCount(),
 				attributeTableModel.getRowCount());
