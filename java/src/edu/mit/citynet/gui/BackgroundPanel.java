@@ -35,11 +35,8 @@ public class BackgroundPanel extends JPanel {
 	public BackgroundPanel() {
 		try {
 			BufferedImage rawLogo = ImageIO.read(
-					getClass().getClassLoader().getResource(
-					"resources" + System.getProperty("file.separator") + 
-					"citynetLogo.png"));
+					getClass().getClassLoader().getResource("resources/citynetLogo.png"));
 			ImageFilter filter = new RGBImageFilter() {
-				@Override
 				public int filterRGB(int x, int y, int rgb) {
 					return 0x66ffffff & rgb; // make slightly transparent
 				}
