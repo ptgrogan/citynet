@@ -360,6 +360,7 @@ public class SystemPanel extends JSplitPane {
 		if(value == JOptionPane.OK_OPTION) {
 			layerPanel.saveLayerCommand();
 			systemTree.getModel().updateLayer(layer);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -370,13 +371,38 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteLayerCommand(Layer layer) {
 		System.out.println("Delete Layer Command");
-		// TODO: check if used in any node region or edge region
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
-				+ layer.getName() + "?", "City.Net | Warning", 
+		Set<NodeRegion> dependentNodeRegions = new HashSet<NodeRegion>();
+		for(NodeRegion nodeRegion : system.getNodeRegions()) {
+			if(nodeRegion.getLayer().equals(layer))
+				dependentNodeRegions.add(nodeRegion);
+		}
+		Set<EdgeRegion> dependentEdgeRegions = new HashSet<EdgeRegion>();
+		for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
+			if(edgeRegion.getLayers().contains(layer))
+				dependentEdgeRegions.add(edgeRegion);
+		}
+		String message = "Do you want to delete the " + layer.getName() + " layer?";
+		if(dependentNodeRegions.size()>0 || dependentEdgeRegions.size()>0) {
+			message += "\nThe following dependent regions will also be deleted:\n";
+			for(NodeRegion nodeRegion : dependentNodeRegions)
+				message += nodeRegion.getDescription() + "\n";
+			for(EdgeRegion edgeRegion : dependentEdgeRegions)
+				message += edgeRegion.getDescription() + "\n";
+		}
+		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
+			for(NodeRegion nodeRegion : dependentNodeRegions) {
+				system.removeNodeRegion(nodeRegion);
+				systemTree.getModel().removeNodeRegion(nodeRegion);
+			}
+			for(EdgeRegion edgeRegion : dependentEdgeRegions) {
+				system.removeEdgeRegion(edgeRegion);
+				systemTree.getModel().removeEdgeRegion(edgeRegion);
+			}
 			system.removeLayer(layer);
 			systemTree.getModel().removeLayer(layer);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -422,13 +448,27 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteNodeTypeCommand(NodeType nodeType) {
 		System.out.println("Delete Node Type Command");
-		// TODO: check if used in any node region or edge region
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
-				+ nodeType.getName() + "?", "City.Net | Warning", 
+		Set<NodeRegion> dependentNodeRegions = new HashSet<NodeRegion>();
+		for(NodeRegion nodeRegion : system.getNodeRegions()) {
+			if(nodeRegion.getNodeType().equals(nodeType))
+				dependentNodeRegions.add(nodeRegion);
+		}
+		String message = "Do you want to delete the " + nodeType.getName() + " node type?";
+		if(dependentNodeRegions.size()>0) {
+			message += "\nThe following dependent node regions will also be deleted:\n";
+			for(NodeRegion nodeRegion : dependentNodeRegions)
+				message += nodeRegion.getDescription() + "\n";
+		}
+		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
+			for(NodeRegion nodeRegion : dependentNodeRegions) {
+				system.removeNodeRegion(nodeRegion);
+				systemTree.getModel().removeNodeRegion(nodeRegion);
+			}
 			system.removeNodeType(nodeType);
 			systemTree.getModel().removeNodeType(nodeType);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -464,6 +504,7 @@ public class SystemPanel extends JSplitPane {
 		if(value == JOptionPane.OK_OPTION) {
 			edgeTypePanel.saveEdgeTypeCommand();
 			systemTree.getModel().updateEdgeType(edgeType);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -474,13 +515,27 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteEdgeTypeCommand(EdgeType edgeType) {
 		System.out.println("Delete Edge Type Command");
-		// TODO: check if used in any node region or edge region
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
-				+ edgeType.getName() + "?", "City.Net | Warning", 
+		Set<EdgeRegion> dependentEdgeRegions = new HashSet<EdgeRegion>();
+		for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
+			if(edgeRegion.getEdgeType().equals(edgeType))
+				dependentEdgeRegions.add(edgeRegion);
+		}
+		String message = "Do you want to delete the " + edgeType.getName() + " edge type?";
+		if(dependentEdgeRegions.size()>0) {
+			message += "\nThe following dependent edge regions will also be deleted:\n";
+			for(EdgeRegion edgeRegion : dependentEdgeRegions)
+				message += edgeRegion.getDescription() + "\n";
+		}
+		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
+			for(EdgeRegion edgeRegion : dependentEdgeRegions) {
+				system.removeEdgeRegion(edgeRegion);
+				systemTree.getModel().removeEdgeRegion(edgeRegion);
+			}
 			system.removeEdgeType(edgeType);
 			systemTree.getModel().removeEdgeType(edgeType);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -515,6 +570,7 @@ public class SystemPanel extends JSplitPane {
 		if(value == JOptionPane.OK_OPTION) {
 			nodeRegionPanel.saveNodeRegionCommand();
 			systemTree.getModel().updateNodeRegion(nodeRegion);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -525,12 +581,13 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteNodeRegionCommand(NodeRegion nodeRegion) {
 		System.out.println("Delete Node Region Command");
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete " 
-				+ nodeRegion.getDescription() + "?", "City.Net | Warning", 
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the " 
+				+ nodeRegion.getDescription() + " node region?", "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			system.removeNodeRegion(nodeRegion);
 			systemTree.getModel().removeNodeRegion(nodeRegion);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -565,6 +622,7 @@ public class SystemPanel extends JSplitPane {
 		if(value == JOptionPane.OK_OPTION) {
 			edgeRegionPanel.saveEdgeRegionCommand();
 			systemTree.getModel().updateEdgeRegion(edgeRegion);
+			layeredPane.repaint();
 		}
 	}
 	
@@ -573,12 +631,13 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteEdgeRegionCommand(EdgeRegion edgeRegion) {
 		System.out.println("Delete Edge Region Command");
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete "
-				+ edgeRegion.getDescription() + "?", "City.Net | Warning", 
+		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the "
+				+ edgeRegion.getDescription() + " edge region?", "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			system.removeEdgeRegion(edgeRegion);
 			systemTree.getModel().removeEdgeRegion(edgeRegion);
+			layeredPane.repaint();
 		}
 	}
 

@@ -124,6 +124,7 @@ public class SystemTreeModel extends DefaultTreeModel {
 		for(int i = 0; i < layersTreeNode.getChildCount(); i++) {
 			if(layersTreeNode.getChildAt(i) instanceof MutableLayerTreeNode
 					&& ((MutableLayerTreeNode)layersTreeNode.getChildAt(i)).getUserObject()==layer) {
+				layersTreeNode.remove(i);
 				nodesWereRemoved(layersTreeNode,new int[]{i},null);
 				break;
 			}
@@ -204,6 +205,7 @@ public class SystemTreeModel extends DefaultTreeModel {
 		for(int i = 0; i < edgeTypesTreeNode.getChildCount(); i++) {
 			if(edgeTypesTreeNode.getChildAt(i) instanceof MutableEdgeTypeTreeNode
 					&& ((MutableEdgeTypeTreeNode)edgeTypesTreeNode.getChildAt(i)).getUserObject()==edgeType) {
+				edgeTypesTreeNode.remove(i);
 				nodesWereRemoved(edgeTypesTreeNode,new int[]{i},null);
 				break;
 			}
@@ -244,6 +246,7 @@ public class SystemTreeModel extends DefaultTreeModel {
 		for(int i = 0; i < nodeRegionsTreeNode.getChildCount(); i++) {
 			if(nodeRegionsTreeNode.getChildAt(i) instanceof MutableNodeRegionTreeNode
 					&& ((MutableNodeRegionTreeNode)nodeRegionsTreeNode.getChildAt(i)).getUserObject()==nodeRegion) {
+				nodeRegionsTreeNode.remove(i);
 				nodesWereRemoved(nodeRegionsTreeNode,new int[]{i},null);
 				break;
 			}
@@ -284,6 +287,7 @@ public class SystemTreeModel extends DefaultTreeModel {
 		for(int i = 0; i < edgeRegionsTreeNode.getChildCount(); i++) {
 			if(edgeRegionsTreeNode.getChildAt(i) instanceof MutableEdgeRegionTreeNode
 					&& ((MutableEdgeRegionTreeNode)edgeRegionsTreeNode.getChildAt(i)).getUserObject()==edgeRegion) {
+				edgeRegionsTreeNode.remove(i);
 				nodesWereRemoved(edgeRegionsTreeNode,new int[]{i},null);
 				break;
 			}
