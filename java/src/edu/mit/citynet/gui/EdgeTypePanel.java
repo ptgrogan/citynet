@@ -128,7 +128,7 @@ public class EdgeTypePanel extends JPanel {
 	public void loadEdgeType(EdgeType edgeType) {
 		this.edgeType = edgeType;
 		nameText.setText(edgeType.getName());
-		descriptionText.setText(edgeType.getName());
+		descriptionText.setText(edgeType.getDescription());
 		colorLabel.setBackground(edgeType.getColor());
 	}
 }

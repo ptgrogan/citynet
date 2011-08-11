@@ -128,7 +128,7 @@ public class NodeTypePanel extends JPanel {
 	public void loadNodeType(NodeType nodeType) {
 		this.nodeType = nodeType;
 		nameText.setText(nodeType.getName());
-		descriptionText.setText(nodeType.getName());
+		descriptionText.setText(nodeType.getDescription());
 		colorLabel.setBackground(nodeType.getColor());
 	}
 }
