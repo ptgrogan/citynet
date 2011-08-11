@@ -341,7 +341,11 @@ public class EdgeRegionPanel extends JPanel {
 	private void addCoordinateCommand() {
 		System.out.println("Add Coordinate Command");
 		coordinateTableModel.getCoordinates().add(new Coordinate(),true);
-		coordinateTableModel.getLayers().add(null);
+		if(systemPanel.getSystem().getLayers().size()>0)
+			coordinateTableModel.getLayers().add(
+					(Layer)systemPanel.getSystem().getLayers().toArray()[0]);
+		else
+			coordinateTableModel.getLayers().add(null);
 		coordinateTableModel.fireTableRowsInserted(
 				coordinateTableModel.getRowCount(),
 				coordinateTableModel.getRowCount());
