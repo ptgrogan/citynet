@@ -1,4 +1,4 @@
-package edu.mit.citynet.viz;
+package edu.mit.citynet.gui;
 
 import java.awt.Component;
 
@@ -8,11 +8,11 @@ import javax.swing.tree.TreeSelectionModel;
 
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
-import edu.mit.citynet.viz.SystemTreeModel.MutableEdgeRegionTreeNode;
-import edu.mit.citynet.viz.SystemTreeModel.MutableEdgeTypeTreeNode;
-import edu.mit.citynet.viz.SystemTreeModel.MutableLayerTreeNode;
-import edu.mit.citynet.viz.SystemTreeModel.MutableNodeRegionTreeNode;
-import edu.mit.citynet.viz.SystemTreeModel.MutableNodeTypeTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableNodeTypeTreeNode;
 
 /**
  * The SystemTree class.

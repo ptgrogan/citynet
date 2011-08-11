@@ -1,7 +1,7 @@
 /*
  * 
  */
-package edu.mit.citynet.viz;
+package edu.mit.citynet.gui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;

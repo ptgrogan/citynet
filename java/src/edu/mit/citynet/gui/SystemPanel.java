@@ -27,12 +27,10 @@ import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
 import edu.mit.citynet.util.CityNetIcon;
-import edu.mit.citynet.viz.SystemTree;
-import edu.mit.citynet.viz.SystemTreeModel;
 import edu.mit.citynet.viz.VizLayeredPane;
-import edu.mit.citynet.viz.SystemTreeModel.MutableEdgeRegionTreeNode;
-import edu.mit.citynet.viz.SystemTreeModel.MutableNodeRegionTreeNode;
 
 /**
  * The SystemVizPanel class provides a system-level visualization of cells, 
