@@ -39,7 +39,7 @@ public class MapLayer extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Image image = vizPane.getCity().getImage();
-		if(image == null) return;
+		if(image == null || !vizPane.getDisplayOptions().isMapDisplayed()) return;
 		// scale the image such that it fits in the area
 		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
 			y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;

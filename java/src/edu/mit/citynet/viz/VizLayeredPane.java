@@ -20,6 +20,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -41,6 +42,8 @@ import edu.mit.citynet.util.CityNetCursor;
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
 	private static final double MIN_SCALE = 10, MAX_SCALE = 1000, MAX_X = 50, MAX_Y = 50;
+	private DisplayOptions displayOptions;
+	private DisplayOptionsPanel displayOptionsPanel;
 	private GridLayer gridLayer;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
@@ -73,6 +76,8 @@ public class VizLayeredPane extends JLayeredPane {
 		this.system = system;
 		this.viewScale = 100d;	// default: 100 px/km
 		this.viewOrigin = new Coordinate();
+		displayOptions = new DisplayOptions();
+		displayOptionsPanel = new DisplayOptionsPanel();
 		initializePanel();
 	}
 	
@@ -199,6 +204,13 @@ public class VizLayeredPane extends JLayeredPane {
 			}
 		});
 		visualizationPopupMenu.add(zoomOutItem);
+		JMenuItem displayOptionsItem = new JMenuItem("Display Options");
+		displayOptionsItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editDisplayOptionsCommand();
+			}
+		});
+		visualizationPopupMenu.add(displayOptionsItem);
 		return visualizationPopupMenu;
 	}
 	
@@ -437,5 +449,28 @@ public class VizLayeredPane extends JLayeredPane {
 	public void setSelectedEdgeRegion(EdgeRegion edgeRegion) {
 		this.selectedEdgeRegion = edgeRegion;
 		repaint();
+	}
+	
+	/**
+	 * Edits the display options command.
+	 */
+	public void editDisplayOptionsCommand() {
+		System.out.println("Edit Display Options Command");
+		displayOptionsPanel.loadDisplayOptions(displayOptions);
+		int value = JOptionPane.showConfirmDialog(this,displayOptionsPanel,"City.Net | Display Options", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			displayOptionsPanel.saveDisplayOptionsCommand();
+			repaint();
+		}
+	}
+	
+	/**
+	 * Gets the display options.
+	 *
+	 * @return the display options
+	 */
+	public DisplayOptions getDisplayOptions() {
+		return displayOptions;
 	}
 }
