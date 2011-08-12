@@ -200,7 +200,7 @@ classdef SpreadsheetReader
             cityNet.city.imagePath = raw{SpreadsheetReader.cityImagePath,2};
             cityNet.city.imageVerticesX = eval(raw{SpreadsheetReader.cityImageVerticesX,2});
             cityNet.city.imageVerticesY = eval(raw{SpreadsheetReader.cityImageVerticesY,2});
-            cityNet.minIntersectionFraction = raw{SpreadsheetReader.minIntersectionFraction,2};
+            cityNet.minIntersectionFraction = 0.5;
             SpreadsheetReader.ReadCells(filepath,cityNet.city);
             SpreadsheetReader.ReadCellRegions(filepath,cityNet.city);
             SpreadsheetReader.ReadSystems(filepath,cityNet.city);
