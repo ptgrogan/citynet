@@ -8,12 +8,13 @@ package edu.mit.citynet.viz;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -36,7 +37,7 @@ public class DisplayOptionsPanel extends JPanel {
 	private JCheckBox gridDisplayCheck, mapDisplayCheck;
 	private JSpinner gridSpacingSpinner;
 	private SpinnerNumberModel gridSpacingModel;
-	private JSlider cellRegionOpacitySlider, cellOpacitySlider,
+	private OpacitySlider cellRegionOpacitySlider, cellOpacitySlider,
 		nodeRegionOpacitySlider, edgeRegionOpacitySlider, 
 		nodeOpacitySlider, edgeOpacitySlider;
 	private JList displayOrderList;
@@ -66,6 +67,11 @@ public class DisplayOptionsPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
 		gridDisplayCheck = new JCheckBox("Display Grid");
+		gridDisplayCheck.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gridSpacingSpinner.setEnabled(gridDisplayCheck.isSelected());
+			}
+		});
 		add(gridDisplayCheck, c);
 		c.gridy++;
 		c.gridwidth = 1;
@@ -79,6 +85,42 @@ public class DisplayOptionsPanel extends JPanel {
 		c.gridwidth = 2;
 		mapDisplayCheck = new JCheckBox("Display Map");
 		add(mapDisplayCheck, c);
+		c.gridy++;
+		c.gridwidth = 1;
+		add(new JLabel("Cell Regions: ", JLabel.RIGHT), c);
+		c.gridx++;
+		cellRegionOpacitySlider = new OpacitySlider();
+		add(cellRegionOpacitySlider, c);
+		c.gridy++;
+		c.gridx = 0;
+		add(new JLabel("Cells: ", JLabel.RIGHT), c);
+		c.gridx++;
+		cellOpacitySlider = new OpacitySlider();
+		add(cellOpacitySlider, c);
+		c.gridy++;
+		c.gridx = 0;
+		add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
+		c.gridx++;
+		nodeRegionOpacitySlider = new OpacitySlider();
+		add(nodeRegionOpacitySlider, c);
+		c.gridy++;
+		c.gridx = 0;
+		add(new JLabel("Nodes: ", JLabel.RIGHT), c);
+		c.gridx++;
+		nodeOpacitySlider = new OpacitySlider();
+		add(nodeOpacitySlider, c);
+		c.gridy++;
+		c.gridx = 0;
+		add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
+		c.gridx++;
+		edgeRegionOpacitySlider = new OpacitySlider();
+		add(edgeRegionOpacitySlider, c);
+		c.gridy++;
+		c.gridx = 0;
+		add(new JLabel("Edges: ", JLabel.RIGHT), c);
+		c.gridx++;
+		edgeOpacitySlider = new OpacitySlider();
+		add(edgeOpacitySlider, c);
 	}
 	
 	/**
@@ -91,6 +133,18 @@ public class DisplayOptionsPanel extends JPanel {
 		gridDisplayCheck.setSelected(displayOptions.isGridDisplayed());
 		gridSpacingSpinner.setValue(displayOptions.getGridSpacing());
 		mapDisplayCheck.setSelected(displayOptions.isMapDisplayed());
+		cellRegionOpacitySlider.setValue(
+				(int)(displayOptions.getCellRegionOpacity()*OpacitySlider.NUM_TICKS));
+		cellOpacitySlider.setValue(
+				(int)(displayOptions.getCellOpacity()*OpacitySlider.NUM_TICKS));
+		nodeRegionOpacitySlider.setValue(
+				(int)(displayOptions.getNodeRegionOpacity()*OpacitySlider.NUM_TICKS));
+		nodeOpacitySlider.setValue(
+				(int)(displayOptions.getNodeOpacity()*OpacitySlider.NUM_TICKS));
+		edgeRegionOpacitySlider.setValue(
+				(int)(displayOptions.getEdgeRegionOpacity()*OpacitySlider.NUM_TICKS));
+		edgeOpacitySlider.setValue(
+				(int)(displayOptions.getEdgeOpacity()*OpacitySlider.NUM_TICKS));
 	}
 	
 	/**
@@ -100,5 +154,17 @@ public class DisplayOptionsPanel extends JPanel {
 		displayOptions.setGridDisplayed(gridDisplayCheck.isSelected());
 		displayOptions.setGridSpacing(gridSpacingModel.getNumber().doubleValue());
 		displayOptions.setMapDisplayed(mapDisplayCheck.isSelected());
+		displayOptions.setCellRegionOpacity(
+				cellRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setCellOpacity(
+				cellOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setNodeRegionOpacity(
+				nodeRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setNodeOpacity(
+				nodeOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setEdgeRegionOpacity(
+				edgeRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setEdgeOpacity(
+				edgeOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 	}
 }

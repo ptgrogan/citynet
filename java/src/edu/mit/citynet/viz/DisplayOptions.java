@@ -13,6 +13,8 @@ package edu.mit.citynet.viz;
 public class DisplayOptions {
 	private boolean gridDisplayed, mapDisplayed;
 	private double gridSpacing;
+	private float cellRegionOpacity, cellOpacity, nodeRegionOpacity, 
+		nodeOpacity, edgeRegionOpacity, edgeOpacity;
 	
 	/**
 	 * Instantiates a new display options.
@@ -21,8 +23,62 @@ public class DisplayOptions {
 		gridDisplayed = true;
 		mapDisplayed = true;
 		gridSpacing = 1;
+		cellRegionOpacity = 0.5f;
+		cellOpacity = 0.5f;
+		nodeRegionOpacity = 0.5f;
+		nodeOpacity = 0.5f;
+		edgeRegionOpacity = 0.5f;
+		edgeOpacity = 0.5f;
 	}
 	
+	public float getCellOpacity() {
+		return cellOpacity;
+	}
+
+	public void setCellOpacity(float cellOpacity) {
+		this.cellOpacity = cellOpacity;
+	}
+
+	public float getNodeRegionOpacity() {
+		return nodeRegionOpacity;
+	}
+
+	public void setNodeRegionOpacity(float nodeRegionOpacity) {
+		this.nodeRegionOpacity = nodeRegionOpacity;
+	}
+
+	public float getNodeOpacity() {
+		return nodeOpacity;
+	}
+
+	public void setNodeOpacity(float nodeOpacity) {
+		this.nodeOpacity = nodeOpacity;
+	}
+
+	public float getEdgeRegionOpacity() {
+		return edgeRegionOpacity;
+	}
+
+	public void setEdgeRegionOpacity(float edgeRegionOpacity) {
+		this.edgeRegionOpacity = edgeRegionOpacity;
+	}
+
+	public float getEdgeOpacity() {
+		return edgeOpacity;
+	}
+
+	public void setEdgeOpacity(float edgeOpacity) {
+		this.edgeOpacity = edgeOpacity;
+	}
+	
+	public float getCellRegionOpacity() {
+		return cellRegionOpacity;
+	}
+
+	public void setCellRegionOpacity(float cellRegionOpacity) {
+		this.cellRegionOpacity = cellRegionOpacity;
+	}
+
 	public double getGridSpacing() {
 		return gridSpacing;
 	}

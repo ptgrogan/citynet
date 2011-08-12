@@ -5,6 +5,7 @@
  */
 package edu.mit.citynet.viz;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -55,6 +56,9 @@ public class EdgeLayer extends JPanel {
 					.getCell().getPolygon().getCentroid().getCoordinate());
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getEdgeOpacity()));
 				// draw a line from origin to destination using the edge
 				// type color. also draw arrows to indicate directionality
 				g2d.setStroke(new BasicStroke(2f));

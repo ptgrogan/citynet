@@ -5,6 +5,7 @@
  */
 package edu.mit.citynet.viz;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -55,8 +56,11 @@ public class CellLayer extends JPanel {
 				yPoints[i] = p.y;
 			}
 			if(g instanceof Graphics2D) {
-				// draw transparent square with thin solid black outline
 				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getCellOpacity()));
+				// draw transparent square with thin solid black outline
 				g2d.setStroke(new BasicStroke(0.5f));
 				g2d.setColor(Color.BLACK);
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);

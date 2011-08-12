@@ -57,12 +57,14 @@ public class NodeLayer extends JPanel {
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getNodeOpacity()));
 				// draw a semi-transparent square with the node type color
 				// and an outline of the same color
 				g2d.setStroke(new BasicStroke(2f));
 				g2d.setColor(node.getNodeType().getColor());
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 				g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 			}
 		}

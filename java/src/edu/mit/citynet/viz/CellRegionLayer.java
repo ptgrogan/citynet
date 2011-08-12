@@ -55,6 +55,9 @@ public class CellRegionLayer extends JPanel {
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getCellRegionOpacity()));
 				// draw a semi-tranparent black square with a black outline
 				if(selected) {
 					g2d.setStroke(new BasicStroke(5f));
@@ -64,7 +67,6 @@ public class CellRegionLayer extends JPanel {
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawPolygon(xPoints, yPoints, xPoints.length);
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 				g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 			}
 		}

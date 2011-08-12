@@ -56,6 +56,9 @@ public class NodeRegionLayer extends JPanel {
 			}
 			if(g instanceof Graphics2D) {
 				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getNodeRegionOpacity()));
 				if(selected) {
 					g2d.setStroke(new BasicStroke(5f));
 					g2d.setColor(Color.WHITE);
@@ -67,15 +70,12 @@ public class NodeRegionLayer extends JPanel {
 					// draw a semi-transparent polygon with the node type color 
 					// with a solid outline of the same color
 					g2d.drawPolygon(xPoints, yPoints, xPoints.length);
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 					g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYLINE) {
 					// draw a polyline outline with the node type color 
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					g2d.drawPolyline(xPoints, yPoints, xPoints.length);
 				} else if(nodeRegion.getNodeRegionType()==NodeRegion.NodeRegionType.POLYPOINT) {
 					// draw an opaque circle with the node type color
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					for(int i=0; i<xPoints.length; i++) {
 						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
 					}
