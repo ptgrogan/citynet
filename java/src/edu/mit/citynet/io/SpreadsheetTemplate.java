@@ -34,6 +34,7 @@ import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
+import edu.mit.citynet.core.CitySystem.CitySystemType;
 import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
@@ -43,7 +44,6 @@ import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
-import edu.mit.citynet.core.CitySystem.CitySystemType;
 
 /**
  * The SpreadsheetTemplate provides file input/operation methods for
@@ -904,7 +904,8 @@ public class SpreadsheetTemplate {
 		row.getCell(NODE_TYPE_NAME).setCellValue(nodeType.getName());
 		row.getCell(NODE_TYPE_DESCRIPTION).setCellValue(nodeType.getDescription());
 		// remove the alpha component of color, encode as hex string
-		row.getCell(NODE_TYPE_COLOR).setCellValue("0x" + Integer.toHexString(0xff000000^nodeType.getColor().getRGB()));
+		row.getCell(NODE_TYPE_COLOR).setCellValue("0x" + String.format("%06x",
+				0xff000000^nodeType.getColor().getRGB()));
 		
 		for(NodeTypeAttribute attribute : nodeType.getAttributes()) {
 			writeNodeTypeAttribute(attribute, nodeType.getId(), wb);
@@ -943,7 +944,8 @@ public class SpreadsheetTemplate {
 		row.getCell(EDGE_TYPE_NAME).setCellValue(edgeType.getName());
 		row.getCell(EDGE_TYPE_DESCRIPTION).setCellValue(edgeType.getDescription());
 		// remove the alpha component of color, encode as hex string
-		row.getCell(EDGE_TYPE_COLOR).setCellValue("0x" + Integer.toHexString(0xff000000^edgeType.getColor().getRGB()));
+		row.getCell(EDGE_TYPE_COLOR).setCellValue("0x" + String.format("%06x",
+				0xff000000^edgeType.getColor().getRGB()));
 
 		for(EdgeTypeAttribute attribute : edgeType.getAttributes()) {
 			writeEdgeTypeAttribute(attribute, edgeType.getId(), wb);
