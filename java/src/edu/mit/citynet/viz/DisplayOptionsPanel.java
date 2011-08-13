@@ -13,17 +13,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
-
-import edu.mit.citynet.core.CellRegion;
-import edu.mit.citynet.core.EdgeRegion;
-import edu.mit.citynet.core.NodeRegion;
-import edu.mit.citynet.gui.RegionTable;
 
 /**
  * The DisplayOptionsPanel class.
@@ -40,12 +32,6 @@ public class DisplayOptionsPanel extends JPanel {
 	private OpacitySlider cellRegionOpacitySlider, cellOpacitySlider,
 		nodeRegionOpacitySlider, edgeRegionOpacitySlider, 
 		nodeOpacitySlider, edgeOpacitySlider;
-	private JList displayOrderList;
-	private JTabbedPane tabbedPane;
-	private JTable layerDisplayTable;
-	private RegionTable<CellRegion> cellRegionsDisplayTable;
-	private RegionTable<NodeRegion> nodeRegionsDisplayTable;
-	private RegionTable<EdgeRegion> edgeRegionsDisplayTable;
 	
 	/**
 	 * Instantiates a new display options panel.
@@ -73,52 +59,64 @@ public class DisplayOptionsPanel extends JPanel {
 			}
 		});
 		add(gridDisplayCheck, c);
-		c.gridy++;
+		c.gridx+=2;
 		c.gridwidth = 1;
 		add(new JLabel("Grid Spacing: ", JLabel.RIGHT), c);
 		c.gridx++;
-		gridSpacingModel = new SpinnerNumberModel(1,0.1,10,1);
+		gridSpacingModel = new SpinnerNumberModel(1,0.1,10,0.25);
 		gridSpacingSpinner = new JSpinner(gridSpacingModel);
 		add(gridSpacingSpinner, c);
 		c.gridx = 0;
 		c.gridy++;
-		c.gridwidth = 2;
+		c.gridwidth = 4;
 		mapDisplayCheck = new JCheckBox("Display Map");
 		add(mapDisplayCheck, c);
 		c.gridy++;
 		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		add(new JLabel("Cell Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		cellRegionOpacitySlider = new OpacitySlider();
 		add(cellRegionOpacitySlider, c);
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		add(new JLabel("Cells: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		cellOpacitySlider = new OpacitySlider();
 		add(cellOpacitySlider, c);
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		nodeRegionOpacitySlider = new OpacitySlider();
 		add(nodeRegionOpacitySlider, c);
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		add(new JLabel("Nodes: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		nodeOpacitySlider = new OpacitySlider();
 		add(nodeOpacitySlider, c);
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		edgeRegionOpacitySlider = new OpacitySlider();
 		add(edgeRegionOpacitySlider, c);
 		c.gridy++;
 		c.gridx = 0;
+		c.gridwidth = 1;
 		add(new JLabel("Edges: ", JLabel.RIGHT), c);
 		c.gridx++;
+		c.gridwidth = 3;
 		edgeOpacitySlider = new OpacitySlider();
 		add(edgeOpacitySlider, c);
 	}

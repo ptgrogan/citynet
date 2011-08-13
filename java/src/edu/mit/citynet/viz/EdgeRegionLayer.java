@@ -76,7 +76,6 @@ public class EdgeRegionLayer extends JPanel {
 				} else if(edgeRegion.getEdgeRegionType()==EdgeRegion.EdgeRegionType.POLYLINE
 						|| edgeRegion.getEdgeRegionType()==EdgeRegion.EdgeRegionType.POLYPOINT) {
 					// draw a solid polygon outline with the edge type color
-					g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 					g2d.drawPolyline(xPoints, yPoints, xPoints.length);
 				}
 			}
