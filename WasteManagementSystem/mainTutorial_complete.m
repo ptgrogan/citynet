@@ -13,7 +13,7 @@ addpath('..')
 
 %% define synthesis properties
 cityNet = CityNet.instance();
-SpreadsheetReader.ReadTemplate('synthesisTutorial_complete.xls');
+SpreadsheetReader.ReadTemplate('synthesisTutorial_completev2.xls');
 
 cityNet.GenerateCells();
 cityNet.GenerateNodes();
