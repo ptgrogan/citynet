@@ -201,9 +201,9 @@ public class NodeRegionsTable extends JTable {
 	}
 	
 	/**
-	 * Gets the mouse adapater.
+	 * Gets the mouse adapter.
 	 *
-	 * @return the mouse adapater
+	 * @return the mouse adapter
 	 */
 	public MouseAdapter getMouseAdapter() {
 		return mouseAdapter;
