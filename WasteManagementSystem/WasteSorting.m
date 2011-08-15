@@ -1,4 +1,4 @@
-%% CollectedWasteSorting Class Definition
+%% WasteSorting Class Definition
 % The WasteSorting behavior calculates the breakdown in destination for the
 % total amount of collected waste in a city. Depending on how the waste is
 % delivered to the waste management system, it can go to either a:
@@ -7,38 +7,40 @@
 % - Directly to a recyclable material reprocessor
 % - Another form of treatment, including sorting for refuse derived fuel,
 % direct thermal treatment, or landfill.
+% - Biological treatment - note that only organic waste (ie. biowaste) can
+% be sent to this treatment process
 % This final fraction is referred to as restwaste.
 % The specific distribution of destination for this restwaste is specified
 % by the user
-% NOTE that this function does not account for waste DELIVERED to the
-% integrated waste management system by its residents. This function only
-% accounts for waste COLLECTED as part of the integrated waste management
-% system.
 %
 % 12-August, 2011
 % Sydney Do, sydneydo@mit.edu
 %%
-classdef CollectedWasteSorting < Behavior
+classdef WasteSorting < Behavior
     properties
         total_residential_waste;    % the total residential waste generated in the city (function input)
         total_commercial_waste;     % the total commercial waste generated in the city (function input)
+        total_delivered_waste;      % the total waste in the city delivered directly to the waste management system by residents (function input)
         waste_to_MRF;               % the comingled waste sent to a materials recovery facility
         recyclables;                % the amount of collected waste able to be sent directly as recyclables
-        total_restwaste;            % the total remaining waste
+        biowaste;                   % the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
+        restwaste;                  % the total remaining waste
     end
     methods
         %% WasteSorting Constructor
-        % Instantiates a new CollectedWasteSorting object.
+        % Instantiates a new WasteSorting object.
         % 
-        % obj = CollectedWasteSorting()
+        % obj = WasteSorting()
         %   obj:                        the new WasteSorting object
         %   total_residential_waste:    the total residential waste generated in the city
         %   total_commercial_waste:     the total commercial waste generated in the city
+        %   total_delivered_waste;      the total waste in the city delivered directly to the waste management system by residents (function input)
         %   waste_to_MRF:               the comingled waste sent to a materials recovery facility
         %   recyclables:                the amount of collected waste able to be sent directly as recyclables
-        %   total_restwaste:            the total remaining waste
+        %   biowaste;                   the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
+        %   restwaste:                  the total remaining waste
 
-        function obj = CollectedWasteSorting()
+        function obj = WasteSorting()
             obj = obj@Behavior('Initial Breakdown in Waste Destination', ...
                 ['Calculates the amount of waste transferred to  ' ...
                 'other waste management processes.'], ...
@@ -110,13 +112,14 @@ classdef CollectedWasteSorting < Behavior
             % corresponds to paper collected from commercial biowaste bins.
             % Additionally, any remaining waste is assumed to enter the
             % restwaste stream
-            commercialpaperratio = str2num(sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioPaper'));
-            commercialglassratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioGlass');
-            commercialfemetalratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioFeMetal');
-            commercialnonfemetalratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioNonFeMetal');
-            commercialfilmplasticratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioFilmPlastic');
-            commercialrigidplasticratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioRigidPlastic');
-            commercialtextilesratio = sorting.GetNodeTypeAttributeValue('CommercialWasteCollectionRatioTextiles');
+            commercialpaperratio = str2num(sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioPaper'));
+            commercialglassratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioGlass');
+            commercialfemetalratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioFeMetal');
+            commercialnonfemetalratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioNonFeMetal');
+            commercialfilmplasticratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioFilmPlastic');
+            commercialrigidplasticratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioRigidPlastic');
+            commercialtextilesratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioTextiles');
+            commercialorganicsratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioOrganics');
             
             % Extract material recovery rates of delivered waste by stream
             % Note that all values here are scalars
@@ -125,7 +128,6 @@ classdef CollectedWasteSorting < Behavior
             deliverednonfemetalrate = sorting.GetNodeTypeAttributeValue('deliveredNonFeMetalRecoveryRate');
             deliveredfilmplasticrate = sorting.GetNodeTypeAttributeValue('deliveredFilmPlasticRecoveryRate');
             deliveredrigidplasticrate = sorting.GetNodeTypeAttributeValue('deliveredRigidPlasticRecoveryRate');
-            deliveredotherrate = sorting.GetNodeTypeAttributeValue('deliveredOtherRecoveryRate');         
             
             % Determine contamination rates based on if kerbside sorting is
             % performed or not
@@ -134,11 +136,9 @@ classdef CollectedWasteSorting < Behavior
             if sorting.GetNodeTypeAttributeValue('wasteKerbsideSort') == 1
                 OrganicContaminationRate = sorting.GetNodeTypeAttributeValue('sortedOrganicContaminationRate');
                 OtherContaminationRate = sorting.GetNodeTypeAttributeValue('sortedOtherContaminationRate');
-                InputLostAsResidue = sorting.GetNodeTypeAttributeValue('sortedInputLostAsResidue');
             else
                 OrganicContaminationRate = sorting.GetNodeTypeAttributeValue('unsortedOrganicContaminationRate');
                 OtherContaminationRate = sorting.GetNodeTypeAttributeValue('unsortedOtherContaminationRate');
-                InputLostAsResidue = sorting.GetNodeTypeAttributeValue('unsortedInputLostAsResidue');
             end
             
             %% Calculate Materials Transferred to Materials Recovery
@@ -208,44 +208,148 @@ classdef CollectedWasteSorting < Behavior
 
             %% Calculate Materials able to be Sent Directly as Recyclables
             % Material transferred to recycled material reprocessors =
-            % Material collected from single material containers
+            % Material collected from single material containers +
+            % Delivered waste recovery rate * Delivered waste
             
             % Paper
+            % Note that paper is not part of the delivered waste stream
             obj.recyclables.paper = obj.total_residential_waste.paper*paperratio(2);
             
             % Glass
-            obj.recyclables.glass = obj.total_residential_waste.glass*glassratio(2);
+            obj.recyclables.glass = obj.total_residential_waste.glass*glassratio(2)+...
+                obj.total_delivered_waste.glass*deliveredglassrate;
                 
             % Ferrous Metal
-            obj.recyclables.fe_metal = obj.total_residential_waste.fe_metal*femetalratio(2);
+            obj.recyclables.fe_metal = obj.total_residential_waste.fe_metal*femetalratio(2)+...
+                obj.total_delivered_waste.fe_metal*deliveredfemetalrate;
             
             % Non-Ferrous Metal
-            obj.recyclables.nonfe_metal = obj.total_residential_waste.nonfe_metal*nonfemetalratio(2);
+            obj.recyclables.nonfe_metal = obj.total_residential_waste.nonfe_metal*nonfemetalratio(2)+...
+                obj.total_delivered_waste.nonfe_metal*deliverednonfemetalrate;
             
             % Film Plastic Metal
-            obj.recyclables.filmplastic = obj.total_residential_waste.filmplastic*filmplasticratio(2);
+            obj.recyclables.filmplastic = obj.total_residential_waste.filmplastic*filmplasticratio(2)+...
+                obj.total_delivered_waste.filmplastic*deliveredfilmplasticrate;
             
             % Rigid Plastic Metal
-            obj.recyclables.rigidplastic = obj.total_residential_waste.rigidplastic*rigidplasticratio(2);
+            obj.recyclables.rigidplastic = obj.total_residential_waste.rigidplastic*rigidplasticratio(2)+...
+                obj.total_delivered_waste.rigidplastic*deliveredrigidplasticrate;
             
             % Textiles
+            % Note that textiles are not part of the delivered waste stream
             obj.recyclables.textiles = obj.total_residential_waste.textiles*textilesratio(2);
+
+            %% Calculate Total Biowaste by Stream
+            % Note that biowaste is derived only from residential and
+            % commercial biowaste bins. Hence the only form of waste is 
+            % paper, film and rigid plastics (from plastic contamination) 
+            % and organic material
+            % Because these make up differing parts of the biowaste input,
+            % the calculation of the contribution of each stream is
+            % different
+            % Note that here, the residential and commercial biowaste bin
+            % plastic contamination rates are assumed to be the same
+            
+            % Paper
+            % This contribution comes from the paper content of the biowaste 
+            % bins (minus film and rigid plastic contamination)
+            obj.biowaste.paper = (obj.total_residential_waste.paper*paperratio(4)+...
+                obj.total_commercial_waste.paper*commercialpaperratio(2))*...
+                (1-sorting.GetNodeTypeAttributeValue('biowasteFilmPlasticContamination')-...
+                sorting.GetNodeTypeAttributeValue('biowasteRigidPlasticContamination'));
+            
+            % Film Plastic
+            % This contribution comes from the film plastic contribution to
+            % the total biowaste bin content
+            obj.biowaste.filmplastic = ((obj.total_residential_waste.paper*paperratio(4)+...
+                obj.total_residential_waste.organics*organicsratio(1))+...
+                (obj.total_commercial_waste.paper*paperratio(2)+...
+                obj.total_commercial_waste.organics*commercialorganicsratio))*...
+                sorting.GetNodeTypeAttributeValue('biowasteFilmPlasticContamination');
+                      
+            % Rigid Plastic
+            % This contribution comes from the rigid plastic contribution to
+            % the total biowaste bin content
+            obj.biowaste.rigidplastic = ((obj.total_residential_waste.paper*paperratio(4)+...
+                obj.total_residential_waste.organics*organicsratio(1))+...
+                (obj.total_commercial_waste.paper*paperratio(2)+...
+                obj.total_commercial_waste.organics*commercialorganicsratio))*...
+                sorting.GetNodeTypeAttributeValue('biowasteRigidPlasticContamination');
+            
+            % Organics
+            % This contribution comes from the organic content of the 
+            % biowaste bins (minus film and rigid plastic contamination) as
+            % well as garden waste directly delivered to the waste
+            % management system by residents, and organic material found in
+            % single material containers
+            obj.biowaste.organics = (obj.total_residential_waste.organics*organicsratio(1)+...
+                obj.total_commercial_waste.organics*commercialorganicsratio)*...
+                (1-sorting.GetNodeTypeAttributeValue('biowasteFilmPlasticContamination')-...
+                sorting.GetNodeTypeAttributeValue('biowasteRigidPlasticContamination'))+...
+                obj.total_delivered_waste.garden+...
+                obj.total_residential_waste.organics*organicsratio(2);
+            
+            %% Calculate Total Restwaste by Stream
+            % Total Restwaste = Total waste input - (waste to MRF +
+            % recyclables + biowaste)
+            
+            % Paper
+            obj.restwaste.paper = (obj.total_residential_waste.paper+...
+                obj.total_commercial_waste.paper)-...
+                (obj.waste_to_MRF.paper+obj.recyclables.paper+...
+                obj.biowaste.paper);
+            
+            % Glass
+            obj.restwaste.glass = (obj.total_residential_waste.glass+...
+                obj.total_commercial_waste.glass+...
+                obj.total_delivered_waste.glass)-...
+                (obj.waste_to_MRF.glass+obj.recyclables.glass);
             
             % Ferrous Metal
-            obj.recyclables.fe_metal = obj.total_residential_waste.fe_metal*femetalratio(2);
+            obj.restwaste.fe_metal = (obj.total_residential_waste.fe_metal+...
+                obj.total_commercial_waste.fe_metal+...
+                obj.total_delivered_waste.fe_metal)-...
+                (obj.waste_to_MRF.fe_metal+obj.recyclables.fe_metal);
             
-            %% Assign Outputs
-            % Assign values to each handle in class
-            % Divide by 1000 to put materials in units of tonnes
-            val = TotalGlass+TotalFeMetal+TotalNonFeMetal+...
-                TotalFilmPlastic+TotalRigidPlastic+TotalGarden+TotalOther;
-            obj.glass = TotalGlass;
-            obj.fe_metal = TotalFeMetal;
-            obj.nonfe_metal = TotalNonFeMetal;
-            obj.filmplastic = TotalFilmPlastic;
-            obj.rigidplastic = TotalRigidPlastic;
-            obj.garden = TotalGarden;
-            obj.other = TotalOther;
+            % Non-Ferrous Metal
+            obj.restwaste.nonfe_metal = (obj.total_residential_waste.nonfe_metal+...
+                obj.total_commercial_waste.nonfe_metal+...
+                obj.total_delivered_waste.nonfe_metal)-...
+                (obj.waste_to_MRF.nonfe_metal+obj.recyclables.nonfe_metal);
+            
+            % Film Plastic
+            obj.restwaste.filmplastic = (obj.total_residential_waste.filmplastic+...
+                obj.total_commercial_waste.filmplastic+...
+                obj.total_delivered_waste.filmplastic)-...
+                (obj.waste_to_MRF.filmplastic+obj.recyclables.filmplastic+...
+                obj.biowaste.filmplastic);
+            
+            % Rigid Plastic
+            obj.restwaste.rigidplastic = (obj.total_residential_waste.rigidplastic+...
+                obj.total_commercial_waste.rigidplastic+...
+                obj.total_delivered_waste.rigidplastic)-...
+                (obj.waste_to_MRF.rigidplastic+obj.recyclables.rigidplastic+...
+                obj.biowaste.rigidplastic);
+            
+            % Textiles
+            obj.restwaste.textiles = (obj.total_residential_waste.textiles+...
+                obj.total_commercial_waste.textiles)-...
+                (obj.waste_to_MRF.textiles+obj.recyclables.textiles);
+            
+            % Organics
+            obj.restwaste.organics = (obj.total_residential_waste.organics+...
+                obj.total_commercial_waste.organics+...
+                obj.total_delivered_waste.garden)-...
+                (obj.waste_to_MRF.organics+obj.biowaste.organics);
+            
+            % Other
+            obj.restwaste.other = (obj.total_residential_waste.other+...
+                obj.total_commercial_waste.other+...
+                obj.total_delivered_waste.other)-...
+                (obj.waste_to_MRF.other);
+            
+            %% Assign Value to val
+            val = [];
             
         end
     end
