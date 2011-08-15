@@ -1,4 +1,4 @@
-%% WasteSorting Class Definition
+%% CollectedWasteSorting Class Definition
 % The WasteSorting behavior calculates the breakdown in destination for the
 % total amount of collected waste in a city. Depending on how the waste is
 % delivered to the waste management system, it can go to either a:
@@ -10,11 +10,15 @@
 % This final fraction is referred to as restwaste.
 % The specific distribution of destination for this restwaste is specified
 % by the user
+% NOTE that this function does not account for waste DELIVERED to the
+% integrated waste management system by its residents. This function only
+% accounts for waste COLLECTED as part of the integrated waste management
+% system.
 %
 % 12-August, 2011
 % Sydney Do, sydneydo@mit.edu
 %%
-classdef WasteSorting < Behavior
+classdef CollectedWasteSorting < Behavior
     properties
         total_residential_waste;    % the total residential waste generated in the city (function input)
         total_commercial_waste;     % the total commercial waste generated in the city (function input)
@@ -24,9 +28,9 @@ classdef WasteSorting < Behavior
     end
     methods
         %% WasteSorting Constructor
-        % Instantiates a new WasteSorting object.
+        % Instantiates a new CollectedWasteSorting object.
         % 
-        % obj = WasteSorting()
+        % obj = CollectedWasteSorting()
         %   obj:                        the new WasteSorting object
         %   total_residential_waste:    the total residential waste generated in the city
         %   total_commercial_waste:     the total commercial waste generated in the city
@@ -34,7 +38,7 @@ classdef WasteSorting < Behavior
         %   recyclables:                the amount of collected waste able to be sent directly as recyclables
         %   total_restwaste:            the total remaining waste
 
-        function obj = WasteSorting()
+        function obj = CollectedWasteSorting()
             obj = obj@Behavior('Initial Breakdown in Waste Destination', ...
                 ['Calculates the amount of waste transferred to  ' ...
                 'other waste management processes.'], ...
@@ -204,10 +208,31 @@ classdef WasteSorting < Behavior
 
             %% Calculate Materials able to be Sent Directly as Recyclables
             % Material transferred to recycled material reprocessors =
-            % Material collected from single material containers + recovery
-            % rate of delivered waste * amount of delivered waste
+            % Material collected from single material containers
             
+            % Paper
+            obj.recyclables.paper = obj.total_residential_waste.paper*paperratio(2);
             
+            % Glass
+            obj.recyclables.glass = obj.total_residential_waste.glass*glassratio(2);
+                
+            % Ferrous Metal
+            obj.recyclables.fe_metal = obj.total_residential_waste.fe_metal*femetalratio(2);
+            
+            % Non-Ferrous Metal
+            obj.recyclables.nonfe_metal = obj.total_residential_waste.nonfe_metal*nonfemetalratio(2);
+            
+            % Film Plastic Metal
+            obj.recyclables.filmplastic = obj.total_residential_waste.filmplastic*filmplasticratio(2);
+            
+            % Rigid Plastic Metal
+            obj.recyclables.rigidplastic = obj.total_residential_waste.rigidplastic*rigidplasticratio(2);
+            
+            % Textiles
+            obj.recyclables.textiles = obj.total_residential_waste.textiles*textilesratio(2);
+            
+            % Ferrous Metal
+            obj.recyclables.fe_metal = obj.total_residential_waste.fe_metal*femetalratio(2);
             
             %% Assign Outputs
             % Assign values to each handle in class
