@@ -179,7 +179,7 @@ public class SpreadsheetTemplate {
 			if(row.getRowNum()==CITY_IMAGE_VERTICES_Y)
 				verticesY = row.getCell(1).getStringCellValue();
 		}
-		CoordinateList coords = createCoordinatesFromMatlabSyntax(verticesX,verticesY);
+		CoordinateList coords = CoordinateFormat.createFromMatlabSyntax(verticesX,verticesY);
 		city.setImageCoordinates(coords);
 		city.addAllCellRegions(readCellRegions(wb));
 		city.addAllCells(readCells(wb));
@@ -260,7 +260,7 @@ public class SpreadsheetTemplate {
 			cellRegion.setDescription(row.getCell(CELL_REGION_DESCRIPTION).getStringCellValue());
 			String verticesX = row.getCell(CELL_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(CELL_REGION_VERTICES_Y).getStringCellValue();
-			cellRegion.setCoordinateList(createCoordinatesFromMatlabSyntax(verticesX,verticesY));
+			cellRegion.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX,verticesY));
 			cellRegions.add(cellRegion);
 		}
 		return cellRegions;
@@ -459,7 +459,7 @@ public class SpreadsheetTemplate {
 			nodeRegion.setNodeType(nodeTypeMap.get((int)row.getCell(NODE_REGION_NODE_TYPE_ID).getNumericCellValue()));
 			String verticesX = row.getCell(NODE_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(NODE_REGION_VERTICES_Y).getStringCellValue();
-			nodeRegion.setCoordinateList(createCoordinatesFromMatlabSyntax(verticesX, verticesY));
+			nodeRegion.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
 			nodeRegion.setNodeRegionType(NodeRegion.NodeRegionType.getNodeRegionType(row.getCell(NODE_REGION_TYPE).getStringCellValue()));
 			nodeRegion.setDescription(row.getCell(NODE_REGION_DESCRIPTION).getStringCellValue());
 			nodeRegions.add(nodeRegion);
@@ -491,50 +491,13 @@ public class SpreadsheetTemplate {
 			edgeRegion.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_REGION_EDGE_TYPE_ID).getNumericCellValue()));
 			String verticesX = row.getCell(EDGE_REGION_VERTICES_X).getStringCellValue();
 			String verticesY = row.getCell(EDGE_REGION_VERTICES_Y).getStringCellValue();
-			edgeRegion.setCoordinateList(createCoordinatesFromMatlabSyntax(verticesX, verticesY));
+			edgeRegion.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
 			edgeRegion.setEdgeRegionType(EdgeRegion.EdgeRegionType.getEdgeRegionType(row.getCell(EDGE_REGION_TYPE).getStringCellValue()));
 			edgeRegion.setDirected(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1);
 			edgeRegion.setDescription(row.getCell(EDGE_REGION_DESCRIPTION).getStringCellValue());
 			edgeRegions.add(edgeRegion);
 		}
 		return edgeRegions;
-	}
-	
-	/**
-	 * Creates the polygon from MATLAB syntax. Assumes vertices are formatted
-	 * with square brackets and space delimiters such as: [0 0.4 0.5 0] and
-	 * there are equal number of vertices in both x- and y-coordinates.
-	 *
-	 * @param verticesX the vertices x
-	 * @param verticesY the vertices y
-	 * @return the polygon
-	 */
-	private static CoordinateList createCoordinatesFromMatlabSyntax(String verticesX, String verticesY) {
-		String[] vX = verticesX.substring(1,verticesX.length()-1).split(" ");
-		String[] vY = verticesY.substring(1,verticesY.length()-1).split(" ");
-		CoordinateList coordinates = new CoordinateList();
-		for(int i=0; i<vX.length; i++) {
-			coordinates.add(new Coordinate(
-					Double.parseDouble(vX[i]),Double.parseDouble(vY[i])),true);
-		}
-		return coordinates;
-	}
-	
-	/**
-	 * Creates the coordinates for Matlab syntax.
-	 *
-	 * @param coordinates the coordinates
-	 * @return the string
-	 */
-	private static String[] createCoordinatesForMatlabSyntax(Coordinate[] coordinates) {
-		String verticesX = "[", verticesY = "[";
-		for(Coordinate coordinate : coordinates) {
-			verticesX += coordinate.x + " ";
-			verticesY += coordinate.y + " ";
-		}
-		verticesX = verticesX.trim() + "]";
-		verticesY = verticesY.trim() + "]";
-		return new String[]{verticesX, verticesY};
 	}
 	
 	/**
@@ -744,7 +707,7 @@ public class SpreadsheetTemplate {
 		s.getRow(CITY_LONGITUDE).getCell(1).setCellValue(city.getLongitude());
 		s.getRow(CITY_ROTATION).getCell(1).setCellValue(city.getRotation());
 		s.getRow(CITY_IMAGE_PATH).getCell(1).setCellValue(city.getImageFilePath());
-		String[] vertices = createCoordinatesForMatlabSyntax(city.getImageCoordinates().toCoordinateArray());
+		String[] vertices = CoordinateFormat.createForMatlabSyntax(city.getImageCoordinates());
 		s.getRow(CITY_IMAGE_VERTICES_X).getCell(1).setCellValue(vertices[0]);
 		s.getRow(CITY_IMAGE_VERTICES_Y).getCell(1).setCellValue(vertices[1]);
 		
@@ -805,7 +768,7 @@ public class SpreadsheetTemplate {
 	private void writeCellRegion(CellRegion cellRegion, Workbook wb) {
 		Row row = getRowForObject(wb, CELL_REGIONS, CELL_REGION_ID, cellRegion.getId());
 		row.getCell(CELL_REGION_ID).setCellValue(cellRegion.getId());
-		String[] vertices = createCoordinatesForMatlabSyntax(cellRegion.getCoordinateList().toCoordinateArray());
+		String[] vertices = CoordinateFormat.createForMatlabSyntax(cellRegion.getCoordinateList());
 		row.getCell(CELL_REGION_VERTICES_X).setCellValue(vertices[0]);
 		row.getCell(CELL_REGION_VERTICES_Y).setCellValue(vertices[1]);
 		row.getCell(CELL_REGION_NUM_ROWS).setCellValue(cellRegion.getNumberRows());
@@ -981,7 +944,7 @@ public class SpreadsheetTemplate {
 		row.getCell(NODE_REGION_SYSTEM_ID).setCellValue(systemId);
 		row.getCell(NODE_REGION_NODE_TYPE_ID).setCellValue(nodeRegion.getNodeType().getId());
 		row.getCell(NODE_REGION_LAYER_ID).setCellValue(nodeRegion.getLayer().getId());
-		String[] vertices = createCoordinatesForMatlabSyntax(nodeRegion.getCoordinateList().toCoordinateArray());
+		String[] vertices = CoordinateFormat.createForMatlabSyntax(nodeRegion.getCoordinateList());
 		row.getCell(NODE_REGION_VERTICES_X).setCellValue(vertices[0]);
 		row.getCell(NODE_REGION_VERTICES_Y).setCellValue(vertices[1]);
 		row.getCell(NODE_REGION_TYPE).setCellValue(nodeRegion.getNodeRegionType().getName());
@@ -1006,7 +969,7 @@ public class SpreadsheetTemplate {
 		}
 		layerIds = layerIds.trim() + "]";
 		row.getCell(EDGE_REGION_LAYER_ID).setCellValue(layerIds);
-		String[] vertices = createCoordinatesForMatlabSyntax(edgeRegion.getCoordinateList().toCoordinateArray());
+		String[] vertices = CoordinateFormat.createForMatlabSyntax(edgeRegion.getCoordinateList());
 		row.getCell(EDGE_REGION_VERTICES_X).setCellValue(vertices[0]);
 		row.getCell(EDGE_REGION_VERTICES_Y).setCellValue(vertices[1]);
 		row.getCell(EDGE_REGION_TYPE).setCellValue(edgeRegion.getEdgeRegionType().getName());

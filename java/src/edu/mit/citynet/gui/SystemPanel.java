@@ -112,7 +112,7 @@ public class SystemPanel extends JSplitPane {
 				if(e.getClickCount()==2 && systemTree.getSelectionCount() > 0) {
 					if(systemTree.getSelectionPath().getLastPathComponent() 
 							== systemTree.getModel().nodeRegionsTreeNode)
-						addNodeRegionCommand();
+						editNodeRegionTableCommand();
 					else if(systemTree.getSelectedNodeRegion()!=null)
 						editNodeRegionCommand(systemTree.getSelectedNodeRegion());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
@@ -709,5 +709,23 @@ public class SystemPanel extends JSplitPane {
 	 */
 	public CityTabbedPane getCityPanel() {
 		return cityPanel;
+	}
+	
+	/**
+	 * Edits the node region table command.
+	 */
+	private void editNodeRegionTableCommand() {
+		System.out.println("Edit Node Region Table Command");
+		NodeRegionsTable table = new NodeRegionsTable(system);
+		JScrollPane tableScroll = new JScrollPane(table);
+		tableScroll.addMouseListener(table.getMouseAdapter());
+		int value = JOptionPane.showConfirmDialog(this, tableScroll, 
+				"City.Net | Node Regions", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+			systemTree.getModel().setSystem(system); // hacked update... bleh
+			layeredPane.repaint();
+		}
 	}
 }

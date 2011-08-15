@@ -5,7 +5,6 @@
  */
 package edu.mit.citynet.gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,11 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -91,62 +88,21 @@ public class NodeRegionPanel extends JPanel {
 		add(new JLabel("Layer: ", JLabel.RIGHT), c);
 		c.gridx++;
 		layerCombo = new JComboBox();
-		layerCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value instanceof Layer) {
-					setText(((Layer)value).getName());
-				}
-				return this;
-			}
-		});
+		layerCombo.setRenderer(RendererFactory.createLayerListCellRenderer());
 		add(layerCombo, c);
 		c.gridy++;
 		c.gridx = 0;
 		add(new JLabel("Node Type: ", JLabel.RIGHT), c);
 		c.gridx++;
 		nodeTypeCombo = new JComboBox();
-		nodeTypeCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value instanceof NodeType) {
-					setText(((NodeType)value).getName());
-					setIcon(((NodeType)value).getIcon());
-				}
-				return this;
-			}
-		});
+		nodeTypeCombo.setRenderer(RendererFactory.createNodeTypeListCellRenderer());
 		add(nodeTypeCombo, c);
 		c.gridy++;
 		c.gridx = 0;
 		add(new JLabel("Region Type: ", JLabel.RIGHT), c);
 		c.gridx++;
-		nodeRegionTypeCombo = new JComboBox();
-		for(NodeRegionType type : NodeRegionType.values()) {
-			nodeRegionTypeCombo.addItem(type);
-		}
-		nodeRegionTypeCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value instanceof NodeRegionType) {
-					setText(((NodeRegionType)value).getName());
-					setIcon(((NodeRegionType)value).getIcon());
-				}
-				return this;
-			}
-		});
+		nodeRegionTypeCombo = new JComboBox(NodeRegionType.values());
+		nodeRegionTypeCombo.setRenderer(RendererFactory.createNodeRegionTypeListCellRenderer());
 		add(nodeRegionTypeCombo, c);
 		c.gridy = 0;
 		c.gridx = 2;

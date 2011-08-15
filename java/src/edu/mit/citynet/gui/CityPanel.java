@@ -6,7 +6,6 @@
 package edu.mit.citynet.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,12 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.util.CityNetIcon;
@@ -87,7 +84,7 @@ public class CityPanel extends JSplitPane {
 			JMenuItem deleteCellRegionMenuItem = new JMenuItem("Delete Cell Region" + (regions.size()>1?"s":""));
 			deleteCellRegionMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					deleteCellRegionsCommand();
+					deleteCellRegionsCommand(cellRegionTable.getSelectedRegions());
 				}
 			});
 			cellRegionPopupMenu.add(deleteCellRegionMenuItem);
@@ -136,21 +133,7 @@ public class CityPanel extends JSplitPane {
 		cellRegionTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		cellRegionTable.getColumnModel().getColumn(0).setHeaderValue(null);
 		cellRegionTable.getColumnModel().getColumn(1).setHeaderValue("Cell Region");
-		cellRegionTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-			private static final long serialVersionUID = 2092491034324672219L;
-			
-			/* (non-Javadoc)
-			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-			 */
-			public Component getTableCellRendererComponent(JTable table,
-					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				if(value instanceof CellRegion) {
-					setText(((CellRegion)value).getDescription());
-				}
-				return this;
-			}
-		});
+		cellRegionTable.getColumnModel().getColumn(1).setCellRenderer(RendererFactory.createCellRegionTableCellRenderer());
 		cellRegionTable.setPreferredScrollableViewportSize(new Dimension(200,400));
 		MouseAdapter cellRegionMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -184,7 +167,7 @@ public class CityPanel extends JSplitPane {
 		cellRegionTable.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode()==KeyEvent.VK_DELETE) {
-					deleteCellRegionsCommand();
+					deleteCellRegionsCommand(cellRegionTable.getSelectedRegions());
 				} else if(e.getKeyCode()==KeyEvent.VK_ENTER && cellRegionTable.getSelectedRowCount()==1){
 					editCellRegionCommand();
 				}
@@ -226,7 +209,7 @@ public class CityPanel extends JSplitPane {
 		deleteCellRegionsButton.setEnabled(false);
 		deleteCellRegionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				deleteCellRegionsCommand();
+				deleteCellRegionsCommand(cellRegionTable.getSelectedRegions());
 			}
 		});
 		cellRegionButtonPanel.add(deleteCellRegionsButton);
@@ -295,12 +278,12 @@ public class CityPanel extends JSplitPane {
 	/**
 	 * Delete cell regions command.
 	 */
-	private void deleteCellRegionsCommand() {
+	private void deleteCellRegionsCommand(List<CellRegion> regions) {
 		System.out.println("Delete Cell Regions Command");
 		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these cell regions?", 
 				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			cityPanel.getCity().removeAllCellRegions(cellRegionTable.getSelectedRegions());
+			cityPanel.getCity().removeAllCellRegions(regions);
 			// TODO: should remove cell region from table model and update
 			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
 			repaint();

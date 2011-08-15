@@ -90,6 +90,8 @@ public class SystemTreeModel extends DefaultTreeModel {
 			edgeRegionsTreeNode.insert(createTreeNode(edgeRegion), edgeRegionsIndex++);
 		}
 		root.insert(edgeRegionsTreeNode, index++);
+		
+		nodeStructureChanged(root);
 	}
 	
 	/**
