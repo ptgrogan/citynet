@@ -20,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -109,6 +110,7 @@ public class NodeRegionsTable extends JTable {
 	 * Adds the node region command.
 	 */
 	private void addNodeRegionCommand() {
+		System.out.println("Add Node Region Command");
 		NodeRegion region = new NodeRegion();
 		if(system.getNodeTypes().size()>0) region.setNodeType(system.getNodeTypes().get(0));
 		region.setNodeRegionType(NodeRegionType.POLYGON);
@@ -119,13 +121,22 @@ public class NodeRegionsTable extends JTable {
 				system.getNodeRegions().indexOf(region));
 	}
 	
+	private void copyNodeRegionCommand(NodeRegion region) {
+		System.out.println("Copy Node Region Command");
+		NodeRegion clone = region.clone();
+		system.addNodeRegion(clone);
+		getModel().fireTableRowsInserted(system.getNodeRegions().indexOf(clone), 
+				system.getNodeRegions().indexOf(clone));
+		
+	}
+	
 	/**
 	 * Delete node regions command.
 	 *
 	 * @param regions the regions
 	 */
 	private void deleteNodeRegionsCommand(List<NodeRegion> regions) {
-		System.out.println("Delete Cell Regions Command");
+		System.out.println("Delete Node Regions Command");
 		int value = JOptionPane.showConfirmDialog(this, 
 				"Do you want to delete " + (regions.size()>1?"these":"this") 
 				+ " node region" + (regions.size()>1?"s":"") + "?", 
@@ -144,13 +155,22 @@ public class NodeRegionsTable extends JTable {
 	 */
 	private JPopupMenu createNodeRegionPopupMenu(final List<NodeRegion> regions) {
 		JPopupMenu nodeRegionPopupMenu = new JPopupMenu();
-		JMenuItem addCellRegionMenuItem = new JMenuItem("Add Node Region");
-		addCellRegionMenuItem.addActionListener(new ActionListener() {
+		JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
+		addNodeRegionMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addNodeRegionCommand();
 			}
 		});
-		nodeRegionPopupMenu.add(addCellRegionMenuItem);
+		nodeRegionPopupMenu.add(addNodeRegionMenuItem);
+		nodeRegionPopupMenu.add(new JSeparator());
+		JMenuItem copyNodeRegionMenuItem = new JMenuItem("Copy Node Region");
+		copyNodeRegionMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				copyNodeRegionCommand(regions.get(0));
+			}
+		});
+		copyNodeRegionMenuItem.setEnabled(regions.size()==1);
+		nodeRegionPopupMenu.add(copyNodeRegionMenuItem);
 		JMenuItem deleteNodeRegionsMenuItem = new JMenuItem("Delete Node Region" + (regions.size()>1?"s":""));
 		deleteNodeRegionsMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

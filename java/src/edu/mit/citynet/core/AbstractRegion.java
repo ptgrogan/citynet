@@ -44,8 +44,10 @@ public abstract class AbstractRegion {
 	 *
 	 * @param coordinateList the new coordinate list
 	 */
+	@SuppressWarnings("unchecked")
 	public void setCoordinateList(CoordinateList coordinateList) {
-		this.coordinateList = coordinateList;
+		this.coordinateList.clear();
+		this.coordinateList.addAll(coordinateList);
 	}
 
 	/**

@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -284,6 +285,7 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(addNodeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editNodeRegionMenuItem = new JMenuItem("Edit Node Region");
 			editNodeRegionMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -293,6 +295,16 @@ public class SystemPanel extends JSplitPane {
 			editNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
 			systemTreePopupMenu.add(editNodeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem copyNodeRegionMenuItem = new JMenuItem("Copy Node Region");
+			copyNodeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					copyNodeRegionCommand(systemTree.getSelectedNodeRegion());
+				}
+			});
+			copyNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeRegionTreeNode);
+			systemTreePopupMenu.add(copyNodeRegionMenuItem);
 			JMenuItem deleteNodeRegionMenuItem = new JMenuItem("Delete Node Region");
 			deleteNodeRegionMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -302,6 +314,14 @@ public class SystemPanel extends JSplitPane {
 			deleteNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
 			systemTreePopupMenu.add(deleteNodeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem editNodeRegionsMenuItem = new JMenuItem("Edit Node Regions Table");
+			editNodeRegionsMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editNodeRegionTableCommand();
+				}
+			});
+			systemTreePopupMenu.add(editNodeRegionsMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
 			JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
@@ -575,6 +595,23 @@ public class SystemPanel extends JSplitPane {
 			nodeRegionPanel.saveNodeRegionCommand();
 			systemTree.getModel().updateNodeRegion(nodeRegion);
 			layeredPane.repaint();
+		}
+	}
+	
+	/**
+	 * Command to copy a node region.
+	 */
+	private void copyNodeRegionCommand(NodeRegion region) {
+		System.out.println("Copy Node Region Command");
+		NodeRegion nodeRegion = region.clone();
+		nodeRegionPanel.loadNodeRegion(nodeRegion);
+		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
+				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeRegionPanel.saveNodeRegionCommand();
+			system.addNodeRegion(nodeRegion);
+			systemTree.getModel().addNodeRegion(nodeRegion);
 		}
 	}
 	

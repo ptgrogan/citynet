@@ -21,7 +21,7 @@ import edu.mit.citynet.util.CityNetIcon;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class NodeRegion extends AbstractRegion {
+public class NodeRegion extends AbstractRegion implements Cloneable {
 	
 	/**
 	 * The NodeRegionType enumeration. Defines the set of possible regions that
@@ -239,5 +239,19 @@ public class NodeRegion extends AbstractRegion {
 	 */
 	public String toString() {
 		return "NodeRegion" + id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public NodeRegion clone() {
+		NodeRegion clone = new NodeRegion();
+		clone.setId(0);
+		clone.setDescription(getDescription() + " (Copy)");
+		clone.setLayer(getLayer());
+		clone.setNodeRegionType(getNodeRegionType());
+		clone.setNodeType(getNodeType());
+		clone.setCoordinateList(getCoordinateList());
+		return clone;
 	}
 }
