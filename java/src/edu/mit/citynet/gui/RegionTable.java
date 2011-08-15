@@ -5,8 +5,8 @@
  */
 package edu.mit.citynet.gui;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTable;
 
@@ -42,8 +42,8 @@ public class RegionTable<t extends AbstractRegion> extends JTable {
 	 *
 	 * @return the selected regions
 	 */
-	public Set<t> getSelectedRegions() {
-		Set<t> regions = new HashSet<t>();
+	public List<t> getSelectedRegions() {
+		List<t> regions = new ArrayList<t>();
 		for(int row : getSelectedRows()) {
 			regions.add(getModel().getRegionAt(row));
 		}

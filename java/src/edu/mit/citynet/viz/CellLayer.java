@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -44,9 +43,7 @@ public class CellLayer extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		Set<Cell> cells = vizPane.getCity().getCells();
-		
-		for(Cell cell : cells) {
+		for(Cell cell : vizPane.getCity().getCells()) {
 			int[] xPoints = new int[cell.getPolygon().getCoordinates().length];
 			int[] yPoints = new int[cell.getPolygon().getCoordinates().length];
 			for(int i=0; i<cell.getPolygon().getCoordinates().length; i++) {

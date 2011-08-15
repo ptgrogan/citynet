@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -183,9 +181,9 @@ public class SpreadsheetTemplate {
 		}
 		CoordinateList coords = createCoordinatesFromMatlabSyntax(verticesX,verticesY);
 		city.setImageCoordinates(coords);
-		city.setCellRegions(readCellRegions(wb));
-		city.setCells(readCells(wb));
-		city.setSystems(readSystems(wb));
+		city.addAllCellRegions(readCellRegions(wb));
+		city.addAllCells(readCells(wb));
+		city.addAllSystems(readSystems(wb));
 		return city;
 	}
 	
@@ -195,8 +193,8 @@ public class SpreadsheetTemplate {
 	 * @param wb the workbook
 	 * @return the sets of systems
 	 */
-	private Set<CitySystem> readSystems(Workbook wb) {
-		Set<CitySystem> systems = new HashSet<CitySystem>();
+	private List<CitySystem> readSystems(Workbook wb) {
+		List<CitySystem> systems = new ArrayList<CitySystem>();
 		for(Row row : wb.getSheet(SYSTEMS)) {
 			if(row.getRowNum()==0) continue; // skip header row
 			CitySystem system = new CitySystem();
@@ -204,13 +202,13 @@ public class SpreadsheetTemplate {
 			system.setName(row.getCell(SYSTEM_NAME).getStringCellValue());
 			system.setType(CitySystemType.getInstance(system.getName()));
 			system.setDescription(row.getCell(SYSTEM_DESCRIPTION).getStringCellValue());
-			system.setLayers(readLayers(wb,system.getId()));
-			system.setNodeTypes(readNodeTypes(wb,system.getId()));
-			system.setEdgeTypes(readEdgeTypes(wb,system.getId()));
-			system.setNodeRegions(readNodeRegions(wb,system.getId()));
-			system.setEdgeRegions(readEdgeRegions(wb,system.getId()));
-			system.setNodes(readNodes(wb,system.getId()));
-			system.setEdges(readEdges(wb,system.getId()));
+			system.addAllLayers(readLayers(wb,system.getId()));
+			system.addAllNodeTypes(readNodeTypes(wb,system.getId()));
+			system.addAllEdgeTypes(readEdgeTypes(wb,system.getId()));
+			system.addAllNodeRegions(readNodeRegions(wb,system.getId()));
+			system.addAllEdgeRegions(readEdgeRegions(wb,system.getId()));
+			system.addAllNodes(readNodes(wb,system.getId()));
+			system.addAllEdges(readEdges(wb,system.getId()));
 			systems.add(system);
 		}
 		return systems;
@@ -222,8 +220,8 @@ public class SpreadsheetTemplate {
 	 * @param wb the workbook
 	 * @return the set of cells
 	 */
-	private Set<Cell> readCells(Workbook wb) {
-		Set<Cell> cells = new HashSet<Cell>();
+	private List<Cell> readCells(Workbook wb) {
+		List<Cell> cells = new ArrayList<Cell>();
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
 		for(Row row : wb.getSheet(CELLS)) {
 			if(row.getRowNum()==0) continue; // skip header row
@@ -251,8 +249,8 @@ public class SpreadsheetTemplate {
 	 * @param wb the workbook
 	 * @return the set of cell regions
 	 */
-	private Set<CellRegion> readCellRegions(Workbook wb) {
-		Set<CellRegion> cellRegions = new HashSet<CellRegion>();
+	private List<CellRegion> readCellRegions(Workbook wb) {
+		List<CellRegion> cellRegions = new ArrayList<CellRegion>();
 		for(Row row : wb.getSheet(CELL_REGIONS)) {
 			if(row.getRowNum()==0) continue; // skip header row
 			CellRegion cellRegion = new CellRegion();
@@ -275,8 +273,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load layers
 	 * @return the set of layers
 	 */
-	private Set<Layer> readLayers(Workbook wb, int systemId) {
-		Set<Layer> layers = new HashSet<Layer>();
+	private List<Layer> readLayers(Workbook wb, int systemId) {
+		List<Layer> layers = new ArrayList<Layer>();
 		for(Row row : wb.getSheet(LAYERS)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(LAYER_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -299,8 +297,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load node types
 	 * @return the set of node types
 	 */
-	private Set<NodeType> readNodeTypes(Workbook wb, int systemId) {
-		Set<NodeType> nodeTypes = new HashSet<NodeType>();
+	private List<NodeType> readNodeTypes(Workbook wb, int systemId) {
+		List<NodeType> nodeTypes = new ArrayList<NodeType>();
 		for(Row row : wb.getSheet(NODE_TYPES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(NODE_TYPE_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -310,7 +308,7 @@ public class SpreadsheetTemplate {
 			nodeType.setName(row.getCell(NODE_TYPE_NAME).getStringCellValue());
 			nodeType.setDescription(row.getCell(NODE_TYPE_DESCRIPTION).getStringCellValue());
 			nodeType.setColor(new Color(Integer.decode(row.getCell(NODE_TYPE_COLOR).getStringCellValue())));
-			nodeType.setAttributes(readNodeTypeAttributes(wb,nodeType.getId()));
+			nodeType.addAllAttributes(readNodeTypeAttributes(wb,nodeType.getId()));
 			nodeTypeMap.put(nodeType.getId(), nodeType);
 			nodeTypes.add(nodeType);
 		}
@@ -325,8 +323,8 @@ public class SpreadsheetTemplate {
 	 * @param nodeTypeId the node type id from which to load the attributes
 	 * @return the set of node type attributes
 	 */
-	private Set<NodeTypeAttribute> readNodeTypeAttributes(Workbook wb, int nodeTypeId) {
-		Set<NodeTypeAttribute> nodeTypeAttributes = new HashSet<NodeTypeAttribute>();
+	private List<NodeTypeAttribute> readNodeTypeAttributes(Workbook wb, int nodeTypeId) {
+		List<NodeTypeAttribute> nodeTypeAttributes = new ArrayList<NodeTypeAttribute>();
 		for(Row row : wb.getSheet(NODE_TYPE_ATTRIBUTES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(NODE_TYPE_ATTRIBUTE_TYPE_ID).getNumericCellValue()!=nodeTypeId) 
@@ -350,8 +348,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to read the edge types
 	 * @return the set of edge types
 	 */
-	private Set<EdgeType> readEdgeTypes(Workbook wb, int systemId) {
-		Set<EdgeType> edgeTypes = new HashSet<EdgeType>();
+	private List<EdgeType> readEdgeTypes(Workbook wb, int systemId) {
+		List<EdgeType> edgeTypes = new ArrayList<EdgeType>();
 		for(Row row : wb.getSheet(EDGE_TYPES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(EDGE_TYPE_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -361,7 +359,7 @@ public class SpreadsheetTemplate {
 			edgeType.setName(row.getCell(EDGE_TYPE_NAME).getStringCellValue());
 			edgeType.setDescription(row.getCell(EDGE_TYPE_DESCRIPTION).getStringCellValue());
 			edgeType.setColor(new Color(Integer.decode(row.getCell(EDGE_TYPE_COLOR).getStringCellValue())));
-			edgeType.setAttributes(readEdgeTypeAttributes(wb,edgeType.getId()));
+			edgeType.addAllAttributes(readEdgeTypeAttributes(wb,edgeType.getId()));
 			edgeTypeMap.put(edgeType.getId(), edgeType);
 			edgeTypes.add(edgeType);
 		}
@@ -376,8 +374,8 @@ public class SpreadsheetTemplate {
 	 * @param edgeTypeId the edge type id from which to load the attributes
 	 * @return the set of edge type attributes
 	 */
-	private Set<EdgeTypeAttribute> readEdgeTypeAttributes(Workbook wb, int edgeTypeId) {
-		Set<EdgeTypeAttribute> edgeTypeAttributes = new HashSet<EdgeTypeAttribute>();
+	private List<EdgeTypeAttribute> readEdgeTypeAttributes(Workbook wb, int edgeTypeId) {
+		List<EdgeTypeAttribute> edgeTypeAttributes = new ArrayList<EdgeTypeAttribute>();
 		for(Row row : wb.getSheet(EDGE_TYPE_ATTRIBUTES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(EDGE_TYPE_ATTRIBUTE_TYPE_ID).getNumericCellValue()!=edgeTypeId) 
@@ -401,8 +399,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load nodes
 	 * @return the set of nodes
 	 */
-	private Set<Node> readNodes(Workbook wb, int systemId) {
-		Set<Node> nodes = new HashSet<Node>();
+	private List<Node> readNodes(Workbook wb, int systemId) {
+		List<Node> nodes = new ArrayList<Node>();
 		for(Row row : wb.getSheet(NODES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(NODE_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -425,8 +423,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load edges
 	 * @return the set of edges
 	 */
-	private Set<Edge> readEdges(Workbook wb, int systemId) {
-		Set<Edge> edges = new HashSet<Edge>();
+	private List<Edge> readEdges(Workbook wb, int systemId) {
+		List<Edge> edges = new ArrayList<Edge>();
 		for(Row row : wb.getSheet(EDGES)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(EDGE_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -449,8 +447,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load node regions
 	 * @return the set of node regions
 	 */
-	private Set<NodeRegion> readNodeRegions(Workbook wb, int systemId) {
-		Set<NodeRegion> nodeRegions = new HashSet<NodeRegion>();
+	private List<NodeRegion> readNodeRegions(Workbook wb, int systemId) {
+		List<NodeRegion> nodeRegions = new ArrayList<NodeRegion>();
 		for(Row row : wb.getSheet(NODE_REGIONS)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(NODE_REGION_SYSTEM_ID).getNumericCellValue()!=systemId) 
@@ -476,8 +474,8 @@ public class SpreadsheetTemplate {
 	 * @param systemId the system id from which to load edge regions
 	 * @return the set of edge regions
 	 */
-	private Set<EdgeRegion> readEdgeRegions(Workbook wb, int systemId) {
-		Set<EdgeRegion> edgeRegions = new HashSet<EdgeRegion>();
+	private List<EdgeRegion> readEdgeRegions(Workbook wb, int systemId) {
+		List<EdgeRegion> edgeRegions = new ArrayList<EdgeRegion>();
 		for(Row row : wb.getSheet(EDGE_REGIONS)) {
 			if(row.getRowNum()==0 || 
 					(int)row.getCell(EDGE_REGION_SYSTEM_ID).getNumericCellValue()!=systemId) 

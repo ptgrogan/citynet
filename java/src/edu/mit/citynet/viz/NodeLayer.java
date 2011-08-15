@@ -10,7 +10,6 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -44,9 +43,7 @@ public class NodeLayer extends JPanel {
 		super.paintComponent(g);
 		if(vizPane.getSystem() == null) return;
 		
-		Set<Node> nodes = vizPane.getSystem().getNodes();
-		
-		for(Node node : nodes) {
+		for(Node node : vizPane.getSystem().getNodes()) {
 			int[] xPoints = new int[node.getCell().getPolygon().getCoordinates().length];
 			int[] yPoints = new int[node.getCell().getPolygon().getCoordinates().length];
 			for(int i=0; i<node.getCell().getPolygon().getCoordinates().length; i++) {

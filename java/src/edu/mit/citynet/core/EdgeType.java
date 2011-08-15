@@ -11,8 +11,9 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -28,7 +29,7 @@ public class EdgeType {
 	private int id;
 	private String name, description;
 	private Color color;
-	private Set<EdgeTypeAttribute> attributes;
+	private List<EdgeTypeAttribute> attributes;
 	
 	/**
 	 * Instantiates a new node type and initializes the attributes to an empty 
@@ -36,7 +37,7 @@ public class EdgeType {
 	 */
 	public EdgeType() {
 		name = "New Edge Type";
-		attributes = new HashSet<EdgeTypeAttribute>();
+		attributes = new ArrayList<EdgeTypeAttribute>();
 	}
 
 	/**
@@ -116,8 +117,28 @@ public class EdgeType {
 	 *
 	 * @return the attributes
 	 */
-	public Set<EdgeTypeAttribute> getAttributes() {
-		return new HashSet<EdgeTypeAttribute>(attributes);
+	public List<EdgeTypeAttribute> getAttributes() {
+		return new ArrayList<EdgeTypeAttribute>(attributes);
+	}
+	
+	/**
+	 * Sets the attributes.
+	 *
+	 * @param attributes the new attributes
+	 * @return true, if successful
+	 */
+	public boolean addAllAttributes(Collection<EdgeTypeAttribute> attributes) {
+		return this.attributes.addAll(attributes);
+	}
+	
+	/**
+	 * Removes the all attributes.
+	 *
+	 * @param attributes the attributes
+	 * @return true, if successful
+	 */
+	public boolean removeAllAttributes(Collection<EdgeTypeAttribute> attributes) {
+		return this.attributes.removeAll(attributes);
 	}
 	
 	/**
@@ -125,8 +146,9 @@ public class EdgeType {
 	 *
 	 * @param attributes the new attributes
 	 */
-	public void setAttributes(Set<EdgeTypeAttribute> attributes) {
-		this.attributes = attributes;
+	public void setAttributes(Collection<EdgeTypeAttribute> attributes) {
+		this.attributes.clear();
+		this.attributes.addAll(attributes);
 	}
 	
 	/* (non-Javadoc)

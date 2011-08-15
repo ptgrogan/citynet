@@ -10,8 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -21,7 +20,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.mit.citynet.core.Cell;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
@@ -170,13 +168,13 @@ public class CityTabbedPane extends JTabbedPane {
 					p.clearNodesCommand();
 			}
 		}
-		city.setCells(new HashSet<Cell>());
+		city.removeAllCells(city.getCells());
 	}
 	
 	/**
 	 * Generate cells command.
 	 */
-	public void generateCellsCommand(Set<CellRegion> cellRegions) {
+	public void generateCellsCommand(List<CellRegion> cellRegions) {
 		System.out.println("Generate Cells Command");
 		if(!city.getCells().isEmpty())
 			clearCellsCommand();

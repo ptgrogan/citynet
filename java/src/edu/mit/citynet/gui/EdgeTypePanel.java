@@ -282,8 +282,6 @@ public class EdgeTypePanel extends JPanel {
 		edgeType.setName(nameText.getText());
 		edgeType.setDescription(descriptionText.getText());
 		edgeType.setColor(colorLabel.getBackground());
-		Set<EdgeTypeAttribute> attributes = new HashSet<EdgeTypeAttribute>();
-		attributes.addAll(attributeTableModel.getAttributes());
-		edgeType.setAttributes(attributes);
+		edgeType.setAttributes(attributeTableModel.getAttributes());
 	}
 }

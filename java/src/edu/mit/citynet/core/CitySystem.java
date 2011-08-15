@@ -5,8 +5,9 @@
  */
 package edu.mit.citynet.core;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -22,13 +23,13 @@ public class CitySystem {
 	private int id;
 	private CitySystemType type;
 	private String name, description;
-	private Set<Layer> layers;
-	private Set<NodeType> nodeTypes;
-	private Set<EdgeType> edgeTypes;
-	private Set<Node> nodes;
-	private Set<Edge> edges;
-	private Set<NodeRegion> nodeRegions;
-	private Set<EdgeRegion> edgeRegions;
+	private List<Layer> layers;
+	private List<NodeType> nodeTypes;
+	private List<EdgeType> edgeTypes;
+	private List<Node> nodes;
+	private List<Edge> edges;
+	private List<NodeRegion> nodeRegions;
+	private List<EdgeRegion> edgeRegions;
 	
 	/**
 	 * The CitySystemType enumeration defines the possible system types.
@@ -103,13 +104,13 @@ public class CitySystem {
 	public CitySystem() {
 		name = "New System";
 		type = CitySystemType.UNDEFINED;
-		layers = new HashSet<Layer>();
-		nodeTypes = new HashSet<NodeType>();
-		edgeTypes = new HashSet<EdgeType>();
-		nodes = new HashSet<Node>();
-		edges = new HashSet<Edge>();
-		nodeRegions = new HashSet<NodeRegion>();
-		edgeRegions = new HashSet<EdgeRegion>();
+		layers = new ArrayList<Layer>();
+		nodeTypes = new ArrayList<NodeType>();
+		edgeTypes = new ArrayList<EdgeType>();
+		nodes = new ArrayList<Node>();
+		edges = new ArrayList<Edge>();
+		nodeRegions = new ArrayList<NodeRegion>();
+		edgeRegions = new ArrayList<EdgeRegion>();
 	}
 	
 	/**
@@ -144,8 +145,8 @@ public class CitySystem {
 	 *
 	 * @return the edge regions
 	 */
-	public Set<EdgeRegion> getEdgeRegions() {
-		return new HashSet<EdgeRegion>(edgeRegions);
+	public List<EdgeRegion> getEdgeRegions() {
+		return new ArrayList<EdgeRegion>(edgeRegions);
 	}
 
 	/**
@@ -153,8 +154,8 @@ public class CitySystem {
 	 *
 	 * @return the edges
 	 */
-	public Set<Edge> getEdges() {
-		return new HashSet<Edge>(edges);
+	public List<Edge> getEdges() {
+		return new ArrayList<Edge>(edges);
 	}
 	
 	/**
@@ -172,8 +173,8 @@ public class CitySystem {
 	 *
 	 * @return the edge types
 	 */
-	public Set<EdgeType> getEdgeTypes() {
-		return new HashSet<EdgeType>(edgeTypes);
+	public List<EdgeType> getEdgeTypes() {
+		return new ArrayList<EdgeType>(edgeTypes);
 	}
 
 	/**
@@ -190,8 +191,8 @@ public class CitySystem {
 	 *
 	 * @return the layers
 	 */
-	public Set<Layer> getLayers() {
-		return new HashSet<Layer>(layers);
+	public List<Layer> getLayers() {
+		return new ArrayList<Layer>(layers);
 	}
 
 	/**
@@ -208,8 +209,8 @@ public class CitySystem {
 	 *
 	 * @return the node regions
 	 */
-	public Set<NodeRegion> getNodeRegions() {
-		return new HashSet<NodeRegion>(nodeRegions);
+	public List<NodeRegion> getNodeRegions() {
+		return new ArrayList<NodeRegion>(nodeRegions);
 	}
 
 	/**
@@ -217,8 +218,8 @@ public class CitySystem {
 	 *
 	 * @return the nodes
 	 */
-	public Set<Node> getNodes() {
-		return new HashSet<Node>(nodes);
+	public List<Node> getNodes() {
+		return new ArrayList<Node>(nodes);
 	}
 	
 	/**
@@ -236,8 +237,8 @@ public class CitySystem {
 	 *
 	 * @return the node types
 	 */
-	public Set<NodeType> getNodeTypes() {
-		return new HashSet<NodeType>(nodeTypes);
+	public List<NodeType> getNodeTypes() {
+		return new ArrayList<NodeType>(nodeTypes);
 	}
 
 	/**
@@ -253,9 +254,20 @@ public class CitySystem {
 	 * Sets the edge regions.
 	 *
 	 * @param edgeRegions the new edge regions
+	 * @return true, if successful
 	 */
-	public void setEdgeRegions(Set<EdgeRegion> edgeRegions) {
-		this.edgeRegions = edgeRegions;
+	public boolean addAllEdgeRegions(Collection<EdgeRegion> edgeRegions) {
+		return this.edgeRegions.addAll(edgeRegions);
+	}
+	
+	/**
+	 * Removes the all edge regions.
+	 *
+	 * @param edgeRegions the edge regions
+	 * @return true, if successful
+	 */
+	public boolean removeAllEdgeRegions(Collection<EdgeRegion> edgeRegions) {
+		return this.edgeRegions.removeAll(edgeRegions);
 	}
 
 	/**
@@ -263,17 +275,38 @@ public class CitySystem {
 	 *
 	 * @param edges the new edges
 	 */
-	public void setEdges(Set<Edge> edges) {
-		this.edges = edges;
+	public boolean addAllEdges(Collection<Edge> edges) {
+		return this.edges.addAll(edges);
+	}
+	
+	/**
+	 * Removes the all edges.
+	 *
+	 * @param edges the edges
+	 * @return true, if successful
+	 */
+	public boolean removeAllEdges(Collection<Edge> edges) {
+		return this.edges.removeAll(edges);
 	}
 
 	/**
 	 * Sets the edge types.
 	 *
 	 * @param edgeTypes the new edge types
+	 * @return true, if successful
 	 */
-	public void setEdgeTypes(Set<EdgeType> edgeTypes) {
-		this.edgeTypes = edgeTypes;
+	public boolean addAllEdgeTypes(Collection<EdgeType> edgeTypes) {
+		return this.edgeTypes.addAll(edgeTypes);
+	}
+	
+	/**
+	 * Removes the all edge types.
+	 *
+	 * @param edgeTypes the edge types
+	 * @return true, if successful
+	 */
+	public boolean removeAllEdgeTypes(Collection<EdgeType> edgeTypes) {
+		return this.edgeTypes.removeAll(edgeTypes);
 	}
 
 	/**
@@ -289,9 +322,20 @@ public class CitySystem {
 	 * Sets the layers.
 	 *
 	 * @param layers the new layers
+	 * @return true, if successful
 	 */
-	public void setLayers(Set<Layer> layers) {
-		this.layers = layers;
+	public boolean addAllLayers(Collection<Layer> layers) {
+		return this.layers.addAll(layers);
+	}
+	
+	/**
+	 * Removes the all layers.
+	 *
+	 * @param layers the layers
+	 * @return true, if successful
+	 */
+	public boolean removeAllLayers(Collection<Layer> layers) {
+		return this.layers.removeAll(layers);
 	}
 
 	/**
@@ -307,27 +351,60 @@ public class CitySystem {
 	 * Sets the node regions.
 	 *
 	 * @param nodeRegions the new node regions
+	 * @return true, if successful
 	 */
-	public void setNodeRegions(Set<NodeRegion> nodeRegions) {
-		this.nodeRegions = nodeRegions;
+	public boolean addAllNodeRegions(Collection<NodeRegion> nodeRegions) {
+		return this.nodeRegions.addAll(nodeRegions);
+	}
+	
+	/**
+	 * Removes the all node regions.
+	 *
+	 * @param nodeRegions the node regions
+	 * @return true, if successful
+	 */
+	public boolean removeAllNodeRegions(Collection<NodeRegion> nodeRegions) {
+		return this.nodeRegions.removeAll(nodeRegions);
 	}
 
 	/**
 	 * Sets the nodes.
 	 *
 	 * @param nodes the new nodes
+	 * @return true, if successful
 	 */
-	public void setNodes(Set<Node> nodes) {
-		this.nodes = nodes;
+	public boolean addAllNodes(Collection<Node> nodes) {
+		return this.nodes.addAll(nodes);
+	}
+	
+	/**
+	 * Removes the all nodes.
+	 *
+	 * @param nodes the nodes
+	 * @return true, if successful
+	 */
+	public boolean removeAllNodes(Collection<Node> nodes) {
+		return this.nodes.removeAll(nodes);
 	}
 
 	/**
 	 * Sets the node types.
 	 *
 	 * @param nodeTypes the new node types
+	 * @return true, if successful
 	 */
-	public void setNodeTypes(Set<NodeType> nodeTypes) {
-		this.nodeTypes = nodeTypes;
+	public boolean addAllNodeTypes(Collection<NodeType> nodeTypes) {
+		return this.nodeTypes.addAll(nodeTypes);
+	}
+	
+	/**
+	 * Removes the all node types.
+	 *
+	 * @param nodeTypes the node types
+	 * @return true, if successful
+	 */
+	public boolean removeAllNodeTypes(Collection<NodeType> nodeTypes) {
+		return this.nodeTypes.removeAll(nodeTypes);
 	}
 	
 	/**

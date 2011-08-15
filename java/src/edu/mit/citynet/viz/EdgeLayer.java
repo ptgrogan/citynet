@@ -13,7 +13,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -47,9 +46,7 @@ public class EdgeLayer extends JPanel {
 		super.paintComponent(g);
 		if(vizPane.getSystem() == null) return;
 		
-		Set<Edge> edges = vizPane.getSystem().getEdges();
-		
-		for(Edge edge : edges) {
+		for(Edge edge : vizPane.getSystem().getEdges()) {
 			Point origin = vizPane.getPoint(edge.getOrigin()
 					.getCell().getPolygon().getCentroid().getCoordinate());
 			Point destination = vizPane.getPoint(edge.getDestination()

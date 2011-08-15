@@ -32,12 +32,10 @@ import javax.swing.filechooser.FileFilter;
 import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.EdgeTypeAttribute;
 import edu.mit.citynet.core.Layer;
-import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
@@ -207,8 +205,8 @@ public class SystemImportPanel extends JPanel {
 						attribute.setId(CityNet.getInstance().getNextEdgeTypeAttributeId());
 					}
 				}
-				system.setNodes(new HashSet<Node>());
-				system.setEdges(new HashSet<Edge>());
+				system.removeAllNodes(system.getNodes());
+				system.removeAllEdges(system.getEdges());
 				systems.add(system);
 			}
 		}

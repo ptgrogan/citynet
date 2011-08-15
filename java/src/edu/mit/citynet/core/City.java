@@ -8,8 +8,9 @@ package edu.mit.citynet.core;
 import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -34,18 +35,18 @@ public class City {
 	private String imageFilePath;
 	private transient Image image;
 	private CoordinateList imageCoordinates;
-	private Set<Cell> cells;
-	private Set<CellRegion> cellRegions;
-	private Set<CitySystem> systems;
+	private List<Cell> cells;
+	private List<CellRegion> cellRegions;
+	private List<CitySystem> systems;
 	
 	/**
 	 * Instantiates a new City.Net city.
 	 */
 	public City() {
 		name = "New City";
-		cells = new HashSet<Cell>();
-		cellRegions = new HashSet<CellRegion>();
-		systems = new HashSet<CitySystem>();
+		cells = new ArrayList<Cell>();
+		cellRegions = new ArrayList<CellRegion>();
+		systems = new ArrayList<CitySystem>();
 		imageCoordinates = new CoordinateList(new Coordinate[]{		
 			new Coordinate(0,0), new Coordinate(1,0), 
 			new Coordinate(1,1), new Coordinate(0,1)});
@@ -56,17 +57,28 @@ public class City {
 	 *
 	 * @return the cells
 	 */
-	public Set<Cell> getCells() {
-		return new HashSet<Cell>(cells);
+	public List<Cell> getCells() {
+		return new ArrayList<Cell>(cells);
 	}
 	
 	/**
 	 * Sets the cells.
 	 *
 	 * @param cells the new cells
+	 * @return true, if successful
 	 */
-	public void setCells(Set<Cell> cells) {
-		this.cells = cells;
+	public boolean addAllCells(Collection<Cell> cells) {
+		return this.cells.addAll(cells);
+	}
+	
+	/**
+	 * Removes the all cells.
+	 *
+	 * @param cells the cells
+	 * @return true, if successful
+	 */
+	public boolean removeAllCells(Collection<Cell> cells) {
+		return this.cells.removeAll(cells);
 	}
 	
 	/**
@@ -86,17 +98,28 @@ public class City {
 	 *
 	 * @return the systems
 	 */
-	public Set<CitySystem> getSystems() {
-		return new HashSet<CitySystem>(systems);
+	public List<CitySystem> getSystems() {
+		return new ArrayList<CitySystem>(systems);
 	}
 
 	/**
 	 * Sets the systems.
 	 *
 	 * @param systems the new systems
+	 * @return true, if successful
 	 */
-	public void setSystems(Set<CitySystem> systems) {
-		this.systems = systems;
+	public boolean addAllSystems(Collection<CitySystem> systems) {
+		return this.systems.addAll(systems);
+	}
+	
+	/**
+	 * Removes the all systems.
+	 *
+	 * @param systems the systems
+	 * @return true, if successful
+	 */
+	public boolean removeAllSystems(Collection<CitySystem> systems) {
+		return this.systems.removeAll(systems);
 	}
 
 	/**
@@ -260,9 +283,20 @@ public class City {
 	 * Sets the cell regions.
 	 *
 	 * @param cellRegions the new cell regions
+	 * @return true, if successful
 	 */
-	public void setCellRegions(Set<CellRegion> cellRegions) {
-		this.cellRegions = cellRegions;
+	public boolean addAllCellRegions(Collection<CellRegion> cellRegions) {
+		return this.cellRegions.addAll(cellRegions);
+	}
+	
+	/**
+	 * Removes the all cell regions.
+	 *
+	 * @param cellRegions the cell regions
+	 * @return true, if successful
+	 */
+	public boolean removeAllCellRegions(Collection<CellRegion> cellRegions) {
+		return this.cellRegions.removeAll(cellRegions);
 	}
 
 	/**
@@ -270,8 +304,8 @@ public class City {
 	 *
 	 * @return the cell regions
 	 */
-	public Set<CellRegion> getCellRegions() {
-		return new HashSet<CellRegion>(cellRegions);
+	public List<CellRegion> getCellRegions() {
+		return new ArrayList<CellRegion>(cellRegions);
 	}
 	
 	/**

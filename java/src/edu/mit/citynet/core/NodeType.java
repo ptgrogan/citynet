@@ -11,8 +11,9 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -28,7 +29,7 @@ public class NodeType {
 	private int id;
 	private String name, description;
 	private Color color;
-	private Set<NodeTypeAttribute> attributes;
+	private List<NodeTypeAttribute> attributes;
 	
 	/**
 	 * Instantiates a new node type and initializes the attributes to an empty 
@@ -36,7 +37,7 @@ public class NodeType {
 	 */
 	public NodeType() {
 		name = "New Node Type";
-		attributes = new HashSet<NodeTypeAttribute>();
+		attributes = new ArrayList<NodeTypeAttribute>();
 	}
 
 	/**
@@ -116,8 +117,28 @@ public class NodeType {
 	 *
 	 * @return the attributes
 	 */
-	public Set<NodeTypeAttribute> getAttributes() {
-		return new HashSet<NodeTypeAttribute>(attributes);
+	public List<NodeTypeAttribute> getAttributes() {
+		return new ArrayList<NodeTypeAttribute>(attributes);
+	}
+	
+	/**
+	 * Sets the attributes.
+	 *
+	 * @param attributes the new attributes
+	 * @return true, if successful
+	 */
+	public boolean addAllAttributes(Collection<NodeTypeAttribute> attributes) {
+		return this.attributes.addAll(attributes);
+	}
+	
+	/**
+	 * Removes the all attributes.
+	 *
+	 * @param attributes the attributes
+	 * @return true, if successful
+	 */
+	public boolean removeAllAttributes(Collection<NodeTypeAttribute> attributes) {
+		return this.attributes.removeAll(attributes);
 	}
 	
 	/**
@@ -125,8 +146,9 @@ public class NodeType {
 	 *
 	 * @param attributes the new attributes
 	 */
-	public void setAttributes(Set<NodeTypeAttribute> attributes) {
-		this.attributes = attributes;
+	public void setAttributes(Collection<NodeTypeAttribute> attributes) {
+		this.attributes.clear();
+		this.attributes.addAll(attributes);
 	}
 
 	/* (non-Javadoc)

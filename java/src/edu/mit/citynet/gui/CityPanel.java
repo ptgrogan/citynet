@@ -16,7 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -73,7 +73,7 @@ public class CityPanel extends JSplitPane {
 	 * @param regions the regions
 	 * @return the j popup menu
 	 */
-	private JPopupMenu createCellRegionPopupMenu(Set<CellRegion> regions) {
+	private JPopupMenu createCellRegionPopupMenu(List<CellRegion> regions) {
 		JPopupMenu cellRegionPopupMenu = new JPopupMenu();
 		if(regions.size()>0) {
 			JMenuItem editCellRegionMenuItem = new JMenuItem("Edit Cell Region");
@@ -300,10 +300,7 @@ public class CityPanel extends JSplitPane {
 		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete these cell regions?", 
 				"City.Net | Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			Set<CellRegion> regions = cityPanel.getCity().getCellRegions();
-			regions.removeAll(cellRegionTable.getSelectedRegions());
-			// TODO: should move removeAll method to the city
-			cityPanel.getCity().setCellRegions(regions);
+			cityPanel.getCity().removeAllCellRegions(cellRegionTable.getSelectedRegions());
 			// TODO: should remove cell region from table model and update
 			cellRegionTableModel.setRegions(cityPanel.getCity().getCellRegions());
 			repaint();

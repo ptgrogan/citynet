@@ -6,11 +6,10 @@
 package edu.mit.citynet.gui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -28,8 +27,7 @@ import edu.mit.citynet.core.AbstractRegion;
 public class RegionTableModel<t extends AbstractRegion> extends AbstractTableModel {
 	private static final long serialVersionUID = -1151237693598337559L;
 	
-	private List<t> regions;
-	private Set<t> checkedRegions;
+	private List<t> regions, checkedRegions;
 	
 	/**
 	 * Instantiates a new node region table model.
@@ -37,7 +35,7 @@ public class RegionTableModel<t extends AbstractRegion> extends AbstractTableMod
 	public RegionTableModel() {
 		super();
 		regions = new ArrayList<t>();
-		checkedRegions = new HashSet<t>();
+		checkedRegions = new ArrayList<t>();
 	}
 	
 	/**
@@ -45,7 +43,7 @@ public class RegionTableModel<t extends AbstractRegion> extends AbstractTableMod
 	 *
 	 * @param regions the new regions
 	 */
-	public void setRegions(Set<t> regions) {
+	public void setRegions(Collection<t> regions) {
 		this.regions.clear();
 		checkedRegions.clear();
 		this.regions.addAll(regions);
@@ -75,8 +73,8 @@ public class RegionTableModel<t extends AbstractRegion> extends AbstractTableMod
 	 *
 	 * @return the checked regions
 	 */
-	public Set<t> getCheckedRegions() {
-		return new HashSet<t>(checkedRegions);
+	public List<t> getCheckedRegions() {
+		return new ArrayList<t>(checkedRegions);
 	}
 	
 	/* (non-Javadoc)

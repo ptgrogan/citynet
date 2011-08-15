@@ -6,8 +6,8 @@
 package edu.mit.citynet.gui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -96,7 +96,7 @@ public class AttributeTableModel<t extends AbstractAttribute> extends AbstractTa
 	 *
 	 * @param attributes the new attributes
 	 */
-	public void setAttributes(Set<t> attributes) {
+	public void setAttributes(Collection<t> attributes) {
 		this.attributes.clear();
 		this.attributes.addAll(attributes);
 		fireTableDataChanged();

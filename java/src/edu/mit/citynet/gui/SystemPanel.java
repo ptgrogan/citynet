@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.BoxLayout;
@@ -28,11 +29,9 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
-import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
@@ -653,7 +652,7 @@ public class SystemPanel extends JSplitPane {
 		System.out.println("Clear Nodes Command");
 		if(!system.getEdges().isEmpty())
 			clearEdgesCommand();
-		system.setNodes(new HashSet<Node>());
+		system.removeAllNodes(system.getNodes());
 	}
 	
 	/**
@@ -661,7 +660,7 @@ public class SystemPanel extends JSplitPane {
 	 *
 	 * @param nodeRegions the node regions
 	 */
-	public void generateNodesCommand(Set<NodeRegion> nodeRegions) {
+	public void generateNodesCommand(List<NodeRegion> nodeRegions) {
 		System.out.println("Generate Nodes Command");
 		if(!system.getNodes().isEmpty())
 			clearNodesCommand();
@@ -677,7 +676,7 @@ public class SystemPanel extends JSplitPane {
 	 */
 	public void clearEdgesCommand() {
 		System.out.println("Clear Edges Command");
-		system.setEdges(new HashSet<Edge>());
+		system.removeAllEdges(system.getEdges());
 	}
 	
 	/**
@@ -685,7 +684,7 @@ public class SystemPanel extends JSplitPane {
 	 *
 	 * @param edgeRegions the edge regions
 	 */
-	public void generateEdgesCommand(Set<EdgeRegion> edgeRegions) {
+	public void generateEdgesCommand(List<EdgeRegion> edgeRegions) {
 		System.out.println("Generate Edges Command");
 		if(!system.getEdges().isEmpty())
 			clearEdgesCommand();

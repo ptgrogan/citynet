@@ -282,8 +282,6 @@ public class NodeTypePanel extends JPanel {
 		nodeType.setName(nameText.getText());
 		nodeType.setDescription(descriptionText.getText());
 		nodeType.setColor(colorLabel.getBackground());
-		Set<NodeTypeAttribute> attributes = new HashSet<NodeTypeAttribute>();
-		attributes.addAll(attributeTableModel.getAttributes());
-		nodeType.setAttributes(attributes);
+		nodeType.setAttributes(nodeType.getAttributes());
 	}
 }
