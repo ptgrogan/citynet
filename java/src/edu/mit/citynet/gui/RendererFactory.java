@@ -191,6 +191,21 @@ public abstract class RendererFactory {
 		};
 	}
 	
+	public static TableCellRenderer createEdgeDirectionTableCellRenderer() {
+		return new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 523244544309854408L;
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof EdgeDirection) {
+					setIcon(((EdgeDirection)value).getIcon());
+					setText(((EdgeDirection)value).getName());
+				}
+				return this;
+			}
+		};
+	}
+	
 	public static ListCellRenderer createEdgeDirectionListCellRenderer() {
 		return new DefaultListCellRenderer() {
 			private static final long serialVersionUID = 1L;

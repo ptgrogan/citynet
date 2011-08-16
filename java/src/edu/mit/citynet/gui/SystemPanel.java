@@ -118,7 +118,7 @@ public class SystemPanel extends JSplitPane {
 						editNodeRegionCommand(systemTree.getSelectedNodeRegion());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
 							== systemTree.getModel().edgeRegionsTreeNode)
-						addEdgeRegionCommand();
+						editEdgeRegionTableCommand();
 					else if(systemTree.getSelectedEdgeRegion()!=null)
 						editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
@@ -331,6 +331,7 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(addEdgeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editEdgeRegionMenuItem = new JMenuItem("Edit Edge Region");
 			editEdgeRegionMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -340,6 +341,16 @@ public class SystemPanel extends JSplitPane {
 			editEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeRegionTreeNode);
 			systemTreePopupMenu.add(editEdgeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem copyEdgeRegionMenuItem = new JMenuItem("Copy Edge Region");
+			copyEdgeRegionMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					copyEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
+				}
+			});
+			copyEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeRegionTreeNode);
+			systemTreePopupMenu.add(copyEdgeRegionMenuItem);
 			JMenuItem deleteEdgeRegionMenuItem = new JMenuItem("Delete Edge Region");
 			deleteEdgeRegionMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -349,6 +360,14 @@ public class SystemPanel extends JSplitPane {
 			deleteEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeRegionTreeNode);
 			systemTreePopupMenu.add(deleteEdgeRegionMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem editEdgeRegionsMenuItem = new JMenuItem("Edit Edge Regions Table");
+			editEdgeRegionsMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editEdgeRegionTableCommand();
+				}
+			});
+			systemTreePopupMenu.add(editEdgeRegionsMenuItem);
 		}
 		return systemTreePopupMenu;
 	}
@@ -616,6 +635,23 @@ public class SystemPanel extends JSplitPane {
 	}
 	
 	/**
+	 * Command to copy an edge region.
+	 */
+	private void copyEdgeRegionCommand(EdgeRegion region) {
+		System.out.println("Copy Edge Region Command");
+		EdgeRegion edgeRegion = region.clone();
+		edgeRegionPanel.loadEdgeRegion(edgeRegion);
+		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
+				"City.Net | Edge Region", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeRegionPanel.saveEdgeRegionCommand();
+			system.addEdgeRegion(edgeRegion);
+			systemTree.getModel().addEdgeRegion(edgeRegion);
+		}
+	}
+	
+	/**
 	 * Delete node regions command.
 	 *
 	 * @param nodeRegions the node regions
@@ -754,6 +790,24 @@ public class SystemPanel extends JSplitPane {
 	private void editNodeRegionTableCommand() {
 		System.out.println("Edit Node Region Table Command");
 		NodeRegionsTable table = new NodeRegionsTable(system);
+		JScrollPane tableScroll = new JScrollPane(table);
+		tableScroll.addMouseListener(table.getMouseAdapter());
+		int value = JOptionPane.showConfirmDialog(this, tableScroll, 
+				"City.Net | Node Regions", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+			systemTree.getModel().setSystem(system); // hacked update... bleh
+			layeredPane.repaint();
+		}
+	}
+	
+	/**
+	 * Edits the node region table command.
+	 */
+	private void editEdgeRegionTableCommand() {
+		System.out.println("Edit Edge Region Table Command");
+		EdgeRegionsTable table = new EdgeRegionsTable(system);
 		JScrollPane tableScroll = new JScrollPane(table);
 		tableScroll.addMouseListener(table.getMouseAdapter());
 		int value = JOptionPane.showConfirmDialog(this, tableScroll, 

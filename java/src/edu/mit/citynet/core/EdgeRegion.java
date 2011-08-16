@@ -35,7 +35,7 @@ import edu.mit.citynet.util.CityNetIcon;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class EdgeRegion extends AbstractRegion {
+public class EdgeRegion extends AbstractRegion implements Cloneable {
 	/**
 	 * The NodeRegionType enumeration. Defines the set of possible regions that
 	 * can be specified, each with differing node generation behaviors.
@@ -358,5 +358,20 @@ public class EdgeRegion extends AbstractRegion {
 	 */
 	public String toString() {
 		return "EdgeRegion" + id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public EdgeRegion clone() {
+		EdgeRegion clone = new EdgeRegion();
+		clone.setId(0);
+		clone.setDescription(getDescription() + " (Copy)");
+		clone.setEdgeRegionType(getEdgeRegionType());
+		clone.setEdgeType(getEdgeType());
+		clone.setEdgeDirection(getEdgeDirection());
+		clone.setCoordinateList(getCoordinateList());
+		clone.setLayers(new ArrayList<Layer>(getLayers()));
+		return clone;
 	}
 }
