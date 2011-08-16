@@ -811,7 +811,7 @@ public class SystemPanel extends JSplitPane {
 		JScrollPane tableScroll = new JScrollPane(table);
 		tableScroll.addMouseListener(table.getMouseAdapter());
 		int value = JOptionPane.showConfirmDialog(this, tableScroll, 
-				"City.Net | Node Regions", JOptionPane.OK_CANCEL_OPTION, 
+				"City.Net | Edge Regions", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
