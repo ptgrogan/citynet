@@ -122,19 +122,21 @@ public class NodeRegionsTableModel extends AbstractTableModel {
 			}
 			break;
 		case 5: 
-			String xCoords = (String)getValueAt(row,4);
-			while(CoordinateFormat.getDoubleCoordinates((String)value).length 
-					> CoordinateFormat.getDoubleCoordinates(xCoords).length) {
-				// add extra x-coordinate... default to 0.0
-				xCoords = xCoords.substring(0, xCoords.length()-2) + " 0.0]";
+			if(value instanceof String && CoordinateFormat.isValidMatlabSyntax((String)value)) {
+				String xCoords = (String)getValueAt(row,4);
+				while(CoordinateFormat.getDoubleCoordinates((String)value).length 
+						> CoordinateFormat.getDoubleCoordinates(xCoords).length) {
+					// add extra x-coordinate... default to 0.0
+					xCoords = xCoords.substring(0, xCoords.length()-2) + " 0.0]";
+				}
+				while(CoordinateFormat.getDoubleCoordinates((String)value).length 
+						< CoordinateFormat.getDoubleCoordinates(xCoords).length) {
+					// remove extra x-coordinate... default to last
+					xCoords = xCoords.substring(0, xCoords.lastIndexOf(" ")) + "]";
+				}
+				system.getNodeRegions().get(row).setCoordinateList(
+						CoordinateFormat.createFromMatlabSyntax(xCoords, (String)value));
 			}
-			while(CoordinateFormat.getDoubleCoordinates((String)value).length 
-					< CoordinateFormat.getDoubleCoordinates(xCoords).length) {
-				// remove extra x-coordinate... default to last
-				xCoords = xCoords.substring(0, xCoords.lastIndexOf(" ")) + "]";
-			}
-			system.getNodeRegions().get(row).setCoordinateList(
-					CoordinateFormat.createFromMatlabSyntax(xCoords, (String)value));
 			break;
 		}
     	fireTableRowsUpdated(row, row);
