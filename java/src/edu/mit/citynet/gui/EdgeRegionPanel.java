@@ -5,7 +5,6 @@
  */
 package edu.mit.citynet.gui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,11 +18,9 @@ import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -32,25 +29,29 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeRegion.EdgeRegionType;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.util.CityNetIcon;
 
+/**
+ * The EdgeRegionPanel class provides a view for editing an edge region.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ * @author Nauman Zafar, nzafar@masdar.ac.ae
+ */
 public class EdgeRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
-	private static final String DIRECTED = "Directed", UNDIRECTED = "Undirected";
 	
 	private SystemPanel systemPanel;
 	private EdgeRegion edgeRegion;
 	private JTextArea descriptionText;
-	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo;
+	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo, layerCombo;
 	private JTable coordinateTable;
 	private CoordinateTableModel3D coordinateTableModel;
 	private JButton addCoordinateButton, deleteCoordinatesButton, 
@@ -94,65 +95,22 @@ public class EdgeRegionPanel extends JPanel {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(new JLabel("Directed: ", JLabel.RIGHT), c);
 		c.gridx++;
-		directedCombo = new JComboBox(new String[]{DIRECTED,UNDIRECTED});
-		directedCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value == DIRECTED) {
-					setIcon(CityNetIcon.DIRECTED.getIcon());
-				} else if(value==UNDIRECTED) {
-					setIcon(CityNetIcon.UNDIRECTED.getIcon());
-				}
-				return this;
-			}
-		});
+		directedCombo = new JComboBox(EdgeDirection.values());
+		directedCombo.setRenderer(RendererFactory.createEdgeDirectionListCellRenderer());
 		add(directedCombo,c);
 		c.gridx = 0;
 		c.gridy++;
 		add(new JLabel("Edge Type: ", JLabel.RIGHT), c);
 		c.gridx++;
 		edgeTypeCombo = new JComboBox();
-		edgeTypeCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value instanceof EdgeType) {
-					setText(((EdgeType)value).getName());
-					setIcon(((EdgeType)value).getIcon());
-				}
-				return this;
-			}
-		});
+		edgeTypeCombo.setRenderer(RendererFactory.createEdgeTypeListCellRenderer());
 		add(edgeTypeCombo, c);
 		c.gridy++;
 		c.gridx = 0;
 		add(new JLabel("Region Type: ", JLabel.RIGHT), c);
 		c.gridx++;
-		edgeRegionTypeCombo = new JComboBox();
-		for(EdgeRegionType type : EdgeRegionType.values()) {
-			edgeRegionTypeCombo.addItem(type);
-		}
-		edgeRegionTypeCombo.setRenderer(new DefaultListCellRenderer() {
-			private static final long serialVersionUID = 2820843521395503530L;
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				super.getListCellRendererComponent(list, value, index, 
-						isSelected, cellHasFocus);
-				if(value instanceof EdgeRegionType) {
-					setText(((EdgeRegionType)value).getName());
-					setIcon(((EdgeRegionType)value).getIcon());
-				}
-				return this;
-			}
-		});
+		edgeRegionTypeCombo = new JComboBox(EdgeRegionType.values());
+		edgeRegionTypeCombo.setRenderer(RendererFactory.createEdgeRegionTypeListCellRenderer());
 		add(edgeRegionTypeCombo, c);
 		c.gridy = 0;
 		c.gridx = 2;
@@ -163,58 +121,15 @@ public class EdgeRegionPanel extends JPanel {
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.VERTICAL;
 		coordinateTableModel = new CoordinateTableModel3D();
-		coordinateTable = new JTable(coordinateTableModel) {
-			private static final long serialVersionUID = 1L;
-			
-			/* (non-Javadoc)
-			 * @see javax.swing.JTable#getCellEditor(int, int)
-			 */
-			public TableCellEditor getCellEditor(int row, int col) {
-		    	if(col==2) {
-		    		JComboBox comboBox = new JComboBox();
-		    		comboBox.setRenderer(new DefaultListCellRenderer() {
-		    			private static final long serialVersionUID = 2820843521395503530L;
-		    			public Component getListCellRendererComponent(JList list,
-		    					Object value, int index, boolean isSelected,
-		    					boolean cellHasFocus) {
-		    				super.getListCellRendererComponent(list, value, 
-		    						index, isSelected, cellHasFocus);
-		    				if(value instanceof Layer) {
-		    					setText(((Layer)value).getName());
-		    				}
-		    				return this;
-		    			}
-		    		});
-		    		for(Layer layer : systemPanel.getSystem().getLayers()) {
-		    			comboBox.addItem(layer);
-		    		}
-		    		comboBox.setSelectedItem(getValueAt(row,col));
-		    		return new DefaultCellEditor(comboBox);
-		    	} else return super.getCellEditor(row,col);
-			}
-		};
+		coordinateTable = new JTable(coordinateTableModel);
 		coordinateTable.getTableHeader().setReorderingAllowed(false);
 		coordinateTable.getColumnModel().getColumn(0).setHeaderValue("X");
 		coordinateTable.getColumnModel().getColumn(1).setHeaderValue("Y");
 		coordinateTable.getColumnModel().getColumn(2).setHeaderValue("Layer");
-		coordinateTable.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-			private static final long serialVersionUID = 2092491034324672219L;
-			
-			/* (non-Javadoc)
-			 * @see javax.swing.table.DefaultTableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
-			 */
-			public Component getTableCellRendererComponent(JTable table,
-					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				
-				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				if(value instanceof Layer) {
-					setText(((Layer)value).getName());
-				} else if(value==null) {
-					setText(null);
-				}
-				return this;
-			}
-		});
+		layerCombo = new JComboBox(systemPanel.getSystem().getLayers().toArray());
+		layerCombo.setRenderer(RendererFactory.createLayerListCellRenderer());
+		coordinateTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(layerCombo));
+		coordinateTable.getColumnModel().getColumn(2).setCellRenderer(RendererFactory.createLayerTableCellRenderer());
 		coordinateTable.setPreferredScrollableViewportSize(new Dimension(200,200));
 		MouseAdapter coordinateMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -425,13 +340,16 @@ public class EdgeRegionPanel extends JPanel {
 			edgeTypeCombo.setSelectedIndex(0);
 		else
 			edgeTypeCombo.setSelectedItem(edgeRegion.getEdgeType());
-		directedCombo.setSelectedItem(edgeRegion.isDirected()?DIRECTED:UNDIRECTED);
+		directedCombo.setSelectedItem(edgeRegion.getEdgeDirection());
 		if(edgeRegion.getEdgeRegionType()==null)
 			edgeRegionTypeCombo.setSelectedIndex(0);
 		else
 			edgeRegionTypeCombo.setSelectedItem(edgeRegion.getEdgeRegionType());
 		coordinateTableModel.setCoordinates(edgeRegion.getCoordinateList());
 		coordinateTableModel.setLayers(edgeRegion.getLayers());
+		layerCombo.removeAllItems();
+		for(Layer layer : systemPanel.getSystem().getLayers()) 
+			layerCombo.addItem(layer);
 	}
 	
 	/**
@@ -442,7 +360,7 @@ public class EdgeRegionPanel extends JPanel {
 		edgeRegion.setEdgeRegionType((EdgeRegionType)edgeRegionTypeCombo.getSelectedItem());
 		edgeRegion.setDescription(descriptionText.getText());
 		edgeRegion.setEdgeType((EdgeType)edgeTypeCombo.getSelectedItem());
-		edgeRegion.setDirected(directedCombo.getSelectedItem()==DIRECTED);
+		edgeRegion.setEdgeDirection((EdgeDirection)directedCombo.getSelectedItem());
 		for(int i = coordinateTableModel.getLayers().size()-1; i >=0; i--) {
 			// remove any null layer coordinates, cannot initialize layers to
 			// non-null value because not guaranteed to exist

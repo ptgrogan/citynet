@@ -34,6 +34,7 @@ import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.CitySystem.CitySystemType;
 import edu.mit.citynet.core.Edge;
+import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.EdgeTypeAttribute;
@@ -434,7 +435,7 @@ public class SpreadsheetTemplate {
 			edge.setOrigin(nodeMap.get((int)row.getCell(EDGE_ORIGIN_ID).getNumericCellValue()));
 			edge.setDestination(nodeMap.get((int)row.getCell(EDGE_DESTINATION_ID).getNumericCellValue()));
 			edge.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_EDGE_TYPE_ID).getNumericCellValue()));
-			edge.setDirected(row.getCell(EDGE_DIRECTED).getNumericCellValue()==1);
+			edge.setEdgeDirection(row.getCell(EDGE_DIRECTED).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
 			edges.add(edge);
 		}
 		return edges;
@@ -493,7 +494,7 @@ public class SpreadsheetTemplate {
 			String verticesY = row.getCell(EDGE_REGION_VERTICES_Y).getStringCellValue();
 			edgeRegion.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
 			edgeRegion.setEdgeRegionType(EdgeRegion.EdgeRegionType.getEdgeRegionType(row.getCell(EDGE_REGION_TYPE).getStringCellValue()));
-			edgeRegion.setDirected(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1);
+			edgeRegion.setEdgeDirection(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
 			edgeRegion.setDescription(row.getCell(EDGE_REGION_DESCRIPTION).getStringCellValue());
 			edgeRegions.add(edgeRegion);
 		}
@@ -973,7 +974,7 @@ public class SpreadsheetTemplate {
 		row.getCell(EDGE_REGION_VERTICES_X).setCellValue(vertices[0]);
 		row.getCell(EDGE_REGION_VERTICES_Y).setCellValue(vertices[1]);
 		row.getCell(EDGE_REGION_TYPE).setCellValue(edgeRegion.getEdgeRegionType().getName());
-		row.getCell(EDGE_REGION_DIRECTED).setCellValue(edgeRegion.isDirected()?1:0);
+		row.getCell(EDGE_REGION_DIRECTED).setCellValue(edgeRegion.getEdgeDirection()==EdgeDirection.DIRECTED?1:0);
 		row.getCell(EDGE_REGION_DESCRIPTION).setCellValue(edgeRegion.getDescription());
 	}
 
@@ -1007,6 +1008,6 @@ public class SpreadsheetTemplate {
 		row.getCell(EDGE_EDGE_TYPE_ID).setCellValue(edge.getEdgeType().getId());
 		row.getCell(EDGE_ORIGIN_ID).setCellValue(edge.getOrigin().getId());
 		row.getCell(EDGE_DESTINATION_ID).setCellValue(edge.getDestination().getId());
-		row.getCell(EDGE_DIRECTED).setCellValue(edge.isDirected()?1:0);
+		row.getCell(EDGE_DIRECTED).setCellValue(edge.getEdgeDirection()==EdgeDirection.DIRECTED?1:0);
 	}
 }

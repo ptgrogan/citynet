@@ -16,7 +16,14 @@ public class Edge {
 	private int id;
 	private Node origin, destination;
 	private EdgeType edgeType;
-	private boolean directed;
+	private EdgeDirection edgeDirection;
+	
+	/**
+	 * Instantiates a new edge.
+	 */
+	public Edge() {
+		setEdgeDirection(EdgeDirection.UNDIRECTED);
+	}
 	
 	/**
 	 * Gets the id.
@@ -91,21 +98,21 @@ public class Edge {
 	}
 	
 	/**
-	 * Checks if is directed.
+	 * Gets the edge direction.
 	 *
-	 * @return true, if is directed
+	 * @return the edge direction
 	 */
-	public boolean isDirected() {
-		return directed;
+	public EdgeDirection getEdgeDirection() {
+		return edgeDirection;
 	}
 	
 	/**
-	 * Sets the directed.
+	 * Sets the edge direction.
 	 *
-	 * @param directed the new directed
+	 * @param edgeDirection the new edge direction
 	 */
-	public void setDirected(boolean directed) {
-		this.directed = directed;
+	public void setEdgeDirection(EdgeDirection edgeDirection) {
+		this.edgeDirection = edgeDirection;
 	}
 	
 	/**

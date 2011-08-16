@@ -31,7 +31,10 @@ import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeRegion.NodeRegionType;
 
 /**
- * The Class NodeRegionsTable.
+ * The NodeRegionsTable class provides a view for editing muliple node regions
+ * at the same time in a tabular format.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class NodeRegionsTable extends JTable {
 	private static final long serialVersionUID = 5057151807789312277L;

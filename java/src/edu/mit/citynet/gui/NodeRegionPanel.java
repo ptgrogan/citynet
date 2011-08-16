@@ -37,6 +37,12 @@ import edu.mit.citynet.core.NodeRegion.NodeRegionType;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.util.CityNetIcon;
 
+/**
+ * The NodeRegionPanel class provides a view for editing a node region.
+ * 
+ * @author Paul Grogan, ptgrogan@mit.edu
+ * @author Nauman Zafar, nzafar@masdar.ac.ae
+ */
 public class NodeRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
 	

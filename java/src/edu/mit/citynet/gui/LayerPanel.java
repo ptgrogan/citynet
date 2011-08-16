@@ -24,9 +24,10 @@ import javax.swing.event.ChangeListener;
 import edu.mit.citynet.core.Layer;
 
 /**
- * The LayerPanel class.
+ * The LayerPanel class provides a view for editing a layer.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
+ * @author Nauman Zafar, nzafar@masdar.ac.ae
  */
 public class LayerPanel extends JPanel {
 	private static final long serialVersionUID = -1820720020787911656L;

@@ -111,7 +111,7 @@ public class EdgeRegion extends AbstractRegion {
 	private EdgeRegionType edgeRegionType;
 	private List<Layer> layers;
 	private EdgeType edgeType;
-	private boolean directed;
+	private EdgeDirection edgeDirection;
 	
 	/**
 	 * Instantiates a new edge region.
@@ -120,6 +120,7 @@ public class EdgeRegion extends AbstractRegion {
 		super();
 		setDescription("New Edge Region");
 		layers = new ArrayList<Layer>();
+		setEdgeDirection(EdgeDirection.UNDIRECTED);
 	}
 	
 	/**
@@ -248,7 +249,7 @@ public class EdgeRegion extends AbstractRegion {
 		edge.setId(CityNet.getInstance().getNextEdgeId());
 		edge.setOrigin(origin);
 		edge.setDestination(destination);
-		edge.setDirected(directed);
+		edge.setEdgeDirection(edgeDirection);
 		edge.setEdgeType(edgeType);
 		system.addEdge(edge);
 	}
@@ -308,21 +309,21 @@ public class EdgeRegion extends AbstractRegion {
 	}
 
 	/**
-	 * Checks if is directed.
+	 * Gets the edge direction.
 	 *
-	 * @return true, if is directed
+	 * @return the edge direction
 	 */
-	public boolean isDirected() {
-		return directed;
+	public EdgeDirection getEdgeDirection() {
+		return edgeDirection;
 	}
-
+	
 	/**
-	 * Sets the directed.
+	 * Sets the edge direction.
 	 *
-	 * @param directed the new directed
+	 * @param edgeDirection the new edge direction
 	 */
-	public void setDirected(boolean directed) {
-		this.directed = directed;
+	public void setEdgeDirection(EdgeDirection edgeDirection) {
+		this.edgeDirection = edgeDirection;
 	}
 
 	/**

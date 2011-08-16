@@ -66,6 +66,7 @@ public class CityNet {
 	private GeometryFactory geometryFactory;
 	
 	private CityNet() { 
+		distanceUnit = DistanceUnit.KILOMETERS;
 		nextNodeTypeId = new AtomicInteger();
 		nextNodeTypeAttributeId = new AtomicInteger();
 		nextEdgeTypeId = new AtomicInteger();

@@ -17,6 +17,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
 import edu.mit.citynet.core.Edge;
+import edu.mit.citynet.core.EdgeDirection;
 
 /**
  * The EdgeLayer class is a transparent JPanel used to display edges in a 
@@ -62,7 +63,8 @@ public class EdgeLayer extends JPanel {
 				g2d.setColor(edge.getEdgeType().getColor());
 				g2d.drawLine(origin.x, origin.y, destination.x, destination.y);
 				g2d.fill(createArrowShape(origin,destination));
-				if(!edge.isDirected()) g2d.fill(createArrowShape(destination,origin));
+				if(edge.getEdgeDirection()==EdgeDirection.UNDIRECTED) 
+					g2d.fill(createArrowShape(destination,origin));
 			}
 		}
 	}

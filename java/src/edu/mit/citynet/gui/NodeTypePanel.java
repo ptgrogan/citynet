@@ -39,9 +39,11 @@ import edu.mit.citynet.core.NodeTypeAttribute;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
- * The NodeTypePanel class.
+ * The NodeTypePanel class provides a view for editing a node type and 
+ * its attributes.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
+ * @author Nauman Zafar, nzafar@masdar.ac.ae
  */
 public class NodeTypePanel extends JPanel {
 	private static final long serialVersionUID = -6993531719921341469L;

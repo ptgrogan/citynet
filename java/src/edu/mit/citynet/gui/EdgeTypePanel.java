@@ -39,9 +39,11 @@ import edu.mit.citynet.core.EdgeTypeAttribute;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
- * The EdgeTypePanel class.
+ * The EdgeTypePanel class provides a view for editing an edge type and 
+ * its attributes.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
+ * @author Nauman Zafar, nzafar@masdar.ac.ae
  */
 public class EdgeTypePanel extends JPanel {
 	private static final long serialVersionUID = -6993531719921341469L;
