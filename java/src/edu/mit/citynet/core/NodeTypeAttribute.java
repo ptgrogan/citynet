@@ -63,7 +63,7 @@ public class NodeTypeAttribute extends AbstractAttribute implements Cloneable {
 	public NodeTypeAttribute clone() {
 		NodeTypeAttribute clone = new NodeTypeAttribute();
 		clone.setId(0);
-		clone.setName(getName());
+		clone.setName(getName() + " (Copy)");
 		clone.setDescription(getDescription());
 		clone.setUnits(getUnits());
 		clone.setBounds(getBounds());

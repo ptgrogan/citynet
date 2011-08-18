@@ -25,7 +25,7 @@ import edu.mit.citynet.util.CityNetIcon;
  * red, green, and blue between 0 and 1 to define the display color in the 
  * rendering), and a set of EdgeTypeAttribute objects.
  */
-public class EdgeType {
+public class EdgeType implements Cloneable {
 	private int id;
 	private String name, description;
 	private Color color;
@@ -181,5 +181,18 @@ public class EdgeType {
 		ImageProducer producer = new FilteredImageSource(
 				CityNetIcon.EDGE_TYPE_BLANK.getIcon().getImage().getSource(), filter);
 		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(producer));
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public EdgeType clone() {
+		EdgeType clone = new EdgeType();
+		clone.setId(0);
+		clone.setName(getName() + " (Copy)");
+		clone.setDescription(getDescription());
+		clone.addAllAttributes(getAttributes());
+		clone.setColor(getColor());
+		return clone;
 	}
 }

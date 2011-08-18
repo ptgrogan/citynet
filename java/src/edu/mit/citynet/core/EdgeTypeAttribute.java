@@ -63,7 +63,7 @@ public class EdgeTypeAttribute extends AbstractAttribute implements Cloneable {
 	public EdgeTypeAttribute clone() {
 		EdgeTypeAttribute clone = new EdgeTypeAttribute();
 		clone.setId(0);
-		clone.setName(getName());
+		clone.setName(getName() + " (Copy)");
 		clone.setDescription(getDescription());
 		clone.setUnits(getUnits());
 		clone.setBounds(getBounds());

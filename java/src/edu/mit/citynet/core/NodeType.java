@@ -182,4 +182,17 @@ public class NodeType {
 				CityNetIcon.NODE_TYPE_BLANK.getIcon().getImage().getSource(), filter);
 		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(producer));
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public NodeType clone() {
+		NodeType clone = new NodeType();
+		clone.setId(0);
+		clone.setName(getName() + " (Copy)");
+		clone.setDescription(getDescription());
+		clone.addAllAttributes(getAttributes());
+		clone.setColor(getColor());
+		return clone;
+	}
 }
