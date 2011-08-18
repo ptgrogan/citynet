@@ -128,7 +128,7 @@ public class SystemPanel extends JSplitPane {
 						editLayerCommand(systemTree.getSelectedLayer());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
 							== systemTree.getModel().nodeTypesTreeNode)
-						addNodeTypeCommand();
+						editNodeTypeTableCommand();
 					else if(systemTree.getSelectedNodeType()!=null)
 						editNodeTypeCommand(systemTree.getSelectedNodeType());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
@@ -249,6 +249,14 @@ public class SystemPanel extends JSplitPane {
 			deleteNodeTypeMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeTypeTreeNode);
 			systemTreePopupMenu.add(deleteNodeTypeMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem editNodeTypeTableMenuItem = new JMenuItem("Edit Node Types Table");
+			editNodeTypeTableMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editNodeTypeTableCommand();
+				}
+			});
+			systemTreePopupMenu.add(editNodeTypeTableMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().edgeTypesTreeNode
 				|| path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode) {
 			JMenuItem addEdgeTypeMenuItem = new JMenuItem("Add Edge Type");
@@ -812,5 +820,20 @@ public class SystemPanel extends JSplitPane {
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
 		systemTree.getModel().setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
-}
+	}
+	
+	/**
+	 * Edits the node type table command.
+	 */
+	private void editNodeTypeTableCommand() {
+		System.out.println("Edit Node Type Table Command");
+		NodeTypesTable table = new NodeTypesTable(system);
+		JScrollPane tableScroll = new JScrollPane(table);
+		tableScroll.addMouseListener(table.getMouseAdapter());
+		JOptionPane.showMessageDialog(this, tableScroll,
+				"City.Net | Node Types", JOptionPane.PLAIN_MESSAGE);
+		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+		systemTree.getModel().setSystem(system); // hacked update... bleh
+		layeredPane.repaint();
+	}
 }

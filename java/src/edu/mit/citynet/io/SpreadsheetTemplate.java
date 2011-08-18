@@ -5,7 +5,6 @@
  */
 package edu.mit.citynet.io;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -308,7 +307,8 @@ public class SpreadsheetTemplate {
 			nodeType.setId((int)row.getCell(NODE_TYPE_ID).getNumericCellValue());
 			nodeType.setName(row.getCell(NODE_TYPE_NAME).getStringCellValue());
 			nodeType.setDescription(row.getCell(NODE_TYPE_DESCRIPTION).getStringCellValue());
-			nodeType.setColor(new Color(Integer.decode(row.getCell(NODE_TYPE_COLOR).getStringCellValue())));
+			nodeType.setColor(HexColorFormat.getColorFromHexString(
+					row.getCell(NODE_TYPE_COLOR).getStringCellValue()));
 			nodeType.addAllAttributes(readNodeTypeAttributes(wb,nodeType.getId()));
 			nodeTypeMap.put(nodeType.getId(), nodeType);
 			nodeTypes.add(nodeType);
@@ -359,7 +359,8 @@ public class SpreadsheetTemplate {
 			edgeType.setId((int)row.getCell(EDGE_TYPE_ID).getNumericCellValue());
 			edgeType.setName(row.getCell(EDGE_TYPE_NAME).getStringCellValue());
 			edgeType.setDescription(row.getCell(EDGE_TYPE_DESCRIPTION).getStringCellValue());
-			edgeType.setColor(new Color(Integer.decode(row.getCell(EDGE_TYPE_COLOR).getStringCellValue())));
+			edgeType.setColor(HexColorFormat.getColorFromHexString(
+					row.getCell(EDGE_TYPE_COLOR).getStringCellValue()));
 			edgeType.addAllAttributes(readEdgeTypeAttributes(wb,edgeType.getId()));
 			edgeTypeMap.put(edgeType.getId(), edgeType);
 			edgeTypes.add(edgeType);
@@ -865,9 +866,8 @@ public class SpreadsheetTemplate {
 		row.getCell(NODE_TYPE_SYSTEM_ID).setCellValue(systemId);
 		row.getCell(NODE_TYPE_NAME).setCellValue(nodeType.getName());
 		row.getCell(NODE_TYPE_DESCRIPTION).setCellValue(nodeType.getDescription());
-		// remove the alpha component of color, encode as hex string
-		row.getCell(NODE_TYPE_COLOR).setCellValue("0x" + String.format("%06x",
-				0xff000000^nodeType.getColor().getRGB()));
+		row.getCell(NODE_TYPE_COLOR).setCellValue(
+				HexColorFormat.getStringFromColor(nodeType.getColor()));
 		
 		for(NodeTypeAttribute attribute : nodeType.getAttributes()) {
 			writeNodeTypeAttribute(attribute, nodeType.getId(), wb);
@@ -905,9 +905,8 @@ public class SpreadsheetTemplate {
 		row.getCell(EDGE_TYPE_SYSTEM_ID).setCellValue(systemId);
 		row.getCell(EDGE_TYPE_NAME).setCellValue(edgeType.getName());
 		row.getCell(EDGE_TYPE_DESCRIPTION).setCellValue(edgeType.getDescription());
-		// remove the alpha component of color, encode as hex string
-		row.getCell(EDGE_TYPE_COLOR).setCellValue("0x" + String.format("%06x",
-				0xff000000^edgeType.getColor().getRGB()));
+		row.getCell(EDGE_TYPE_COLOR).setCellValue(
+				HexColorFormat.getStringFromColor(edgeType.getColor()));
 
 		for(EdgeTypeAttribute attribute : edgeType.getAttributes()) {
 			writeEdgeTypeAttribute(attribute, edgeType.getId(), wb);

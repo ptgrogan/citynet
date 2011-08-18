@@ -5,6 +5,7 @@
  */
 package edu.mit.citynet.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
@@ -21,6 +22,7 @@ import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion.NodeRegionType;
 import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.io.HexColorFormat;
 
 public abstract class RendererFactory {
 	
@@ -216,6 +218,26 @@ public abstract class RendererFactory {
 				if(value instanceof EdgeDirection) {
 					setIcon(((EdgeDirection)value).getIcon());
 					setText(((EdgeDirection)value).getName());
+				}
+				return this;
+			}
+		};
+	}
+	
+	public static TableCellRenderer createHexColorTableCellRenderer() {
+		return new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 523244544309854408L;
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof String && HexColorFormat.isValidHexString((String)value)) {
+					Color c = HexColorFormat.getColorFromHexString((String)value);
+					setBackground(c);
+					if(c.getRed()<0x44 && c.getGreen()<0x44 && c.getBlue()<0x44)
+						setForeground(Color.white);
+					else
+						setForeground(Color.black);
+					setText((String)value);
 				}
 				return this;
 			}

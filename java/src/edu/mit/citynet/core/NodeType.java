@@ -25,7 +25,7 @@ import edu.mit.citynet.util.CityNetIcon;
  * red, green, and blue between 0 and 1 to define the display color in the 
  * rendering), and a set of NodeTypeAttribute objects.
  */
-public class NodeType {
+public class NodeType implements Cloneable {
 	private int id;
 	private String name, description;
 	private Color color;
@@ -37,6 +37,7 @@ public class NodeType {
 	 */
 	public NodeType() {
 		name = "New Node Type";
+		color = Color.red;
 		attributes = new ArrayList<NodeTypeAttribute>();
 	}
 

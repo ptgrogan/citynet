@@ -37,6 +37,7 @@ public class EdgeType implements Cloneable {
 	 */
 	public EdgeType() {
 		name = "New Edge Type";
+		color = Color.red;
 		attributes = new ArrayList<EdgeTypeAttribute>();
 	}
 
