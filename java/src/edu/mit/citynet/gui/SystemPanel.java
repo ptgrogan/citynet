@@ -133,7 +133,7 @@ public class SystemPanel extends JSplitPane {
 						editNodeTypeCommand(systemTree.getSelectedNodeType());
 					else if(systemTree.getSelectionPath().getLastPathComponent() 
 							== systemTree.getModel().edgeTypesTreeNode)
-						addEdgeTypeCommand();
+						editEdgeTypeTableCommand();
 					else if(systemTree.getSelectedEdgeType()!=null)
 						editEdgeTypeCommand(systemTree.getSelectedEdgeType());
 				}
@@ -284,6 +284,14 @@ public class SystemPanel extends JSplitPane {
 			deleteEdgeTypeMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeTypeTreeNode);
 			systemTreePopupMenu.add(deleteEdgeTypeMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem editEdgeTypeTableMenuItem = new JMenuItem("Edit Edge Types Table");
+			editEdgeTypeTableMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					editEdgeTypeTableCommand();
+				}
+			});
+			systemTreePopupMenu.add(editEdgeTypeTableMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
 			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
@@ -465,7 +473,7 @@ public class SystemPanel extends JSplitPane {
 		NodeType nodeType = new NodeType();
 		nodeTypePanel.loadNodeType(nodeType);
 		int value = JOptionPane.showConfirmDialog(this, nodeTypePanel,
-				"City.Net | NodeType", JOptionPane.OK_CANCEL_OPTION, 
+				"City.Net | Node Type", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			nodeTypePanel.saveNodeTypeCommand();
@@ -483,7 +491,7 @@ public class SystemPanel extends JSplitPane {
 		System.out.println("Edit Node Type Command");
 		nodeTypePanel.loadNodeType(nodeType);
 		int value = JOptionPane.showConfirmDialog(this, nodeTypePanel, 
-				"City.Net | NodeType", JOptionPane.OK_CANCEL_OPTION, 
+				"City.Net | Node Type", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			nodeTypePanel.saveNodeTypeCommand();
@@ -531,7 +539,7 @@ public class SystemPanel extends JSplitPane {
 		EdgeType edgeType = new EdgeType();
 		edgeTypePanel.loadEdgeType(edgeType);
 		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel,
-				"City.Net | EdgeType", JOptionPane.OK_CANCEL_OPTION, 
+				"City.Net | Edge Type", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			edgeTypePanel.saveEdgeTypeCommand();
@@ -550,7 +558,7 @@ public class SystemPanel extends JSplitPane {
 		System.out.println("Edit Edge Type Command");
 		edgeTypePanel.loadEdgeType(edgeType);
 		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel, 
-				"City.Net | EdgeType", JOptionPane.OK_CANCEL_OPTION, 
+				"City.Net | Edge Type", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			edgeTypePanel.saveEdgeTypeCommand();
@@ -832,6 +840,21 @@ public class SystemPanel extends JSplitPane {
 		tableScroll.addMouseListener(table.getMouseAdapter());
 		JOptionPane.showMessageDialog(this, tableScroll,
 				"City.Net | Node Types", JOptionPane.PLAIN_MESSAGE);
+		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+		systemTree.getModel().setSystem(system); // hacked update... bleh
+		layeredPane.repaint();
+	}
+	
+	/**
+	 * Edits the edge type table command.
+	 */
+	private void editEdgeTypeTableCommand() {
+		System.out.println("Edit Edge Type Table Command");
+		EdgeTypesTable table = new EdgeTypesTable(system);
+		JScrollPane tableScroll = new JScrollPane(table);
+		tableScroll.addMouseListener(table.getMouseAdapter());
+		JOptionPane.showMessageDialog(this, tableScroll,
+				"City.Net | Edge Types", JOptionPane.PLAIN_MESSAGE);
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
 		systemTree.getModel().setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
