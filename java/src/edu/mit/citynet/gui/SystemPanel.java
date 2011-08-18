@@ -792,14 +792,11 @@ public class SystemPanel extends JSplitPane {
 		NodeRegionsTable table = new NodeRegionsTable(system);
 		JScrollPane tableScroll = new JScrollPane(table);
 		tableScroll.addMouseListener(table.getMouseAdapter());
-		int value = JOptionPane.showConfirmDialog(this, tableScroll, 
-				"City.Net | Node Regions", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-			systemTree.getModel().setSystem(system); // hacked update... bleh
-			layeredPane.repaint();
-		}
+		JOptionPane.showMessageDialog(this, tableScroll, 
+				"City.Net | Node Regions", JOptionPane.PLAIN_MESSAGE);
+		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+		systemTree.getModel().setSystem(system); // hacked update... bleh
+		layeredPane.repaint();
 	}
 	
 	/**
@@ -810,13 +807,10 @@ public class SystemPanel extends JSplitPane {
 		EdgeRegionsTable table = new EdgeRegionsTable(system);
 		JScrollPane tableScroll = new JScrollPane(table);
 		tableScroll.addMouseListener(table.getMouseAdapter());
-		int value = JOptionPane.showConfirmDialog(this, tableScroll, 
-				"City.Net | Edge Regions", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-			systemTree.getModel().setSystem(system); // hacked update... bleh
-			layeredPane.repaint();
-		}
-	}
+		JOptionPane.showMessageDialog(this, tableScroll, 
+				"City.Net | Edge Regions", JOptionPane.PLAIN_MESSAGE);
+		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
+		systemTree.getModel().setSystem(system); // hacked update... bleh
+		layeredPane.repaint();
+}
 }
