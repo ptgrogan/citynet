@@ -19,7 +19,7 @@ import edu.mit.citynet.CityNet;
  * The CellRegion class was created to be able to specify cells without
  * relying on tedious individual cell definitions.
  */
-public class CellRegion extends AbstractRegion {
+public class CellRegion extends AbstractRegion implements Cloneable {
 	private int id;
 	private int numberRows;
 	private int numberColumns;
@@ -140,5 +140,18 @@ public class CellRegion extends AbstractRegion {
 	 */
 	public String toString() {
 		return "CellRegion" + id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public CellRegion clone() {
+		CellRegion clone = new CellRegion();
+		clone.setId(0);
+		clone.setDescription(getDescription() + " (Copy)");
+		clone.setCoordinateList(getCoordinateList());
+		clone.setNumberColumns(getNumberColumns());
+		clone.setNumberRows(getNumberRows());
+		return clone;
 	}
 }
