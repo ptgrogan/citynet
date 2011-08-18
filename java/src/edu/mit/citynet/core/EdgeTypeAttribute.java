@@ -11,7 +11,7 @@ package edu.mit.citynet.core;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class EdgeTypeAttribute extends AbstractAttribute {
+public class EdgeTypeAttribute extends AbstractAttribute implements Cloneable {
 	private int id;
 	
 	/**
@@ -55,5 +55,19 @@ public class EdgeTypeAttribute extends AbstractAttribute {
 	 */
 	public String toString() {
 		return "EdgeTypeAttribute" + id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public EdgeTypeAttribute clone() {
+		EdgeTypeAttribute clone = new EdgeTypeAttribute();
+		clone.setId(0);
+		clone.setName(getName());
+		clone.setDescription(getDescription());
+		clone.setUnits(getUnits());
+		clone.setBounds(getBounds());
+		clone.setValue(getValue());
+		return clone;
 	}
 }

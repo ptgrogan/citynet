@@ -11,7 +11,7 @@ package edu.mit.citynet.core;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class NodeTypeAttribute extends AbstractAttribute {
+public class NodeTypeAttribute extends AbstractAttribute implements Cloneable {
 	private int id;
 	
 	/**
@@ -55,5 +55,19 @@ public class NodeTypeAttribute extends AbstractAttribute {
 	 */
 	public String toString() {
 		return "NodeTypeAttribute" + id;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public NodeTypeAttribute clone() {
+		NodeTypeAttribute clone = new NodeTypeAttribute();
+		clone.setId(0);
+		clone.setName(getName());
+		clone.setDescription(getDescription());
+		clone.setUnits(getUnits());
+		clone.setBounds(getBounds());
+		clone.setValue(getValue());
+		return clone;
 	}
 }

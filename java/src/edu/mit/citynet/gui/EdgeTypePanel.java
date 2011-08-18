@@ -15,8 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -55,7 +55,8 @@ public class EdgeTypePanel extends JPanel {
 	private JLabel colorLabel;
 	private AttributeTableModel<EdgeTypeAttribute> attributeTableModel;
 	private JTable attributeTable;
-	private JButton addAttributeButton, deleteAttributesButton;
+	private JButton addAttributeButton, deleteAttributesButton, 
+		copyAttributeButton, moveAttributeUpButton, moveAttributeDownButton;
 	
 	/**
 	 * Instantiates a new node type panel.
@@ -142,7 +143,7 @@ public class EdgeTypePanel extends JPanel {
 		attributeTable.getColumnModel().getColumn(3).setPreferredWidth(75);
 		attributeTable.getColumnModel().getColumn(4).setHeaderValue("Value");
 		attributeTable.getColumnModel().getColumn(4).setPreferredWidth(50);
-		attributeTable.setPreferredScrollableViewportSize(new Dimension(400,150));
+		attributeTable.setPreferredScrollableViewportSize(new Dimension(600,400));
 		MouseAdapter attributeMouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2 && e.getComponent()!=attributeTable)
@@ -160,7 +161,7 @@ public class EdgeTypePanel extends JPanel {
 				if(e.isPopupTrigger()) {
 					int row = attributeTable.rowAtPoint(e.getPoint());
 					attributeTable.getSelectionModel().addSelectionInterval(row, row);
-					Set<EdgeTypeAttribute> attributes = new HashSet<EdgeTypeAttribute>();
+					List<EdgeTypeAttribute> attributes = new ArrayList<EdgeTypeAttribute>();
 					for(int i : attributeTable.getSelectedRows()) 
 						attributes.add(attributeTableModel.getAttributes().get(i));
 					createAttributePopupMenu(attributes).show(e.getComponent(), e.getX(), e.getY());
@@ -171,6 +172,11 @@ public class EdgeTypePanel extends JPanel {
 		attributeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				deleteAttributesButton.setEnabled(attributeTable.getSelectedRowCount()>0);
+				copyAttributeButton.setEnabled(attributeTable.getSelectedRowCount()==1);
+				moveAttributeUpButton.setEnabled(attributeTable.getSelectedRowCount()==1 
+						&& attributeTable.getSelectedRow()>0);
+				moveAttributeDownButton.setEnabled(attributeTable.getSelectedRowCount()==1 
+						&& attributeTable.getSelectedRow()<attributeTable.getRowCount()-1);
 			}
 		});
 		JScrollPane attributeScroll = new JScrollPane(attributeTable);
@@ -198,6 +204,36 @@ public class EdgeTypePanel extends JPanel {
 		});
 		deleteAttributesButton.setEnabled(false);
 		attributeButtonPanel.add(deleteAttributesButton);
+		copyAttributeButton = new JButton("Copy");
+		copyAttributeButton.setToolTipText("Copy selected attribute");
+		copyAttributeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				copyAttributeCommand(attributeTableModel.getAttributes()
+						.get(attributeTable.getSelectedRow()));
+			}
+		});
+		copyAttributeButton.setEnabled(false);
+		attributeButtonPanel.add(copyAttributeButton);
+		moveAttributeUpButton = new JButton(CityNetIcon.MOVE_UP.getIcon());
+		moveAttributeUpButton.setToolTipText("Move attribute up in list");
+		moveAttributeUpButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				moveAttributeUpCommand(attributeTableModel.getAttributes()
+						.get(attributeTable.getSelectedRow()));
+			}
+		});
+		moveAttributeUpButton.setEnabled(false);
+		attributeButtonPanel.add(moveAttributeUpButton);
+		moveAttributeDownButton = new JButton(CityNetIcon.MOVE_DOWN.getIcon());
+		moveAttributeDownButton.setToolTipText("Move attribute down in list");
+		moveAttributeDownButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				moveAttributeDownCommand(attributeTableModel.getAttributes()
+						.get(attributeTable.getSelectedRow()));
+			}
+		});
+		moveAttributeDownButton.setEnabled(false);
+		attributeButtonPanel.add(moveAttributeDownButton);
 		add(attributeButtonPanel, c);
 	}
 	
@@ -207,7 +243,7 @@ public class EdgeTypePanel extends JPanel {
 	 * @param attributes the attributes
 	 * @return the j popup menu
 	 */
-	private JPopupMenu createAttributePopupMenu(final Set<EdgeTypeAttribute> attributes) {
+	private JPopupMenu createAttributePopupMenu(final List<EdgeTypeAttribute> attributes) {
 		JPopupMenu attributePopupMenu = new JPopupMenu();
 		if(attributes.size()>0) {
 			JMenuItem deleteAttributesMenuItem = new JMenuItem("Delete Attribute" + (attributes.size()>1?"s":""));
@@ -217,6 +253,32 @@ public class EdgeTypePanel extends JPanel {
 				}
 			});
 			attributePopupMenu.add(deleteAttributesMenuItem);
+			JMenuItem copyAttributeMenuItem = new JMenuItem("Copy Attribute");
+			copyAttributeMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					copyAttributeCommand(attributes.get(0));
+				}
+			});
+			copyAttributeMenuItem.setEnabled(attributes.size()==1);
+			attributePopupMenu.add(copyAttributeMenuItem);
+			JMenuItem moveAttributeUpMenuItem = new JMenuItem("Move Attribute Up");
+			moveAttributeUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					moveAttributeUpCommand(attributes.get(0));
+				}
+			});
+			moveAttributeUpMenuItem.setEnabled(attributes.size()==1
+					&& attributeTable.getSelectedRow() > 0);
+			attributePopupMenu.add(moveAttributeUpMenuItem);
+			JMenuItem moveAttributeDownMenuItem = new JMenuItem("Move Attribute Down");
+			moveAttributeDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					moveAttributeDownCommand(attributes.get(0));
+				}
+			});
+			moveAttributeDownMenuItem.setEnabled(attributes.size()==1
+					&& attributeTable.getSelectedRow() < attributeTable.getRowCount()-1);
+			attributePopupMenu.add(moveAttributeDownMenuItem);
 		} else {
 			JMenuItem addAttributeMenuItem = new JMenuItem("Add Attribute");
 			addAttributeMenuItem.addActionListener(new ActionListener() {
@@ -242,6 +304,55 @@ public class EdgeTypePanel extends JPanel {
 				attributeTableModel.getRowCount());
 	}
 	
+	/**
+	 * Copy attribute command.
+	 *
+	 * @param attribute the attribute
+	 */
+	private void copyAttributeCommand(EdgeTypeAttribute attribute) {
+		System.out.println("Copy Attribute Command");
+		EdgeTypeAttribute clone = attribute.clone();
+		clone.setId(CityNet.getInstance().getNextEdgeTypeAttributeId());
+		attributeTableModel.getAttributes().add(clone);
+		attributeTableModel.fireTableRowsInserted(
+				attributeTableModel.getRowCount(),
+				attributeTableModel.getRowCount());
+	}
+	
+	/**
+	 * Move attribute up command.
+	 *
+	 * @param attribute the attribute
+	 */
+	private void moveAttributeUpCommand(EdgeTypeAttribute attribute) {
+		System.out.println("Move Attribute Up Command");
+		int rowIndex = attributeTableModel.getAttributes().indexOf(attribute);
+		if(rowIndex > 0) {
+			EdgeTypeAttribute a = attributeTableModel.getAttributes().get(rowIndex-1);
+			attributeTableModel.getAttributes().set(rowIndex-1, attribute);
+			attributeTableModel.getAttributes().set(rowIndex, a);
+			attributeTableModel.fireTableRowsUpdated(rowIndex-1, rowIndex);
+			attributeTable.getSelectionModel().setSelectionInterval(rowIndex-1, rowIndex-1);
+		}
+	}
+	
+	/**
+	 * Move attribute down command.
+	 *
+	 * @param attribute the attribute
+	 */
+	private void moveAttributeDownCommand(EdgeTypeAttribute attribute) {
+		System.out.println("Move Attribute Down Command");
+		int rowIndex = attributeTableModel.getAttributes().indexOf(attribute);
+		if(rowIndex < attributeTableModel.getAttributes().size()-1) {
+			EdgeTypeAttribute a = attributeTableModel.getAttributes().get(rowIndex+1);
+			attributeTableModel.getAttributes().set(rowIndex+1, attribute);
+			attributeTableModel.getAttributes().set(rowIndex, a);
+			attributeTableModel.fireTableRowsUpdated(rowIndex, rowIndex+1);
+			attributeTable.getSelectionModel().setSelectionInterval(rowIndex+1, rowIndex+1);
+		}
+	}
+		
 	/**
 	 * Delete attributes command.
 	 */
