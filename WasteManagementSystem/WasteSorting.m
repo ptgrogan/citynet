@@ -24,7 +24,11 @@ classdef WasteSorting < Behavior
         waste_to_MRF;               % the comingled waste sent to a materials recovery facility
         recyclables;                % the amount of collected waste able to be sent directly as recyclables
         biowaste;                   % the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
-        restwaste;                  % the total remaining waste
+        restwaste_to_cRDF;          % the fraction of the total remaining waste going to cRDF sorting
+        restwaste_to_dRDF;          % the fraction of the total remaining waste going to dRDF sorting
+        restwaste_to_biological;    % the fraction of the total remaining waste going to biological treatment
+        restwaste_to_thermal;       % the fraction of the total remaining waste going to thermal treatment
+        restwaste_to_landfill;      % the fraction of the total remaining waste going to landfill
     end
     methods
         %% WasteSorting Constructor
@@ -34,11 +38,15 @@ classdef WasteSorting < Behavior
         %   obj:                        the new WasteSorting object
         %   total_residential_waste:    the total residential waste generated in the city
         %   total_commercial_waste:     the total commercial waste generated in the city
-        %   total_delivered_waste;      the total waste in the city delivered directly to the waste management system by residents (function input)
+        %   total_delivered_waste:      the total waste in the city delivered directly to the waste management system by residents (function input)
         %   waste_to_MRF:               the comingled waste sent to a materials recovery facility
         %   recyclables:                the amount of collected waste able to be sent directly as recyclables
-        %   biowaste;                   the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
-        %   restwaste:                  the total remaining waste
+        %   biowaste:                   the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
+        %   restwaste_to_cRDF:          the fraction of the total remaining waste going to cRDF sorting
+        %   restwaste_to_dRDF:          the fraction of the total remaining waste going to dRDF sorting
+        %   restwaste_to_biological:    the fraction of the total remaining waste going to biological treatment
+        %   restwaste_to_thermal:       the fraction of the total remaining waste going to thermal treatment
+        %   restwaste_to_landfill:      the fraction of the total remaining waste going to landfill
 
         function obj = WasteSorting()
             obj = obj@Behavior('Initial Breakdown in Waste Destination', ...
@@ -58,10 +66,7 @@ classdef WasteSorting < Behavior
         %   obj:    the TotalResidentialWaste object handle
         function val = EvaluateImpl(obj)      
             
-            % For each building system node, identify residential node and
-            % calculate corresponding delivered waste generated per node by stream.
-            % Following this, sum all stream values
-            
+            % Set city identifier
             city = CityNet.instance().city;
             
             % Search for waste system identifier       
@@ -289,64 +294,129 @@ classdef WasteSorting < Behavior
                 obj.total_delivered_waste.garden+...
                 obj.total_residential_waste.organics*organicsratio(2);
             
-            %% Calculate Total Restwaste by Stream
+            %% Calculate Total Restwaste by Stream, as well as breakdown of restwaste by destination from sorting facility
             % Total Restwaste = Total waste input - (waste to MRF +
             % recyclables + biowaste)
             
+                    %   restwaste_to_cRDF:          the fraction of the total remaining waste going to cRDF sorting
+        %   restwaste_to_dRDF:          the fraction of the total remaining waste going to dRDF sorting
+        %   restwaste_to_biological:    the fraction of the total remaining waste going to biological treatment
+        %   restwaste_to_thermal:       the fraction of the total remaining waste going to thermal treatment
+        %   restwaste_to_landfill:      the fraction of the total remaining waste going to landfill
+            
+            % Extract restwaste destination ratio values
+            % Vector format is [cRDF dRDF biological treatment, thermal
+            % treatment]. The remainder is sent to landfill
+            restwastedistribution = str2num(sorting.GetNodeTypeAttributeValue('restwasteDestinationRatio'));
+                
             % Paper
-            obj.restwaste.paper = (obj.total_residential_waste.paper+...
+            totalrestwastepaper = (obj.total_residential_waste.paper+...
                 obj.total_commercial_waste.paper)-...
                 (obj.waste_to_MRF.paper+obj.recyclables.paper+...
                 obj.biowaste.paper);
             
+            obj.restwaste_to_cRDF.paper = restwastedistribution(1)*totalrestwastepaper;
+            obj.restwaste_to_dRDF.paper = restwastedistribution(2)*totalrestwastepaper;
+            obj.restwaste_to_biological.paper = restwastedistribution(3)*totalrestwastepaper;
+            obj.restwaste_to_thermal.paper = restwastedistribution(4)*totalrestwastepaper;
+            obj.restwaste_to_landfill.paper = (1-sum(restwastedistribution([1:4])))*totalrestwastepaper;
+            
             % Glass
-            obj.restwaste.glass = (obj.total_residential_waste.glass+...
+            totalrestwasteglass = (obj.total_residential_waste.glass+...
                 obj.total_commercial_waste.glass+...
                 obj.total_delivered_waste.glass)-...
                 (obj.waste_to_MRF.glass+obj.recyclables.glass);
             
+            obj.restwaste_to_cRDF.glass = restwastedistribution(1)*totalrestwasteglass;
+            obj.restwaste_to_dRDF.glass = restwastedistribution(2)*totalrestwasteglass;
+            obj.restwaste_to_biological.glass = restwastedistribution(3)*totalrestwasteglass;
+            obj.restwaste_to_thermal.glass = restwastedistribution(4)*totalrestwasteglass;
+            obj.restwaste_to_landfill.glass = (1-sum(restwastedistribution([1:4])))*totalrestwasteglass;
+                        
             % Ferrous Metal
-            obj.restwaste.fe_metal = (obj.total_residential_waste.fe_metal+...
+            totalrestwastefe_metal = (obj.total_residential_waste.fe_metal+...
                 obj.total_commercial_waste.fe_metal+...
                 obj.total_delivered_waste.fe_metal)-...
                 (obj.waste_to_MRF.fe_metal+obj.recyclables.fe_metal);
+                        
+            obj.restwaste_to_cRDF.fe_metal = restwastedistribution(1)*totalrestwastefe_metal;
+            obj.restwaste_to_dRDF.fe_metal = restwastedistribution(2)*totalrestwastefe_metal;
+            obj.restwaste_to_biological.fe_metal = restwastedistribution(3)*totalrestwastefe_metal;
+            obj.restwaste_to_thermal.fe_metal = restwastedistribution(4)*totalrestwastefe_metal;
+            obj.restwaste_to_landfill.fe_metal = (1-sum(restwastedistribution([1:4])))*totalrestwastefe_metal;
             
             % Non-Ferrous Metal
-            obj.restwaste.nonfe_metal = (obj.total_residential_waste.nonfe_metal+...
+            totalrestwastenonfe_metal = (obj.total_residential_waste.nonfe_metal+...
                 obj.total_commercial_waste.nonfe_metal+...
                 obj.total_delivered_waste.nonfe_metal)-...
                 (obj.waste_to_MRF.nonfe_metal+obj.recyclables.nonfe_metal);
             
+            obj.restwaste_to_cRDF.nonfe_metal = restwastedistribution(1)*totalrestwastenonfe_metal;
+            obj.restwaste_to_dRDF.nonfe_metal = restwastedistribution(2)*totalrestwastenonfe_metal;
+            obj.restwaste_to_biological.nonfe_metal = restwastedistribution(3)*totalrestwastenonfe_metal;
+            obj.restwaste_to_thermal.nonfe_metal = restwastedistribution(4)*totalrestwastenonfe_metal;
+            obj.restwaste_to_landfill.nonfe_metal = (1-sum(restwastedistribution([1:4])))*totalrestwastenonfe_metal;
+            
             % Film Plastic
-            obj.restwaste.filmplastic = (obj.total_residential_waste.filmplastic+...
+            totalrestwastefilmplastic = (obj.total_residential_waste.filmplastic+...
                 obj.total_commercial_waste.filmplastic+...
                 obj.total_delivered_waste.filmplastic)-...
                 (obj.waste_to_MRF.filmplastic+obj.recyclables.filmplastic+...
                 obj.biowaste.filmplastic);
             
+            obj.restwaste_to_cRDF.filmplastic = restwastedistribution(1)*totalrestwastefilmplastic;
+            obj.restwaste_to_dRDF.filmplastic = restwastedistribution(2)*totalrestwastefilmplastic;
+            obj.restwaste_to_biological.filmplastic = restwastedistribution(3)*totalrestwastefilmplastic;
+            obj.restwaste_to_thermal.filmplastic = restwastedistribution(4)*totalrestwastefilmplastic;
+            obj.restwaste_to_landfill.filmplastic = (1-sum(restwastedistribution([1:4])))*totalrestwastefilmplastic;
+            
             % Rigid Plastic
-            obj.restwaste.rigidplastic = (obj.total_residential_waste.rigidplastic+...
+            totalrestwasterigidplastic = (obj.total_residential_waste.rigidplastic+...
                 obj.total_commercial_waste.rigidplastic+...
                 obj.total_delivered_waste.rigidplastic)-...
                 (obj.waste_to_MRF.rigidplastic+obj.recyclables.rigidplastic+...
                 obj.biowaste.rigidplastic);
             
+            obj.restwaste_to_cRDF.rigidplastic = restwastedistribution(1)*totalrestwasterigidplastic;
+            obj.restwaste_to_dRDF.rigidplastic = restwastedistribution(2)*totalrestwasterigidplastic;
+            obj.restwaste_to_biological.rigidplastic = restwastedistribution(3)*totalrestwasterigidplastic;
+            obj.restwaste_to_thermal.rigidplastic = restwastedistribution(4)*totalrestwasterigidplastic;
+            obj.restwaste_to_landfill.rigidplastic = (1-sum(restwastedistribution([1:4])))*totalrestwasterigidplastic;
+            
             % Textiles
-            obj.restwaste.textiles = (obj.total_residential_waste.textiles+...
+            totalrestwastetextiles = (obj.total_residential_waste.textiles+...
                 obj.total_commercial_waste.textiles)-...
                 (obj.waste_to_MRF.textiles+obj.recyclables.textiles);
             
+            obj.restwaste_to_cRDF.textiles = restwastedistribution(1)*totalrestwastetextiles;
+            obj.restwaste_to_dRDF.textiles = restwastedistribution(2)*totalrestwastetextiles;
+            obj.restwaste_to_biological.textiles = restwastedistribution(3)*totalrestwastetextiles;
+            obj.restwaste_to_thermal.textiles = restwastedistribution(4)*totalrestwastetextiles;
+            obj.restwaste_to_landfill.textiles = (1-sum(restwastedistribution([1:4])))*totalrestwastetextiles;
+            
             % Organics
-            obj.restwaste.organics = (obj.total_residential_waste.organics+...
+            totalrestwasteorganics = (obj.total_residential_waste.organics+...
                 obj.total_commercial_waste.organics+...
                 obj.total_delivered_waste.garden)-...
                 (obj.waste_to_MRF.organics+obj.biowaste.organics);
             
+            obj.restwaste_to_cRDF.organics = restwastedistribution(1)*totalrestwasteorganics;
+            obj.restwaste_to_dRDF.organics = restwastedistribution(2)*totalrestwasteorganics;
+            obj.restwaste_to_biological.organics = restwastedistribution(3)*totalrestwasteorganics;
+            obj.restwaste_to_thermal.organics = restwastedistribution(4)*totalrestwasteorganics;
+            obj.restwaste_to_landfill.organics = (1-sum(restwastedistribution([1:4])))*totalrestwasteorganics;
+            
             % Other
-            obj.restwaste.other = (obj.total_residential_waste.other+...
+            totalrestwasteother = (obj.total_residential_waste.other+...
                 obj.total_commercial_waste.other+...
                 obj.total_delivered_waste.other)-...
                 (obj.waste_to_MRF.other);
+            
+            obj.restwaste_to_cRDF.other = restwastedistribution(1)*totalrestwasteother;
+            obj.restwaste_to_dRDF.other = restwastedistribution(2)*totalrestwasteother;
+            obj.restwaste_to_biological.other = restwastedistribution(3)*totalrestwasteother;
+            obj.restwaste_to_thermal.other = restwastedistribution(4)*totalrestwasteother;
+            obj.restwaste_to_landfill.other = (1-sum(restwastedistribution([1:4])))*totalrestwasteother;
             
             %% Assign Value to val
             val = [];
