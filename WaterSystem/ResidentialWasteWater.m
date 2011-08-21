@@ -38,14 +38,14 @@ classdef ResidentialWasteWater < Behavior
         %   obj:    the ResidentialWasteWater object handle
         function val = EvaluateImpl(obj) 
             
-            totalResidentialWaterBehavior.Evaluate(); %get the values of object associated with handle using the evaluate method
+            obj.totalResidentialWaterBehavior.Evaluate(); %get the values of object associated with handle using the evaluate method
             
-            TotalGreyWater = totalResidentialWaterBehavior.kitchen+...
-                totalResidentialWaterBehavior.facuets+...
-                totalResidentialWaterBehavior.shower+...
-                totalResidentialWaterBehavior.laundry;
+            TotalGreyWater = obj.totalResidentialWaterBehavior.kitchen+...
+                obj.totalResidentialWaterBehavior.faucets+...
+                obj.totalResidentialWaterBehavior.shower+...
+                obj.totalResidentialWaterBehavior.laundry;
             
-            TotalBlackWater = totalResidentialWaterBehavior.toilets;
+            TotalBlackWater = obj.totalResidentialWaterBehavior.toilets;
                         
             %% Assign Total Extracted Recycles to val
             val = TotalGreyWater+TotalBlackWater;
