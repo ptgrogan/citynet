@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -43,6 +44,7 @@ public class CoordinateSelectionPanel extends VizLayeredPane {
 	public CoordinateSelectionPanel(City city, CitySystem system) {
 		super(city, system);
 		setPreferredSize(new Dimension(400,400));
+		this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 		coordinates = new CoordinateList();
 		coordinatesLayer = new CoordinatesLayer(this);
 		add(coordinatesLayer,new Integer(9));
