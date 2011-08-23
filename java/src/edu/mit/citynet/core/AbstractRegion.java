@@ -5,6 +5,7 @@
  */
 package edu.mit.citynet.core;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -35,8 +36,13 @@ public abstract class AbstractRegion {
 	 *
 	 * @return the coordinate list
 	 */
+	@SuppressWarnings("unchecked")
 	public CoordinateList getCoordinateList() {
-		return new CoordinateList(coordinateList.toCoordinateArray());
+		CoordinateList list = new CoordinateList();
+		for(Coordinate coordinate : coordinateList.toCoordinateArray()) {
+			list.add(new Coordinate(coordinate.x,coordinate.y));
+		}
+		return list;
 	}
 	
 	/**
