@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import edu.mit.citynet.CityNet;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
@@ -129,6 +130,8 @@ public class EdgeType implements Cloneable {
 	 * @return true, if successful
 	 */
 	public boolean addAttribute(EdgeTypeAttribute attribute) {
+		if(attribute.getId()==0)
+			attribute.setId(CityNet.getInstance().getNextEdgeTypeAttributeId());
 		return attributes.add(attribute);
 	}
 	
