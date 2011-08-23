@@ -6,7 +6,6 @@
 package edu.mit.citynet.viz;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,6 +59,7 @@ public class VizLayeredPane extends JLayeredPane {
 	private CellRegion selectedCellRegion;
 	private NodeRegion selectedNodeRegion;
 	private EdgeRegion selectedEdgeRegion;
+	protected boolean panModeEnabled = true;
 	
 	/**
 	 * Instantiates a new viz layered pane.
@@ -85,7 +85,6 @@ public class VizLayeredPane extends JLayeredPane {
 	 * Initializes the panel.
 	 */
 	private void initializePanel() {
-		setPreferredSize(new Dimension(250,250));
 		gridLayer = new GridLayer(this);
 		add(gridLayer, new Integer(1));
 		mapLayer = new MapLayer(this);
@@ -108,18 +107,15 @@ public class VizLayeredPane extends JLayeredPane {
 				requestFocusInWindow(true);
 			}
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==2) {
-					centerView(e.getPoint());
-				}
 				maybeShowPopup(e);
 			}
 			public void mousePressed(MouseEvent e) {
 				updateCursor(true);
-				previousDrag = e.getPoint();
+				if(panModeEnabled) previousDrag = e.getPoint();
 			}
 			public void mouseReleased(MouseEvent e) {
 				updateCursor(false);
-				previousDrag = null;
+				if(panModeEnabled) previousDrag = null;
 				maybeShowPopup(e);
 			}
 			public void mouseExited(MouseEvent e) {
@@ -133,10 +129,12 @@ public class VizLayeredPane extends JLayeredPane {
 		});
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				panView(new Point(previousDrag.x - e.getPoint().x, 
-						previousDrag.y - e.getPoint().y));
-				updateCursor(true);
-				previousDrag = e.getPoint();
+				if(panModeEnabled) {
+					panView(new Point(previousDrag.x - e.getPoint().x, 
+							previousDrag.y - e.getPoint().y));
+					updateCursor(true);
+					previousDrag = e.getPoint();
+				}
 			}
 		});
 		addMouseWheelListener(new MouseWheelListener() {

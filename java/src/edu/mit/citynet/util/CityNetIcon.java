@@ -33,7 +33,8 @@ public enum CityNetIcon {
 	DIRECTED("resources/arrow_right.png"),
 	GENERATE("resources/lightning.png"),
 	DELETE("resources/delete.png"),
-	COLOR_PALETTE("resources/color_swatch.png");
+	COLOR_PALETTE("resources/color_swatch.png"),
+	SELECT_COORDINATES("resources/map.png");
 	
 	private String filePath;
 	private transient ImageIcon icon;

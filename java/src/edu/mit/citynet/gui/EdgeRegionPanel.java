@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -54,8 +55,9 @@ public class EdgeRegionPanel extends JPanel {
 	private JComboBox edgeRegionTypeCombo, directedCombo, edgeTypeCombo, layerCombo;
 	private JTable coordinateTable;
 	private CoordinateTableModel3D coordinateTableModel;
+	private CoordinateSelectionPanel coordinateSelectionPanel;
 	private JButton addCoordinateButton, deleteCoordinatesButton, 
-		moveUpButton, moveDownButton;
+		moveUpButton, moveDownButton, selectCoordinatesButton;
 	
 	/**
 	 * Instantiates a new edge region panel.
@@ -64,6 +66,8 @@ public class EdgeRegionPanel extends JPanel {
 	 */
 	public EdgeRegionPanel(SystemPanel systemPanel) {
 		this.systemPanel = systemPanel;
+		coordinateSelectionPanel = new CoordinateSelectionPanel(
+				systemPanel.getCityPanel().getCity(), systemPanel.getSystem());
 		initializePanel();
 	}
 	
@@ -207,6 +211,15 @@ public class EdgeRegionPanel extends JPanel {
 		});
 		deleteCoordinatesButton.setEnabled(false);
 		coordinateButtonPanel.add(deleteCoordinatesButton);
+		coordinateButtonPanel.add(deleteCoordinatesButton);
+		selectCoordinatesButton = new JButton(CityNetIcon.SELECT_COORDINATES.getIcon());
+		selectCoordinatesButton.setToolTipText("Select coordinates from map");
+		selectCoordinatesButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectCoordinatesCommand();
+			}
+		});
+		coordinateButtonPanel.add(selectCoordinatesButton);
 		add(coordinateButtonPanel, c);
 	}
 	
@@ -350,6 +363,17 @@ public class EdgeRegionPanel extends JPanel {
 		layerCombo.removeAllItems();
 		for(Layer layer : systemPanel.getSystem().getLayers()) 
 			layerCombo.addItem(layer);
+	}
+	
+	public void selectCoordinatesCommand() {
+		System.out.println("Select Coordinates Command");
+		coordinateSelectionPanel.setCoordinates(coordinateTableModel.getCoordinates());
+		int value = JOptionPane.showConfirmDialog(this, coordinateSelectionPanel, 
+				"City.Net | Select Coordinates", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			coordinateTableModel.setCoordinates(coordinateSelectionPanel.getCoordinates());
+		}
 	}
 	
 	/**
