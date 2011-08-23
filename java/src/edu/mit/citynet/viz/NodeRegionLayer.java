@@ -45,6 +45,9 @@ public class NodeRegionLayer extends JPanel {
 		if(vizPane.getSystem() == null) return;
 		
 		for(NodeRegion nodeRegion : vizPane.getSystem().getNodeRegions()) {
+			if(vizPane.getDisplayOptions().isLayersFiltered() 
+					&& vizPane.getDisplayOptions().getDisplayHeight()!=nodeRegion.getLayer().getDisplayHeight()) 
+				continue;
 			boolean selected = nodeRegion.equals(vizPane.getSelectedNodeRegion());
 			int[] xPoints = new int[nodeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[nodeRegion.getCoordinateList().size()];

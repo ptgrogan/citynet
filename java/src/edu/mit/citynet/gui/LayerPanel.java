@@ -10,12 +10,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.DecimalFormat;
-import java.util.Hashtable;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -31,14 +29,13 @@ import edu.mit.citynet.core.Layer;
  */
 public class LayerPanel extends JPanel {
 	private static final long serialVersionUID = -1820720020787911656L;
-	private static final int MIN_HEIGHT = 0, MAX_HEIGHT = 50;
 
 	private SystemPanel systemPanel;
 	private Layer layer;
 	private JTextField nameText;
 	private JTextArea descriptionText;
 	private JLabel displayHeightLabel;
-	private JSlider displayHeightSlider;
+	private DisplayHeightSlider displayHeightSlider;
 	private final DecimalFormat format = new DecimalFormat("0.0");
 	
 	/**
@@ -92,17 +89,11 @@ public class LayerPanel extends JPanel {
 		displayHeightLabel.setPreferredSize(new Dimension(100,20));
 		add(displayHeightLabel, c);
 		c.gridy++;
-		displayHeightSlider = new JSlider(JSlider.VERTICAL, MIN_HEIGHT, MAX_HEIGHT, 0);
-		displayHeightSlider.setMajorTickSpacing(5);
-		displayHeightSlider.setMinorTickSpacing(1);
-		displayHeightSlider.setSnapToTicks(true);
-		displayHeightSlider.setPaintTicks(true);
-		displayHeightSlider.setPaintLabels(true);
-		displayHeightSlider.setToolTipText("Height at which to display layer");
+		displayHeightSlider = new DisplayHeightSlider(DisplayHeightSlider.VERTICAL);
 		displayHeightSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				displayHeightLabel.setText("Display Height: " 
-						+ format.format(displayHeightSlider.getValue()/5d));
+						+ format.format(displayHeightSlider.getDisplayHeight()));
 			}
 		});
 		add(displayHeightSlider, c);
@@ -118,32 +109,8 @@ public class LayerPanel extends JPanel {
 		this.layer = layer;
 		nameText.setText(layer.getName());
 		descriptionText.setText(layer.getDescription());
-		displayHeightSlider.setValue(Math.max(MIN_HEIGHT,
-				Math.min((int)(layer.getDisplayHeight()*5),MAX_HEIGHT)));
-		Hashtable<Integer, JLabel> labelDictionary = new Hashtable<Integer, JLabel>();
-		for(Layer l : systemPanel.getSystem().getLayers()) {
-			if(l.equals(layer)) continue;
-			JLabel label = labelDictionary.get((int)(l.getDisplayHeight()*5));
-			if(label!=null) {
-				label.setText(label.getText() + ", " + l.getName());
-			} else {
-				labelDictionary.put((int)(l.getDisplayHeight()*5), 
-						new JLabel(format.format(l.getDisplayHeight()) + ": " + l.getName()));
-			}
-		}
-		for(int i=MIN_HEIGHT; i<=MAX_HEIGHT; i+=5) {
-			if(labelDictionary.get(i)==null
-					&& labelDictionary.get(i-1)==null
-					&& labelDictionary.get(i-2)==null
-					&& labelDictionary.get(i-3)==null
-					&& labelDictionary.get(i-4)==null
-					&& labelDictionary.get(i+1)==null
-					&& labelDictionary.get(i+2)==null
-					&& labelDictionary.get(i+3)==null
-					&& labelDictionary.get(i+4)==null)
-				labelDictionary.put(i,new JLabel(format.format(i/5d)));
-		}
-		displayHeightSlider.setLabelTable(labelDictionary);
+		displayHeightSlider.setDisplayHeight(layer.getDisplayHeight());
+		displayHeightSlider.loadLabels(systemPanel.getSystem().getLayers(), layer);
 	}
 	
 	/**

@@ -48,6 +48,10 @@ public class EdgeLayer extends JPanel {
 		if(vizPane.getSystem() == null) return;
 		
 		for(Edge edge : vizPane.getSystem().getEdges()) {
+			if(vizPane.getDisplayOptions().isLayersFiltered() 
+					&& vizPane.getDisplayOptions().getDisplayHeight()!=edge.getOrigin().getLayer().getDisplayHeight()
+					&& vizPane.getDisplayOptions().getDisplayHeight()!=edge.getDestination().getLayer().getDisplayHeight()) 
+				continue;
 			Point origin = vizPane.getPoint(edge.getOrigin()
 					.getCell().getPolygon().getCentroid().getCoordinate());
 			Point destination = vizPane.getPoint(edge.getDestination()

@@ -25,17 +25,19 @@ public class OpacitySlider extends JSlider {
 	/**
 	 * Instantiates a new opacity slider.
 	 */
-	public OpacitySlider() {
+	public OpacitySlider(boolean paintLabels) {
 		super(JSlider.HORIZONTAL, 0, NUM_TICKS, 0);
 		setMajorTickSpacing(5);
 		setMinorTickSpacing(1);
 		setSnapToTicks(true);
-		setPaintTicks(true);
-		setPaintLabels(true);
-		Hashtable<Integer, JLabel> labelDictionary = new Hashtable<Integer, JLabel>();
-		for(int i=0; i<=20; i+=5) {
-			labelDictionary.put(i,new JLabel(format.format((i*TICK_SIZE))));
+		setPaintTicks(paintLabels);
+		setPaintLabels(paintLabels);
+		if(paintLabels) {
+			Hashtable<Integer, JLabel> labelDictionary = new Hashtable<Integer, JLabel>();
+			for(int i=0; i<=20; i+=5) {
+				labelDictionary.put(i,new JLabel(format.format((i*TICK_SIZE))));
+			}
+			setLabelTable(labelDictionary);
 		}
-		setLabelTable(labelDictionary);
 	}
 }

@@ -10,12 +10,20 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import edu.mit.citynet.core.Layer;
+import edu.mit.citynet.gui.DisplayHeightSlider;
 
 /**
  * The DisplayOptionsPanel class.
@@ -26,12 +34,15 @@ public class DisplayOptionsPanel extends JPanel {
 	private static final long serialVersionUID = -4559321620341885337L;
 
 	private DisplayOptions displayOptions;
-	private JCheckBox gridDisplayCheck, mapDisplayCheck;
+	private JCheckBox gridDisplayCheck, mapDisplayCheck, layerFilterCheck;
 	private JSpinner gridSpacingSpinner;
 	private SpinnerNumberModel gridSpacingModel;
 	private OpacitySlider cellRegionOpacitySlider, cellOpacitySlider,
 		nodeRegionOpacitySlider, edgeRegionOpacitySlider, 
 		nodeOpacitySlider, edgeOpacitySlider;
+	private DisplayHeightSlider displayHeightSlider;
+	private JLabel displayHeightLabel;
+	private final DecimalFormat format = new DecimalFormat("0.0");
 	
 	/**
 	 * Instantiates a new display options panel.
@@ -72,53 +83,95 @@ public class DisplayOptionsPanel extends JPanel {
 		mapDisplayCheck = new JCheckBox("Display Map");
 		add(mapDisplayCheck, c);
 		c.gridy++;
-		c.gridwidth = 1;
+		c.fill = GridBagConstraints.BOTH;
+		c.anchor = GridBagConstraints.CENTER;
+		add(buildOpacityPanel(),c);
+		c.gridy++;
+		add(buildLayerPanel(),c);
+	}
+	
+	/**
+	 * Builds the opacity panel.
+	 *
+	 * @return the j panel
+	 */
+	private JPanel buildOpacityPanel() {
+		JPanel opacityPanel = new JPanel(new GridBagLayout());
+		opacityPanel.setBorder(BorderFactory.createTitledBorder("Display Opacity"));
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(2,2,2,2);
+		c.gridx = 0;
+		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(new JLabel("Cell Regions: ", JLabel.RIGHT), c);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		opacityPanel.add(new JLabel("Cell Regions: ", JLabel.RIGHT), c);
+		c.weightx = 1;
 		c.gridx++;
-		c.gridwidth = 3;
-		cellRegionOpacitySlider = new OpacitySlider();
-		add(cellRegionOpacitySlider, c);
-		c.gridy++;
+		cellRegionOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(cellRegionOpacitySlider, c);
+		c.weightx = 0;
 		c.gridx = 0;
-		c.gridwidth = 1;
-		add(new JLabel("Cells: ", JLabel.RIGHT), c);
-		c.gridx++;
-		c.gridwidth = 3;
-		cellOpacitySlider = new OpacitySlider();
-		add(cellOpacitySlider, c);
 		c.gridy++;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
+		opacityPanel.add(new JLabel("Cells: ", JLabel.RIGHT), c);
 		c.gridx++;
-		c.gridwidth = 3;
-		nodeRegionOpacitySlider = new OpacitySlider();
-		add(nodeRegionOpacitySlider, c);
+		cellOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(cellOpacitySlider, c);
+		c.gridx = 0;
 		c.gridy++;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		add(new JLabel("Nodes: ", JLabel.RIGHT), c);
+		opacityPanel.add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
-		c.gridwidth = 3;
-		nodeOpacitySlider = new OpacitySlider();
-		add(nodeOpacitySlider, c);
+		nodeRegionOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(nodeRegionOpacitySlider, c);
+		c.gridx = 0;
 		c.gridy++;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
+		opacityPanel.add(new JLabel("Nodes: ", JLabel.RIGHT), c);
 		c.gridx++;
-		c.gridwidth = 3;
-		edgeRegionOpacitySlider = new OpacitySlider();
-		add(edgeRegionOpacitySlider, c);
+		nodeOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(nodeOpacitySlider, c);
+		c.gridx = 0;
 		c.gridy++;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		add(new JLabel("Edges: ", JLabel.RIGHT), c);
+		opacityPanel.add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
-		c.gridwidth = 3;
-		edgeOpacitySlider = new OpacitySlider();
-		add(edgeOpacitySlider, c);
+		edgeRegionOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(edgeRegionOpacitySlider, c);
+		c.gridx = 0;
+		c.gridy++;
+		opacityPanel.add(new JLabel("Edges: ", JLabel.RIGHT), c);
+		c.gridx++;
+		edgeOpacitySlider = new OpacitySlider(true);
+		opacityPanel.add(edgeOpacitySlider, c);
+		return opacityPanel;
+	}
+	
+	private JPanel buildLayerPanel() {
+		JPanel layerPanel = new JPanel(new GridBagLayout());
+		layerPanel.setBorder(BorderFactory.createTitledBorder("Display Height"));
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(2,2,2,2);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridwidth = 2;
+		layerFilterCheck = new JCheckBox("Filter Layer Display");
+		layerFilterCheck.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayHeightSlider.setEnabled(layerFilterCheck.isSelected());
+			}
+		});
+		layerPanel.add(layerFilterCheck, c);
+		c.gridwidth = 1;
+		c.gridy++;
+		layerPanel.add(new JLabel("Height: "), c);
+		c.gridx++;
+		c.weightx = 1;
+		displayHeightSlider = new DisplayHeightSlider(DisplayHeightSlider.HORIZONTAL);
+		displayHeightSlider.setEnabled(false);
+		layerPanel.add(displayHeightSlider, c);
+		c.gridy++;
+		displayHeightLabel = new JLabel("Display Height: ");
+		layerPanel.add(displayHeightLabel, c);
+		return layerPanel;
 	}
 	
 	/**
@@ -131,6 +184,15 @@ public class DisplayOptionsPanel extends JPanel {
 		gridDisplayCheck.setSelected(displayOptions.isGridDisplayed());
 		gridSpacingSpinner.setValue(displayOptions.getGridSpacing());
 		mapDisplayCheck.setSelected(displayOptions.isMapDisplayed());
+		layerFilterCheck.setSelected(displayOptions.isLayersFiltered());
+		displayHeightSlider.setDisplayHeight(displayOptions.getDisplayHeight());
+		displayHeightSlider.loadLabels(new ArrayList<Layer>(), null);
+		displayHeightSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				displayHeightLabel.setText("Display Height: " 
+						+ format.format(displayHeightSlider.getDisplayHeight()));
+			}
+		});
 		cellRegionOpacitySlider.setValue(
 				(int)(displayOptions.getCellRegionOpacity()*OpacitySlider.NUM_TICKS));
 		cellOpacitySlider.setValue(
@@ -152,6 +214,8 @@ public class DisplayOptionsPanel extends JPanel {
 		displayOptions.setGridDisplayed(gridDisplayCheck.isSelected());
 		displayOptions.setGridSpacing(gridSpacingModel.getNumber().doubleValue());
 		displayOptions.setMapDisplayed(mapDisplayCheck.isSelected());
+		displayOptions.setLayersFiltered(layerFilterCheck.isSelected());
+		displayOptions.setDisplayHeight(displayHeightSlider.getDisplayHeight());
 		displayOptions.setCellRegionOpacity(
 				cellRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setCellOpacity(

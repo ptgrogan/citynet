@@ -45,6 +45,10 @@ public class EdgeRegionLayer extends JPanel {
 		if(vizPane.getSystem() == null) return;
 		
 		for(EdgeRegion edgeRegion : vizPane.getSystem().getEdgeRegions()) {
+			if(vizPane.getDisplayOptions().isLayersFiltered() 
+					&& edgeRegion.getLayers().size() > 0
+					&& vizPane.getDisplayOptions().getDisplayHeight()!=edgeRegion.getLayers().get(0).getDisplayHeight()) 
+				continue; // TODO: currently only checks first point for layer
 			boolean selected = edgeRegion.equals(vizPane.getSelectedEdgeRegion());
 			int[] xPoints = new int[edgeRegion.getCoordinateList().size()];
 			int[] yPoints = new int[edgeRegion.getCoordinateList().size()];

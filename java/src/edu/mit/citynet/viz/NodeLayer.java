@@ -44,6 +44,9 @@ public class NodeLayer extends JPanel {
 		if(vizPane.getSystem() == null) return;
 		
 		for(Node node : vizPane.getSystem().getNodes()) {
+			if(vizPane.getDisplayOptions().isLayersFiltered() 
+					&& vizPane.getDisplayOptions().getDisplayHeight()!=node.getLayer().getDisplayHeight()) 
+				continue;
 			int[] xPoints = new int[node.getCell().getPolygon().getCoordinates().length];
 			int[] yPoints = new int[node.getCell().getPolygon().getCoordinates().length];
 			for(int i=0; i<node.getCell().getPolygon().getCoordinates().length; i++) {

@@ -11,8 +11,8 @@ package edu.mit.citynet.viz;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class DisplayOptions {
-	private boolean gridDisplayed, mapDisplayed;
-	private double gridSpacing;
+	private boolean gridDisplayed, mapDisplayed, layersFiltered;
+	private double gridSpacing, displayHeight;
 	private float cellRegionOpacity, cellOpacity, nodeRegionOpacity, 
 		nodeOpacity, edgeRegionOpacity, edgeOpacity;
 	
@@ -22,6 +22,8 @@ public class DisplayOptions {
 	public DisplayOptions() {
 		gridDisplayed = true;
 		mapDisplayed = true;
+		layersFiltered = false;
+		displayHeight = 0d;
 		gridSpacing = 1;
 		cellRegionOpacity = 0.5f;
 		cellOpacity = 0.5f;
@@ -31,6 +33,22 @@ public class DisplayOptions {
 		edgeOpacity = 0.5f;
 	}
 	
+	public boolean isLayersFiltered() {
+		return layersFiltered;
+	}
+
+	public void setLayersFiltered(boolean layersFiltered) {
+		this.layersFiltered = layersFiltered;
+	}
+
+	public double getDisplayHeight() {
+		return displayHeight;
+	}
+
+	public void setDisplayHeight(double displayHeight) {
+		this.displayHeight = displayHeight;
+	}
+
 	public float getCellOpacity() {
 		return cellOpacity;
 	}
