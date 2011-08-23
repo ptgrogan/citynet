@@ -41,6 +41,7 @@ import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
+import edu.mit.citynet.viz.DisplayOptions;
 
 /**
  * Synthesis template class.
@@ -59,6 +60,7 @@ import edu.mit.citynet.util.DistanceUnit;
 public class CityNet {
 	private DistanceUnit distanceUnit;
 	private City city;
+	private DisplayOptions displayOptions;
 	private AtomicInteger nextNodeTypeId,nextNodeTypeAttributeId,
 		nextEdgeTypeId,nextEdgeTypeAttributeId,nextCellId,nextCellRegionId,
 		nextLayerId,nextSystemId,nextNodeId,nextNodeRegionId,nextEdgeId,
@@ -67,6 +69,7 @@ public class CityNet {
 	
 	private CityNet() { 
 		distanceUnit = DistanceUnit.KILOMETERS;
+		displayOptions = new DisplayOptions();
 		nextNodeTypeId = new AtomicInteger();
 		nextNodeTypeAttributeId = new AtomicInteger();
 		nextEdgeTypeId = new AtomicInteger();
@@ -83,6 +86,15 @@ public class CityNet {
 	}
 	private static class SingletonHolder { 
 		public static final CityNet INSTANCE = new CityNet();
+	}
+	
+	/**
+	 * Gets the display options.
+	 *
+	 * @return the display options
+	 */
+	public DisplayOptions getDisplayOptions() {
+		return displayOptions;
 	}
 	
 	/**

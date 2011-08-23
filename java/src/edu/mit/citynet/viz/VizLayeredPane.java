@@ -24,6 +24,7 @@ import javax.swing.JPopupMenu;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
@@ -40,8 +41,6 @@ import edu.mit.citynet.util.CityNetCursor;
  */
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
-	private static final double MIN_SCALE = 10, MAX_SCALE = 1000, MAX_X = 50, MAX_Y = 50;
-	private DisplayOptions displayOptions;
 	private DisplayOptionsPanel displayOptionsPanel;
 	private GridLayer gridLayer;
 	private MapLayer mapLayer;
@@ -53,8 +52,6 @@ public class VizLayeredPane extends JLayeredPane {
 	private EdgeLayer edgeLayer;
 	private City city;
 	private CitySystem system;
-	private double viewScale;
-	private Coordinate viewOrigin;
 	private Point previousDrag;
 	private CellRegion selectedCellRegion;
 	private NodeRegion selectedNodeRegion;
@@ -74,11 +71,17 @@ public class VizLayeredPane extends JLayeredPane {
 		}
 		this.city = city;
 		this.system = system;
-		this.viewScale = 100d;	// default: 100 px/km
-		this.viewOrigin = new Coordinate();
-		displayOptions = new DisplayOptions();
 		displayOptionsPanel = new DisplayOptionsPanel();
 		initializePanel();
+	}
+	
+	/**
+	 * Gets the display options.
+	 *
+	 * @return the display options
+	 */
+	DisplayOptions getDisplayOptions() {
+		return CityNet.getInstance().getDisplayOptions();
 	}
 	
 	/**
@@ -157,8 +160,7 @@ public class VizLayeredPane extends JLayeredPane {
 				} else if(e.getKeyCode()==KeyEvent.VK_RIGHT) {
 					panView(new Point(-1, 0));
 				} else if(e.getKeyCode()==KeyEvent.VK_HOME) {
-					viewOrigin.x = 0;
-					viewOrigin.y = 0;
+					getDisplayOptions().setViewOrigin(new Coordinate());
 					repaint();
 				} else if(e.getKeyCode()==KeyEvent.VK_ENTER){
 					autofitView();
@@ -253,8 +255,8 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the point
 	 */
 	public Point getPoint(Coordinate coordinate) {
-		return new Point((int)(Math.round((coordinate.x-viewOrigin.x)*getViewScale())),
-				(int)(Math.round((coordinate.y-viewOrigin.y)*getViewScale())));
+		return new Point((int)(Math.round((coordinate.x-getDisplayOptions().getViewOrigin().x)*getViewScale())),
+				(int)(Math.round((coordinate.y-getDisplayOptions().getViewOrigin().y)*getViewScale())));
 	}
 	
 	/**
@@ -264,8 +266,8 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the coordinate
 	 */
 	public Coordinate getCoordinate(Point point) {
-		return new Coordinate(viewOrigin.x + point.x/viewScale,
-				viewOrigin.y + point.y/viewScale);
+		return new Coordinate(getDisplayOptions().getViewOrigin().x + point.x/getDisplayOptions().getViewScale(),
+				getDisplayOptions().getViewOrigin().y + point.y/getDisplayOptions().getViewScale());
 	}
 	
 	/**
@@ -274,7 +276,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the scale
 	 */
 	public double getViewScale() {
-		return viewScale;
+		return getDisplayOptions().getViewScale();
 	}
 	
 	/**
@@ -283,7 +285,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the position
 	 */
 	public Coordinate getViewOrigin() {
-		return viewOrigin;
+		return getDisplayOptions().getViewOrigin();
 	}
 	
 	/**
@@ -293,7 +295,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the auto scale
 	 */
 	private double getAutoScale() {
-		if(city.getImage()==null) return viewScale;
+		if(city.getImage()==null) return getDisplayOptions().getViewScale();
 		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
 		y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;
 		for(Coordinate coordinate : city.getImagePolygon().getCoordinates()) {
@@ -311,7 +313,7 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @return the auto position
 	 */
 	private Coordinate getAutoPosition() {
-		if(city.getImage()==null) return new Coordinate(-getWidth()/2/viewScale,-getHeight()/2/viewScale);
+		if(city.getImage()==null) return new Coordinate(-getWidth()/2/getDisplayOptions().getViewScale(),-getHeight()/2/getDisplayOptions().getViewScale());
 		double x1 = Double.MAX_VALUE, x2 = Double.MIN_VALUE, 
 		y1 = Double.MAX_VALUE, y2 = Double.MIN_VALUE;
 		for(Coordinate coordinate : city.getImagePolygon().getCoordinates()) {
@@ -322,7 +324,7 @@ public class VizLayeredPane extends JLayeredPane {
 		}
 		Point p1 = getPoint(new Coordinate(x1,y1));
 		Point p2 = getPoint(new Coordinate(x2,y2));
-		Point p = getPoint(new Coordinate(viewOrigin.x,viewOrigin.y));
+		Point p = getPoint(new Coordinate(getDisplayOptions().getViewOrigin().x,getDisplayOptions().getViewOrigin().y));
 		p.x = p1.x - (getWidth()-Math.abs(p2.x-p1.x))/2;
 		p.y = p1.y - (getHeight()-Math.abs(p2.y-p1.y))/2;
 		return getCoordinate(p);
@@ -336,10 +338,12 @@ public class VizLayeredPane extends JLayeredPane {
 	private void panView(Point distance) {
 		Coordinate c1 = getCoordinate(new Point(0,0));
 		Coordinate c2 = getCoordinate(new Point(getWidth(),getHeight()));
-		viewOrigin.x = Math.min(Math.max(viewOrigin.x
-				+ (distance.x)/viewScale, -MAX_X),MAX_X-(c2.x-c1.x));
-		viewOrigin.y = Math.min(Math.max(viewOrigin.y
-				+ (distance.y)/viewScale, -MAX_Y),MAX_Y-(c2.y-c1.y));
+		getDisplayOptions().getViewOrigin().x = Math.min(Math.max(getDisplayOptions().getViewOrigin().x
+				+ (distance.x)/getDisplayOptions().getViewScale(), 
+				-DisplayOptions.MAX_X),DisplayOptions.MAX_X-(c2.x-c1.x));
+		getDisplayOptions().getViewOrigin().y = Math.min(Math.max(getDisplayOptions().getViewOrigin().y
+				+ (distance.y)/getDisplayOptions().getViewScale(), 
+				-DisplayOptions.MAX_Y),DisplayOptions.MAX_Y-(c2.y-c1.y));
 		repaint();
 	}
 	
@@ -349,8 +353,10 @@ public class VizLayeredPane extends JLayeredPane {
 	 * @param location the location
 	 */
 	private void centerView(Point location) {
-		viewOrigin.x = viewOrigin.x + (location.x - getWidth()/2)/viewScale;
-		viewOrigin.y = viewOrigin.y + (location.y - getHeight()/2)/viewScale;
+		getDisplayOptions().getViewOrigin().x = getDisplayOptions().getViewOrigin().x 
+			+ (location.x - getWidth()/2)/getDisplayOptions().getViewScale();
+		getDisplayOptions().getViewOrigin().y = getDisplayOptions().getViewOrigin().y 
+			+ (location.y - getHeight()/2)/getDisplayOptions().getViewScale();
 		repaint();
 	}
 	
@@ -362,11 +368,15 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	private void zoomView(int level, Point location) {
 		double scaleFactor = Math.pow(1.5, level);
-		double newViewScale = Math.max(MIN_SCALE,Math.min(MAX_SCALE,viewScale*scaleFactor));
+		double newViewScale = Math.max(DisplayOptions.MIN_SCALE,
+				Math.min(DisplayOptions.MAX_SCALE,
+						getDisplayOptions().getViewScale()*scaleFactor));
 		Coordinate coordinate = getCoordinate(location);
-		viewOrigin.x = coordinate.x - (coordinate.x-viewOrigin.x)*viewScale/newViewScale;
-		viewOrigin.y = coordinate.y - (coordinate.y-viewOrigin.y)*viewScale/newViewScale;
-		viewScale = newViewScale;
+		getDisplayOptions().getViewOrigin().x = coordinate.x 
+			- (coordinate.x-getDisplayOptions().getViewOrigin().x)*getDisplayOptions().getViewScale()/newViewScale;
+		getDisplayOptions().getViewOrigin().y = coordinate.y 
+			- (coordinate.y-getDisplayOptions().getViewOrigin().y)*getDisplayOptions().getViewScale()/newViewScale;
+		getDisplayOptions().setViewScale(newViewScale);
 		repaint();
 	}
 	
@@ -374,8 +384,8 @@ public class VizLayeredPane extends JLayeredPane {
 	 * Autofit view.
 	 */
 	private void autofitView() {
-		viewScale = getAutoScale();
-		viewOrigin = getAutoPosition();
+		getDisplayOptions().setViewScale(getAutoScale());
+		getDisplayOptions().setViewOrigin(getAutoPosition());
 		repaint();
 	}
 
@@ -454,21 +464,12 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	public void editDisplayOptionsCommand() {
 		System.out.println("Edit Display Options Command");
-		displayOptionsPanel.loadDisplayOptions(displayOptions);
+		displayOptionsPanel.loadDisplayOptions(getDisplayOptions());
 		int value = JOptionPane.showConfirmDialog(this,displayOptionsPanel,"City.Net | Display Options", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			displayOptionsPanel.saveDisplayOptionsCommand();
 			repaint();
 		}
-	}
-	
-	/**
-	 * Gets the display options.
-	 *
-	 * @return the display options
-	 */
-	public DisplayOptions getDisplayOptions() {
-		return displayOptions;
 	}
 }

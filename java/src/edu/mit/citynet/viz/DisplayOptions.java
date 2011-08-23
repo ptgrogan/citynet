@@ -5,12 +5,17 @@
  */
 package edu.mit.citynet.viz;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 /**
  * The DisplayOptions class.
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class DisplayOptions {
+	public static final double MIN_SCALE = 10, MAX_SCALE = 1000, MAX_X = 50, MAX_Y = 50;
+	private double viewScale;
+	private Coordinate viewOrigin;
 	private boolean gridDisplayed, mapDisplayed, layersFiltered;
 	private double gridSpacing, displayHeight;
 	private float cellRegionOpacity, cellOpacity, nodeRegionOpacity, 
@@ -31,8 +36,26 @@ public class DisplayOptions {
 		nodeOpacity = 0.5f;
 		edgeRegionOpacity = 0.5f;
 		edgeOpacity = 0.5f;
+		viewScale = 100d;	// default: 100 px/km
+		viewOrigin = new Coordinate();
 	}
 	
+	public double getViewScale() {
+		return viewScale;
+	}
+
+	public void setViewScale(double viewScale) {
+		this.viewScale = viewScale;
+	}
+
+	public Coordinate getViewOrigin() {
+		return viewOrigin;
+	}
+
+	public void setViewOrigin(Coordinate viewOrigin) {
+		this.viewOrigin = viewOrigin;
+	}
+
 	public boolean isLayersFiltered() {
 		return layersFiltered;
 	}
