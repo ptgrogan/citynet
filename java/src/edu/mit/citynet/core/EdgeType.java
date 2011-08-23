@@ -123,6 +123,16 @@ public class EdgeType implements Cloneable {
 	}
 	
 	/**
+	 * Adds the attribute.
+	 *
+	 * @param attribute the attribute
+	 * @return true, if successful
+	 */
+	public boolean addAttribute(EdgeTypeAttribute attribute) {
+		return attributes.add(attribute);
+	}
+	
+	/**
 	 * Sets the attributes.
 	 *
 	 * @param attributes the new attributes
@@ -192,7 +202,8 @@ public class EdgeType implements Cloneable {
 		clone.setId(0);
 		clone.setName(getName() + " (Copy)");
 		clone.setDescription(getDescription());
-		clone.addAllAttributes(getAttributes());
+		for(EdgeTypeAttribute attribute : getAttributes())
+			clone.addAttribute(attribute.clone());
 		clone.setColor(getColor());
 		return clone;
 	}
