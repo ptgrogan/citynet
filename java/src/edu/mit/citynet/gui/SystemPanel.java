@@ -811,7 +811,7 @@ public class SystemPanel extends JSplitPane {
 		JOptionPane.showMessageDialog(this, tableScroll, 
 				"City.Net | Node Regions", JOptionPane.PLAIN_MESSAGE);
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.getModel().setSystem(system); // hacked update... bleh
+		systemTree.setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
 	}
 	
@@ -826,7 +826,7 @@ public class SystemPanel extends JSplitPane {
 		JOptionPane.showMessageDialog(this, tableScroll, 
 				"City.Net | Edge Regions", JOptionPane.PLAIN_MESSAGE);
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.getModel().setSystem(system); // hacked update... bleh
+		systemTree.setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
 	}
 	
@@ -841,7 +841,7 @@ public class SystemPanel extends JSplitPane {
 		JOptionPane.showMessageDialog(this, tableScroll,
 				"City.Net | Node Types", JOptionPane.PLAIN_MESSAGE);
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.getModel().setSystem(system); // hacked update... bleh
+		systemTree.setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
 	}
 	
@@ -856,7 +856,7 @@ public class SystemPanel extends JSplitPane {
 		JOptionPane.showMessageDialog(this, tableScroll,
 				"City.Net | Edge Types", JOptionPane.PLAIN_MESSAGE);
 		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.getModel().setSystem(system); // hacked update... bleh
+		systemTree.setSystem(system); // hacked update... bleh
 		layeredPane.repaint();
 	}
 }

@@ -32,8 +32,15 @@ public class SystemTreeModel extends DefaultTreeModel {
 	 */
 	public SystemTreeModel(CitySystem system) {
 		super(createTreeNode(system));
-		root = (DefaultMutableTreeNode)getRoot();
+		root = (DefaultMutableTreeNode)super.getRoot();
 		setSystem(system);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.swing.tree.DefaultTreeModel#getRoot()
+	 */
+	public DefaultMutableTreeNode getRoot() {
+		return root;
 	}
 	
 	/**

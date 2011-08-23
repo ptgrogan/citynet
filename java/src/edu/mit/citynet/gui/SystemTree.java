@@ -7,11 +7,14 @@ package edu.mit.citynet.gui;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.util.Enumeration;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
@@ -148,5 +151,18 @@ public class SystemTree extends JTree {
 			return ((MutableEdgeRegionTreeNode)
 					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
 		} else return null;
+	}
+	
+	/**
+	 * Sets the system.
+	 *
+	 * @param system the new system
+	 */
+	public void setSystem(CitySystem system) {
+		Enumeration<TreePath> expandedPaths = getExpandedDescendants(new TreePath(model.getRoot()));
+		model.setSystem(system);
+		while(expandedPaths.hasMoreElements()) {
+			expandPath(expandedPaths.nextElement());
+		}
 	}
 }
