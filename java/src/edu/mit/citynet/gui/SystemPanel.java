@@ -197,58 +197,90 @@ public class SystemPanel extends JSplitPane {
 		if(path==null) return systemTreePopupMenu;
 		if(path.getLastPathComponent()==systemTree.getModel().layersTreeNode
 				|| path.getLastPathComponent() instanceof MutableLayerTreeNode) {
-			JMenuItem addLayerMenuItem = new JMenuItem("Add Layer");
-			addLayerMenuItem.addActionListener(new ActionListener() {
+			JMenuItem addMenuItem = new JMenuItem("Add Layer");
+			addMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addLayerCommand();
 				}
 			});
-			systemTreePopupMenu.add(addLayerMenuItem);
-			JMenuItem editLayerMenuItem = new JMenuItem("Edit Layer");
-			editLayerMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(addMenuItem);
+			JMenuItem editMenuItem = new JMenuItem("Edit Layer");
+			editMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					editLayerCommand(systemTree.getSelectedLayer());
 				}
 			});
-			editLayerMenuItem.setEnabled(path.getLastPathComponent() 
+			editMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableLayerTreeNode);
-			systemTreePopupMenu.add(editLayerMenuItem);
-			JMenuItem deleteLayerMenuItem = new JMenuItem("Delete Layer");
-			deleteLayerMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(editMenuItem);
+			JMenuItem deleteMenuItem = new JMenuItem("Delete Layer");
+			deleteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					deleteLayerCommand(systemTree.getSelectedLayer());
 				}
 			});
-			deleteLayerMenuItem.setEnabled(path.getLastPathComponent() 
+			deleteMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableLayerTreeNode);
-			systemTreePopupMenu.add(deleteLayerMenuItem);
+			systemTreePopupMenu.add(deleteMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem moveUpMenuItem = new JMenuItem("Move Layer Up");
+			moveUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Layer layer = systemTree.getSelectedLayer();
+					if(system.moveLayerTo(layer, system.getLayers().indexOf(layer)-1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableLayerTreeNode &&
+					system.getLayers().indexOf(systemTree.getSelectedLayer())>0);
+			systemTreePopupMenu.add(moveUpMenuItem);
+			JMenuItem moveDownMenuItem = new JMenuItem("Move Layer Down");
+			moveDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Layer layer = systemTree.getSelectedLayer();
+					if(system.moveLayerTo(layer, system.getLayers().indexOf(layer)+1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableLayerTreeNode &&
+					system.getLayers().indexOf(systemTree.getSelectedLayer())<system.getLayers().size()-1);
+			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().nodeTypesTreeNode
 				|| path.getLastPathComponent() instanceof MutableNodeTypeTreeNode) {
-			JMenuItem addNodeTypeMenuItem = new JMenuItem("Add Node Type");
-			addNodeTypeMenuItem.addActionListener(new ActionListener() {
+			JMenuItem addMenuItem = new JMenuItem("Add Node Type");
+			addMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addNodeTypeCommand();
 				}
 			});
-			systemTreePopupMenu.add(addNodeTypeMenuItem);
-			JMenuItem editNodeTypeMenuItem = new JMenuItem("Edit Node Type");
-			editNodeTypeMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(addMenuItem);
+			JMenuItem editMenuItem = new JMenuItem("Edit Node Type");
+			editMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					editNodeTypeCommand(systemTree.getSelectedNodeType());
 				}
 			});
-			editNodeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+			editMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeTypeTreeNode);
-			systemTreePopupMenu.add(editNodeTypeMenuItem);
-			JMenuItem deleteNodeTypeMenuItem = new JMenuItem("Delete Node Type");
-			deleteNodeTypeMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(editMenuItem);
+			JMenuItem deleteMenuItem = new JMenuItem("Delete Node Type");
+			deleteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					deleteNodeTypeCommand(systemTree.getSelectedNodeType());
 				}
 			});
-			deleteNodeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+			deleteMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeTypeTreeNode);
-			systemTreePopupMenu.add(deleteNodeTypeMenuItem);
+			systemTreePopupMenu.add(deleteMenuItem);
+			JMenuItem copyMenuItem = new JMenuItem("Copy Node Type");
+			copyMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					copyNodeTypeCommand(systemTree.getSelectedNodeType());
+				}
+			});
+			copyMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableNodeTypeTreeNode);
+			systemTreePopupMenu.add(copyMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editNodeTypeTableMenuItem = new JMenuItem("Edit Node Types Table");
 			editNodeTypeTableMenuItem.addActionListener(new ActionListener() {
@@ -257,33 +289,65 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(editNodeTypeTableMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem moveUpMenuItem = new JMenuItem("Move Node Type Up");
+			moveUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					NodeType type = systemTree.getSelectedNodeType();
+					if(system.moveNodeTypeTo(type, system.getNodeTypes().indexOf(type)-1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeTypeTreeNode &&
+					system.getNodeTypes().indexOf(systemTree.getSelectedNodeType())>0);
+			systemTreePopupMenu.add(moveUpMenuItem);
+			JMenuItem moveDownMenuItem = new JMenuItem("Move Node Type Down");
+			moveDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					NodeType type = systemTree.getSelectedNodeType();
+					if(system.moveNodeTypeTo(type, system.getNodeTypes().indexOf(type)+1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeTypeTreeNode &&
+					system.getNodeTypes().indexOf(systemTree.getSelectedNodeType())<system.getNodeTypes().size()-1);
+			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().edgeTypesTreeNode
 				|| path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode) {
-			JMenuItem addEdgeTypeMenuItem = new JMenuItem("Add Edge Type");
-			addEdgeTypeMenuItem.addActionListener(new ActionListener() {
+			JMenuItem addMenuItem = new JMenuItem("Add Edge Type");
+			addMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addEdgeTypeCommand();
 				}
 			});
-			systemTreePopupMenu.add(addEdgeTypeMenuItem);
-			JMenuItem editEdgeTypeMenuItem = new JMenuItem("Edit Edge Type");
-			editEdgeTypeMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(addMenuItem);
+			JMenuItem editMenuItem = new JMenuItem("Edit Edge Type");
+			editMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					editEdgeTypeCommand(systemTree.getSelectedEdgeType());
 				}
 			});
-			editEdgeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+			editMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeTypeTreeNode);
-			systemTreePopupMenu.add(editEdgeTypeMenuItem);
-			JMenuItem deleteEdgeTypeMenuItem = new JMenuItem("Delete Edge Type");
-			deleteEdgeTypeMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(editMenuItem);
+			JMenuItem deleteMenuItem = new JMenuItem("Delete Edge Type");
+			deleteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					deleteEdgeTypeCommand(systemTree.getSelectedEdgeType());
 				}
 			});
-			deleteEdgeTypeMenuItem.setEnabled(path.getLastPathComponent() 
+			deleteMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeTypeTreeNode);
-			systemTreePopupMenu.add(deleteEdgeTypeMenuItem);
+			systemTreePopupMenu.add(deleteMenuItem);
+			JMenuItem copyMenuItem = new JMenuItem("Copy Edge Type");
+			copyMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					copyEdgeTypeCommand(systemTree.getSelectedEdgeType());
+				}
+			});
+			copyMenuItem.setEnabled(path.getLastPathComponent() 
+					instanceof MutableEdgeTypeTreeNode);
+			systemTreePopupMenu.add(copyMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editEdgeTypeTableMenuItem = new JMenuItem("Edit Edge Types Table");
 			editEdgeTypeTableMenuItem.addActionListener(new ActionListener() {
@@ -292,44 +356,67 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(editEdgeTypeTableMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem moveUpMenuItem = new JMenuItem("Move Edge Type Up");
+			moveUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EdgeType type = systemTree.getSelectedEdgeType();
+					if(system.moveEdgeTypeTo(type, system.getEdgeTypes().indexOf(type)-1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode &&
+					system.getEdgeTypes().indexOf(systemTree.getSelectedEdgeType())>0);
+			systemTreePopupMenu.add(moveUpMenuItem);
+			JMenuItem moveDownMenuItem = new JMenuItem("Move Edge Type Down");
+			moveDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EdgeType type = systemTree.getSelectedEdgeType();
+					if(system.moveEdgeTypeTo(type, system.getEdgeTypes().indexOf(type)+1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode &&
+					system.getEdgeTypes().indexOf(systemTree.getSelectedEdgeType())<system.getEdgeTypes().size()-1);
+			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
-			JMenuItem addNodeRegionMenuItem = new JMenuItem("Add Node Region");
-			addNodeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem addMenuItem = new JMenuItem("Add Node Region");
+			addMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addNodeRegionCommand();
 				}
 			});
-			systemTreePopupMenu.add(addNodeRegionMenuItem);
+			systemTreePopupMenu.add(addMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editNodeRegionMenuItem = new JMenuItem("Edit Node Region");
-			editNodeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem editMenuItem = new JMenuItem("Edit Node Region");
+			editMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					editNodeRegionCommand(systemTree.getSelectedNodeRegion());
 				}
 			});
-			editNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			editMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(editNodeRegionMenuItem);
+			systemTreePopupMenu.add(editMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem copyNodeRegionMenuItem = new JMenuItem("Copy Node Region");
-			copyNodeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem copyMenuItem = new JMenuItem("Copy Node Region");
+			copyMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					copyNodeRegionCommand(systemTree.getSelectedNodeRegion());
 				}
 			});
-			copyNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			copyMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(copyNodeRegionMenuItem);
-			JMenuItem deleteNodeRegionMenuItem = new JMenuItem("Delete Node Region");
-			deleteNodeRegionMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(copyMenuItem);
+			JMenuItem deleteMenuItem = new JMenuItem("Delete Node Region");
+			deleteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					deleteNodeRegionCommand(systemTree.getSelectedNodeRegion());
 				}
 			});
-			deleteNodeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			deleteMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(deleteNodeRegionMenuItem);
+			systemTreePopupMenu.add(deleteMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editNodeRegionsMenuItem = new JMenuItem("Edit Node Regions Table");
 			editNodeRegionsMenuItem.addActionListener(new ActionListener() {
@@ -338,44 +425,67 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(editNodeRegionsMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem moveUpMenuItem = new JMenuItem("Move Node Region Up");
+			moveUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					NodeRegion type = systemTree.getSelectedNodeRegion();
+					if(system.moveNodeRegionTo(type, system.getNodeRegions().indexOf(type)-1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeRegionTreeNode &&
+					system.getNodeRegions().indexOf(systemTree.getSelectedNodeRegion())>0);
+			systemTreePopupMenu.add(moveUpMenuItem);
+			JMenuItem moveDownMenuItem = new JMenuItem("Move Node Region Down");
+			moveDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					NodeRegion type = systemTree.getSelectedNodeRegion();
+					if(system.moveNodeRegionTo(type, system.getNodeRegions().indexOf(type)+1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeRegionTreeNode &&
+					system.getNodeRegions().indexOf(systemTree.getSelectedNodeRegion())<system.getNodeRegions().size()-1);
+			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
-			JMenuItem addEdgeRegionMenuItem = new JMenuItem("Add Edge Region");
-			addEdgeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem addMenuItem = new JMenuItem("Add Edge Region");
+			addMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addEdgeRegionCommand();
 				}
 			});
-			systemTreePopupMenu.add(addEdgeRegionMenuItem);
+			systemTreePopupMenu.add(addMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editEdgeRegionMenuItem = new JMenuItem("Edit Edge Region");
-			editEdgeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem editMenuItem = new JMenuItem("Edit Edge Region");
+			editMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
 				}
 			});
-			editEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			editMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(editEdgeRegionMenuItem);
+			systemTreePopupMenu.add(editMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem copyEdgeRegionMenuItem = new JMenuItem("Copy Edge Region");
-			copyEdgeRegionMenuItem.addActionListener(new ActionListener() {
+			JMenuItem copyMenuItem = new JMenuItem("Copy Edge Region");
+			copyMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					copyEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
 				}
 			});
-			copyEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			copyMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(copyEdgeRegionMenuItem);
-			JMenuItem deleteEdgeRegionMenuItem = new JMenuItem("Delete Edge Region");
-			deleteEdgeRegionMenuItem.addActionListener(new ActionListener() {
+			systemTreePopupMenu.add(copyMenuItem);
+			JMenuItem deleteMenuItem = new JMenuItem("Delete Edge Region");
+			deleteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					deleteEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
 				}
 			});
-			deleteEdgeRegionMenuItem.setEnabled(path.getLastPathComponent() 
+			deleteMenuItem.setEnabled(path.getLastPathComponent() 
 					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(deleteEdgeRegionMenuItem);
+			systemTreePopupMenu.add(deleteMenuItem);
 			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editEdgeRegionsMenuItem = new JMenuItem("Edit Edge Regions Table");
 			editEdgeRegionsMenuItem.addActionListener(new ActionListener() {
@@ -384,6 +494,29 @@ public class SystemPanel extends JSplitPane {
 				}
 			});
 			systemTreePopupMenu.add(editEdgeRegionsMenuItem);
+			systemTreePopupMenu.add(new JSeparator());
+			JMenuItem moveUpMenuItem = new JMenuItem("Move Edge Region Up");
+			moveUpMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EdgeRegion type = systemTree.getSelectedEdgeRegion();
+					if(system.moveEdgeRegionTo(type, system.getEdgeRegions().indexOf(type)-1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode &&
+					system.getEdgeRegions().indexOf(systemTree.getSelectedEdgeRegion())>0);
+			systemTreePopupMenu.add(moveUpMenuItem);
+			JMenuItem moveDownMenuItem = new JMenuItem("Move Edge Region Down");
+			moveDownMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EdgeRegion type = systemTree.getSelectedEdgeRegion();
+					if(system.moveEdgeRegionTo(type, system.getEdgeRegions().indexOf(type)+1))
+						systemTree.setSystem(system); // hack-y update
+				}
+			});
+			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode &&
+					system.getEdgeRegions().indexOf(systemTree.getSelectedEdgeRegion())<system.getEdgeRegions().size()-1);
+			systemTreePopupMenu.add(moveDownMenuItem);
 		}
 		return systemTreePopupMenu;
 	}
@@ -532,6 +665,25 @@ public class SystemPanel extends JSplitPane {
 	}
 	
 	/**
+	 * Copy node type command.
+	 *
+	 * @param type the type
+	 */
+	private void copyNodeTypeCommand(NodeType type) {
+		System.out.println("Copy Node Type Command");
+		NodeType nodeType = type.clone();
+		nodeTypePanel.loadNodeType(nodeType);
+		int value = JOptionPane.showConfirmDialog(this, nodeTypePanel,
+				"City.Net | Node Type", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			nodeTypePanel.saveNodeTypeCommand();
+			system.addNodeType(nodeType);
+			systemTree.getModel().addNodeType(nodeType);
+		}
+	}
+	
+	/**
 	 * Adds the edge type command.
 	 */
 	private void addEdgeTypeCommand() {
@@ -595,6 +747,25 @@ public class SystemPanel extends JSplitPane {
 			system.removeEdgeType(edgeType);
 			systemTree.getModel().removeEdgeType(edgeType);
 			layeredPane.repaint();
+		}
+	}
+	
+	/**
+	 * Copy edge type command.
+	 *
+	 * @param type the type
+	 */
+	private void copyEdgeTypeCommand(EdgeType type) {
+		System.out.println("Copy Edge Type Command");
+		EdgeType edgeType = type.clone();
+		edgeTypePanel.loadEdgeType(edgeType);
+		int value = JOptionPane.showConfirmDialog(this, edgeTypePanel,
+				"City.Net | Edge Type", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			edgeTypePanel.saveEdgeTypeCommand();
+			system.addEdgeType(edgeType);
+			systemTree.getModel().addEdgeType(edgeType);
 		}
 	}
 	

@@ -124,6 +124,11 @@ public class NodeRegionsTable extends JTable {
 				system.getNodeRegions().indexOf(region));
 	}
 	
+	/**
+	 * Copy node region command.
+	 *
+	 * @param region the region
+	 */
 	private void copyNodeRegionCommand(NodeRegion region) {
 		System.out.println("Copy Node Region Command");
 		NodeRegion clone = region.clone();
@@ -182,6 +187,7 @@ public class NodeRegionsTable extends JTable {
 		});
 		deleteNodeRegionsMenuItem.setEnabled(regions.size()>0);
 		nodeRegionPopupMenu.add(deleteNodeRegionsMenuItem);
+		nodeRegionPopupMenu.add(new JSeparator());
 		return nodeRegionPopupMenu;
 	}
 	

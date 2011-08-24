@@ -526,6 +526,91 @@ public class CitySystem {
 		} else return false;
 	}
 	
+	/**
+	 * Move node region to a new index.
+	 *
+	 * @param region the region
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveNodeRegionTo(NodeRegion region, int index) {
+		if(!nodeRegions.contains(region) || index < 0 || index >= nodeRegions.size())
+			return false;
+		int oldIndex = nodeRegions.indexOf(region);
+		NodeRegion otherRegion = nodeRegions.get(index);
+		nodeRegions.set(index, region);
+		nodeRegions.set(oldIndex, otherRegion);
+		return true;
+	}
+	
+	/**
+	 * Move edge region to a new index.
+	 *
+	 * @param region the region
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveEdgeRegionTo(EdgeRegion region, int index) {
+		if(!edgeRegions.contains(region) || index < 0 || index >= edgeRegions.size())
+			return false;
+		int oldIndex = edgeRegions.indexOf(region);
+		EdgeRegion otherRegion = edgeRegions.get(index);
+		edgeRegions.set(index, region);
+		edgeRegions.set(oldIndex, otherRegion);
+		return true;
+	}
+	
+	/**
+	 * Move node type to a new index.
+	 *
+	 * @param type the type
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveNodeTypeTo(NodeType type, int index) {
+		if(!nodeTypes.contains(type) || index < 0 || index >= nodeTypes.size())
+			return false;
+		int oldIndex = nodeTypes.indexOf(type);
+		NodeType otherType = nodeTypes.get(index);
+		nodeTypes.set(index, type);
+		nodeTypes.set(oldIndex, otherType);
+		return true;
+	}
+	
+	/**
+	 * Move edge type to a new index.
+	 *
+	 * @param type the type
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveEdgeTypeTo(EdgeType type, int index) {
+		if(!edgeTypes.contains(type) || index < 0 || index >= edgeTypes.size())
+			return false;
+		int oldIndex = edgeTypes.indexOf(type);
+		EdgeType otherType = edgeTypes.get(index);
+		edgeTypes.set(index, type);
+		edgeTypes.set(oldIndex, otherType);
+		return true;
+	}
+	
+	/**
+	 * Move layer to a new index.
+	 *
+	 * @param layer the layer
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveLayerTo(Layer layer, int index) {
+		if(!layers.contains(layer) || index < 0 || index >= layers.size())
+			return false;
+		int oldIndex = layers.indexOf(layer);
+		Layer otherLayer = layers.get(index);
+		layers.set(index, layer);
+		layers.set(oldIndex, otherLayer);
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
