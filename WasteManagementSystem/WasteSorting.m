@@ -23,7 +23,7 @@ classdef WasteSorting < Behavior
         total_delivered_waste;      % the total waste in the city delivered directly to the waste management system by residents (function input)
         waste_to_MRF;               % the comingled waste sent to a materials recovery facility
         recyclables;                % the amount of collected waste able to be sent directly as recyclables
-        biowaste;                   % the total amount of biowaste generated. This can either be treated biologically, thermally, or landfilled
+        biowaste;                   % the total amount of biowaste generated. This can either be treated biologically or landfilled
         restwaste_to_cRDF;          % the fraction of the total remaining waste going to cRDF sorting
         restwaste_to_dRDF;          % the fraction of the total remaining waste going to dRDF sorting
         restwaste_to_biological;    % the fraction of the total remaining waste going to biological treatment
@@ -100,14 +100,30 @@ classdef WasteSorting < Behavior
             % It should be noted that the remaining proportion of each
             % waste stream (ie. 1-sum(terms in ratio vector)) i sassumed to
             % be comingled restwaste.
-            paperratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioPaper'));
-            glassratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioGlass'));
-            femetalratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFeMetal'));
-            nonfemetalratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioNonFeMetal'));
-            filmplasticratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFilmPlastic'));
-            rigidplasticratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioRigidPlastic'));
-            textilesratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioTextiles'));
-            organicsratio = str2num(sorting.GetNodeTypeAttributeValue('wasteCollectionRatioOrganics'));
+            paperratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioPaperKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioPaperSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioPaperMixedMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioPaperBiowaste')];
+            glassratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioGlassKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioGlassSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioGlassMixedMaterials')];
+            femetalratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFeMetalKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFeMetalSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFeMetalMixedMaterials')];
+            nonfemetalratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioNonFeMetalKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioNonFeMetalSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioNonFeMetalMixedMaterials')];
+            filmplasticratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFilmPlasticKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFilmPlasticSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioFilmPlasticMixedMaterials')];
+            rigidplasticratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioRigidPlasticKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioRigidPlasticSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioRigidPlasticMixedMaterials')];
+            textilesratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioTextilesKerbside'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioTextilesSingleMaterials'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioTextilesMixedMaterials')];
+            organicsratio = [sorting.GetNodeTypeAttributeValue('wasteCollectionRatioOrganicsBiowaste'),...
+                sorting.GetNodeTypeAttributeValue('wasteCollectionRatioOrganicsSingleMaterials')];
             
             % Extract proportions of commercial waste transferred to
             % waste management system by waste stream
@@ -117,7 +133,8 @@ classdef WasteSorting < Behavior
             % corresponds to paper collected from commercial biowaste bins.
             % Additionally, any remaining waste is assumed to enter the
             % restwaste stream
-            commercialpaperratio = str2num(sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioPaper'));
+            commercialpaperratio = [sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioPaperDirect'),...
+                sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioPaperBiowaste')];
             commercialglassratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioGlass');
             commercialfemetalratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioFeMetal');
             commercialnonfemetalratio = sorting.GetNodeTypeAttributeValue('commercialWasteCollectionRatioNonFeMetal');
@@ -133,6 +150,7 @@ classdef WasteSorting < Behavior
             deliverednonfemetalrate = sorting.GetNodeTypeAttributeValue('deliveredNonFeMetalRecoveryRate');
             deliveredfilmplasticrate = sorting.GetNodeTypeAttributeValue('deliveredFilmPlasticRecoveryRate');
             deliveredrigidplasticrate = sorting.GetNodeTypeAttributeValue('deliveredRigidPlasticRecoveryRate');
+            deliveredotherrate = sorting.GetNodeTypeAttributeValue('deliveredOtherRecoveryRate');
             
             % Determine contamination rates based on if kerbside sorting is
             % performed or not
@@ -297,17 +315,26 @@ classdef WasteSorting < Behavior
             %% Calculate Total Restwaste by Stream, as well as breakdown of restwaste by destination from sorting facility
             % Total Restwaste = Total waste input - (waste to MRF +
             % recyclables + biowaste)
-            
-                    %   restwaste_to_cRDF:          the fraction of the total remaining waste going to cRDF sorting
-        %   restwaste_to_dRDF:          the fraction of the total remaining waste going to dRDF sorting
-        %   restwaste_to_biological:    the fraction of the total remaining waste going to biological treatment
-        %   restwaste_to_thermal:       the fraction of the total remaining waste going to thermal treatment
-        %   restwaste_to_landfill:      the fraction of the total remaining waste going to landfill
+            %
+            % For the case of restwaste to thermal and landfill, the
+            % contribution of delivered waste residues is also added for
+            % the glass, fe_metal, nonfe_metal, filmplastic, rigidplastic,
+            % and other waste streams
+            %
+            %   restwaste_to_cRDF:          the fraction of the total remaining waste going to cRDF sorting
+            %   restwaste_to_dRDF:          the fraction of the total remaining waste going to dRDF sorting
+            %   restwaste_to_biological:    the fraction of the total remaining waste going to biological treatment
+            %   restwaste_to_thermal:       the fraction of the total remaining waste going to thermal treatment
+            %   restwaste_to_landfill:      the fraction of the total remaining waste going to landfill
+            %   delivered
             
             % Extract restwaste destination ratio values
             % Vector format is [cRDF dRDF biological treatment, thermal
             % treatment]. The remainder is sent to landfill
-            restwastedistribution = str2num(sorting.GetNodeTypeAttributeValue('restwasteDestinationRatio'));
+            restwastedistribution = [sorting.GetNodeTypeAttributeValue('restwasteDestinationRatiocRDF'),...
+                sorting.GetNodeTypeAttributeValue('restwasteDestinationRatiodRDF'),...
+                sorting.GetNodeTypeAttributeValue('restwasteDestinationRatioBiological'),...
+                sorting.GetNodeTypeAttributeValue('restwasteDestinationRatioThermal')];
                 
             % Paper
             totalrestwastepaper = (obj.total_residential_waste.paper+...
@@ -319,7 +346,7 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_dRDF.paper = restwastedistribution(2)*totalrestwastepaper;
             obj.restwaste_to_biological.paper = restwastedistribution(3)*totalrestwastepaper;
             obj.restwaste_to_thermal.paper = restwastedistribution(4)*totalrestwastepaper;
-            obj.restwaste_to_landfill.paper = (1-sum(restwastedistribution([1:4])))*totalrestwastepaper;
+            obj.restwaste_to_landfill.paper = (1-sum(restwastedistribution(1:4)))*totalrestwastepaper;
             
             % Glass
             totalrestwasteglass = (obj.total_residential_waste.glass+...
@@ -330,8 +357,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.glass = restwastedistribution(1)*totalrestwasteglass;
             obj.restwaste_to_dRDF.glass = restwastedistribution(2)*totalrestwasteglass;
             obj.restwaste_to_biological.glass = restwastedistribution(3)*totalrestwasteglass;
-            obj.restwaste_to_thermal.glass = restwastedistribution(4)*totalrestwasteglass;
-            obj.restwaste_to_landfill.glass = (1-sum(restwastedistribution([1:4])))*totalrestwasteglass;
+            obj.restwaste_to_thermal.glass = restwastedistribution(4)*totalrestwasteglass+...
+                obj.total_delivered_waste.glass*(1-deliveredglassrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration');       
+            obj.restwaste_to_landfill.glass = (1-sum(restwastedistribution(1:4)))*totalrestwasteglass+...
+                obj.total_delivered_waste.glass*(1-deliveredglassrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
                         
             % Ferrous Metal
             totalrestwastefe_metal = (obj.total_residential_waste.fe_metal+...
@@ -342,8 +373,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.fe_metal = restwastedistribution(1)*totalrestwastefe_metal;
             obj.restwaste_to_dRDF.fe_metal = restwastedistribution(2)*totalrestwastefe_metal;
             obj.restwaste_to_biological.fe_metal = restwastedistribution(3)*totalrestwastefe_metal;
-            obj.restwaste_to_thermal.fe_metal = restwastedistribution(4)*totalrestwastefe_metal;
-            obj.restwaste_to_landfill.fe_metal = (1-sum(restwastedistribution([1:4])))*totalrestwastefe_metal;
+            obj.restwaste_to_thermal.fe_metal = restwastedistribution(4)*totalrestwastefe_metal+...
+                obj.total_delivered_waste.fe_metal*(1-deliveredfemetalrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration');
+            obj.restwaste_to_landfill.fe_metal = (1-sum(restwastedistribution(1:4)))*totalrestwastefe_metal+...
+                obj.total_delivered_waste.fe_metal*(1-deliveredfemetalrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
             
             % Non-Ferrous Metal
             totalrestwastenonfe_metal = (obj.total_residential_waste.nonfe_metal+...
@@ -354,8 +389,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.nonfe_metal = restwastedistribution(1)*totalrestwastenonfe_metal;
             obj.restwaste_to_dRDF.nonfe_metal = restwastedistribution(2)*totalrestwastenonfe_metal;
             obj.restwaste_to_biological.nonfe_metal = restwastedistribution(3)*totalrestwastenonfe_metal;
-            obj.restwaste_to_thermal.nonfe_metal = restwastedistribution(4)*totalrestwastenonfe_metal;
-            obj.restwaste_to_landfill.nonfe_metal = (1-sum(restwastedistribution([1:4])))*totalrestwastenonfe_metal;
+            obj.restwaste_to_thermal.nonfe_metal = restwastedistribution(4)*totalrestwastenonfe_metal+...
+                obj.total_delivered_waste.nonfe_metal*(1-deliverednonfemetalrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration');           
+            obj.restwaste_to_landfill.nonfe_metal = (1-sum(restwastedistribution(1:4)))*totalrestwastenonfe_metal+...
+                obj.total_delivered_waste.nonfe_metal*(1-deliverednonfemetalrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration')); 
             
             % Film Plastic
             totalrestwastefilmplastic = (obj.total_residential_waste.filmplastic+...
@@ -367,8 +406,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.filmplastic = restwastedistribution(1)*totalrestwastefilmplastic;
             obj.restwaste_to_dRDF.filmplastic = restwastedistribution(2)*totalrestwastefilmplastic;
             obj.restwaste_to_biological.filmplastic = restwastedistribution(3)*totalrestwastefilmplastic;
-            obj.restwaste_to_thermal.filmplastic = restwastedistribution(4)*totalrestwastefilmplastic;
-            obj.restwaste_to_landfill.filmplastic = (1-sum(restwastedistribution([1:4])))*totalrestwastefilmplastic;
+            obj.restwaste_to_thermal.filmplastic = restwastedistribution(4)*totalrestwastefilmplastic+...
+                obj.total_delivered_waste.filmplastic*(1-deliveredfilmplasticrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'); 
+            obj.restwaste_to_landfill.filmplastic = (1-sum(restwastedistribution(1:4)))*totalrestwastefilmplastic+...
+                obj.total_delivered_waste.filmplastic*(1-deliveredfilmplasticrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
             
             % Rigid Plastic
             totalrestwasterigidplastic = (obj.total_residential_waste.rigidplastic+...
@@ -380,8 +423,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.rigidplastic = restwastedistribution(1)*totalrestwasterigidplastic;
             obj.restwaste_to_dRDF.rigidplastic = restwastedistribution(2)*totalrestwasterigidplastic;
             obj.restwaste_to_biological.rigidplastic = restwastedistribution(3)*totalrestwasterigidplastic;
-            obj.restwaste_to_thermal.rigidplastic = restwastedistribution(4)*totalrestwasterigidplastic;
-            obj.restwaste_to_landfill.rigidplastic = (1-sum(restwastedistribution([1:4])))*totalrestwasterigidplastic;
+            obj.restwaste_to_thermal.rigidplastic = restwastedistribution(4)*totalrestwasterigidplastic+...
+                obj.total_delivered_waste.rigidplastic*(1-deliveredrigidplasticrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'); 
+            obj.restwaste_to_landfill.rigidplastic = (1-sum(restwastedistribution(1:4)))*totalrestwasterigidplastic+...
+                obj.total_delivered_waste.rigidplastic*(1-deliveredrigidplasticrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
             
             % Textiles
             totalrestwastetextiles = (obj.total_residential_waste.textiles+...
@@ -392,7 +439,7 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_dRDF.textiles = restwastedistribution(2)*totalrestwastetextiles;
             obj.restwaste_to_biological.textiles = restwastedistribution(3)*totalrestwastetextiles;
             obj.restwaste_to_thermal.textiles = restwastedistribution(4)*totalrestwastetextiles;
-            obj.restwaste_to_landfill.textiles = (1-sum(restwastedistribution([1:4])))*totalrestwastetextiles;
+            obj.restwaste_to_landfill.textiles = (1-sum(restwastedistribution(1:4)))*totalrestwastetextiles;
             
             % Organics
             totalrestwasteorganics = (obj.total_residential_waste.organics+...
@@ -404,7 +451,7 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_dRDF.organics = restwastedistribution(2)*totalrestwasteorganics;
             obj.restwaste_to_biological.organics = restwastedistribution(3)*totalrestwasteorganics;
             obj.restwaste_to_thermal.organics = restwastedistribution(4)*totalrestwasteorganics;
-            obj.restwaste_to_landfill.organics = (1-sum(restwastedistribution([1:4])))*totalrestwasteorganics;
+            obj.restwaste_to_landfill.organics = (1-sum(restwastedistribution(1:4)))*totalrestwasteorganics;
             
             % Other
             totalrestwasteother = (obj.total_residential_waste.other+...
@@ -415,8 +462,12 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_cRDF.other = restwastedistribution(1)*totalrestwasteother;
             obj.restwaste_to_dRDF.other = restwastedistribution(2)*totalrestwasteother;
             obj.restwaste_to_biological.other = restwastedistribution(3)*totalrestwasteother;
-            obj.restwaste_to_thermal.other = restwastedistribution(4)*totalrestwasteother;
-            obj.restwaste_to_landfill.other = (1-sum(restwastedistribution([1:4])))*totalrestwasteother;
+            obj.restwaste_to_thermal.other = restwastedistribution(4)*totalrestwasteother+...
+                obj.total_delivered_waste.other*(1-deliveredotherrate)*...
+                sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration');
+            obj.restwaste_to_landfill.other = (1-sum(restwastedistribution(1:4)))*totalrestwasteother+...
+                obj.total_delivered_waste.other*(1-deliveredotherrate)*...
+                (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
             
             %% Assign Value to val
             val = [];
