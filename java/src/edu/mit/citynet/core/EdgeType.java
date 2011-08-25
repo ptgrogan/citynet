@@ -205,8 +205,12 @@ public class EdgeType implements Cloneable {
 		clone.setId(0);
 		clone.setName(getName() + " (Copy)");
 		clone.setDescription(getDescription());
-		for(EdgeTypeAttribute attribute : getAttributes())
-			clone.addAttribute(attribute.clone());
+		for(EdgeTypeAttribute attribute : getAttributes()) {
+			EdgeTypeAttribute clonedAttribute = attribute.clone();
+			clonedAttribute.setName(clonedAttribute.getName().substring(0, 
+				clonedAttribute.getName().indexOf(" (Copy)")));
+			clone.addAttribute(clonedAttribute);
+		}
 		clone.setColor(getColor());
 		return clone;
 	}

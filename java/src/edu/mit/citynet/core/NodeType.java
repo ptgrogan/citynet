@@ -205,8 +205,12 @@ public class NodeType implements Cloneable {
 		clone.setId(0);
 		clone.setName(getName() + " (Copy)");
 		clone.setDescription(getDescription());
-		for(NodeTypeAttribute attribute : getAttributes())
-			clone.addAttribute(attribute.clone());
+		for(NodeTypeAttribute attribute : getAttributes()) {
+			NodeTypeAttribute clonedAttribute = attribute.clone();
+			clonedAttribute.setName(clonedAttribute.getName().substring(0, 
+					clonedAttribute.getName().indexOf(" (Copy)")));
+			clone.addAttribute(clonedAttribute);
+		}
 		clone.setColor(getColor());
 		return clone;
 	}
