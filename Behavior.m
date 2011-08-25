@@ -39,6 +39,36 @@ classdef Behavior < handle
                 obj.bounds = '[0,0]';
             end
         end
+        %% PlotCellValueMap Function
+        % Plots the values of a cell map (id->value) in the current figure.
+        % Note: requires a containers.Map object for use. For example,
+        % cellValueMap = ...
+        %         containers.Map('KeyType','int32','ValueType','double');
+        % cellValueMap(1) = 5.3; % sets cell id 1 to a value of 5.3
+        %        
+        % PlotCellValueMap(cellValueMap)
+        %   cellValueMap:   the cell id-value map
+        function PlotCellValueMap(obj, cellValueMap)
+            city = CityNet.instance().city;
+            xlabel(['x (' city.distanceUnits ')'])
+            ylabel(['y (' city.distanceUnits ')'])
+            hold on
+            if ischar(city.imagePath) && ~strcmp(city.imagePath,'')
+                imagesc([min(city.imageVerticesX) max(city.imageVerticesX)], ...
+                [min(city.imageVerticesY) max(city.imageVerticesY)], ...
+                city.GetImage())
+            end
+            cmap = colormap(jet(128));
+            for i=1:length(city.cells)
+                [cVx cVy] = city.cells(i).GetVertices();
+                cind = round(length(cmap)*obj.cellLandUse(city.cells(i).id)/max(cell2mat(cellValueMap.values)));
+                patch(cVx, cVy, [1 1 1],'FaceColor', cmap(cind,:));
+            end
+            caxis([0 max(cell2mat(cellValueMap.values))])
+            colorbar
+            axis ij square tight
+            hold off
+        end
     end
     methods(Sealed)
         %% Evaluate Function
