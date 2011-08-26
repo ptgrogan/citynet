@@ -321,13 +321,12 @@ classdef WasteSorting < Behavior
             % the glass, fe_metal, nonfe_metal, filmplastic, rigidplastic,
             % and other waste streams
             %
-            %   restwaste_to_cRDF:          the fraction of the total remaining waste going to cRDF sorting
-            %   restwaste_to_dRDF:          the fraction of the total remaining waste going to dRDF sorting
-            %   restwaste_to_biological:    the fraction of the total remaining waste going to biological treatment
-            %   restwaste_to_thermal:       the fraction of the total remaining waste going to thermal treatment
-            %   restwaste_to_landfill:      the fraction of the total remaining waste going to landfill
-            %   delivered
-            
+            %   restwaste_to_cRDF:              the fraction of the total remaining waste going to cRDF sorting
+            %   restwaste_to_dRDF:              the fraction of the total remaining waste going to dRDF sorting
+            %   restwaste_to_biological:        the fraction of the total remaining waste going to biological treatment
+            %   restwaste_to_thermal:           the fraction of the total remaining waste going to thermal treatment
+            %   restwaste_to_landfill:          the fraction of the total remaining waste going to landfill
+                        
             % Extract restwaste destination ratio values
             % Vector format is [cRDF dRDF biological treatment, thermal
             % treatment]. The remainder is sent to landfill
@@ -363,7 +362,7 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_landfill.glass = (1-sum(restwastedistribution(1:4)))*totalrestwasteglass+...
                 obj.total_delivered_waste.glass*(1-deliveredglassrate)*...
                 (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration'));
-                        
+            
             % Ferrous Metal
             totalrestwastefe_metal = (obj.total_residential_waste.fe_metal+...
                 obj.total_commercial_waste.fe_metal+...
@@ -395,7 +394,7 @@ classdef WasteSorting < Behavior
             obj.restwaste_to_landfill.nonfe_metal = (1-sum(restwastedistribution(1:4)))*totalrestwastenonfe_metal+...
                 obj.total_delivered_waste.nonfe_metal*(1-deliverednonfemetalrate)*...
                 (1-sorting.GetNodeTypeAttributeValue('deliveredWasteResidueTreatmentIncineration')); 
-            
+                        
             % Film Plastic
             totalrestwastefilmplastic = (obj.total_residential_waste.filmplastic+...
                 obj.total_commercial_waste.filmplastic+...
