@@ -60,6 +60,6 @@ cityNet.RenderLayer(5);
 % test behaviors
 energyBehavior = zeros(length(cityNet.city.cells),1);
 for i=1:length(cityNet.city.cells)
-    b = PVStationEnergy(cityNet.city.cells(i),cityNet.city.systems(2));
+    b = CSPEnergy(cityNet.city.cells(i),cityNet.city.systems(2));
     energyBehavior(i) = b.Evaluate();
 end
