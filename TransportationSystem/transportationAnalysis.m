@@ -19,7 +19,32 @@ cityNet.city.imagePath = 'master_plan.jpg'; % only .jpg is compatible
 figure(1)
 cityNet.RenderCity();
 
-clear b
-b = TransportationLandUse();
-b.Evaluate()
-b.PlotCellLandUse();
+clear b1
+b1 = TransportationLandUse();
+b1.Evaluate()
+b1.PlotCellLandUse();
+
+clear b2
+b2 = TransportationWaterUse();
+b2.Evaluate()
+b2.PlotCellWaterUse();
+
+clear b3
+b3 = TransportationEmissionsProduction();
+b3.Evaluate()
+b3.PlotCellEmissionsProduction();
+
+clear b4
+b4 = TransportationEnergyUse();
+b4.Evaluate()
+b4.PlotCellEnergyUse();
+
+clear b5
+b5 = TransportationFixedExpense();
+b5.Evaluate()
+b5.PlotCellFixedExpense();
+
+clear b6
+b6 = TransportationRecurringExpense();
+b6.Evaluate()
+b6.PlotCellRecurringExpense();

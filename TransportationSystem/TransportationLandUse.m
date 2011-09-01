@@ -10,16 +10,16 @@ classdef TransportationLandUse < Behavior
         cellLandUse = containers.Map('KeyType','int32','ValueType','double');
     end
     methods
-        %% NumberResidentsCity Constructor
-        % Instantiates a new NumberResidentsCity object.
+        %% TransportationLandUse Constructor
+        % Instantiates a new TransportationLandUse object.
         % 
-        % obj = NumberResidentsCity()
-        %   obj:            the new NumberResidentsCity object
+        % obj = TransportationLandUse()
+        %   obj:            the new TransportationLandUse object
         function obj = TransportationLandUse()
             obj = obj@Behavior('Transportation Land Use', ...
                 ['Counts the amount of land used within the ' ...
                 'transportation system.'], ...
-                'km^2','[0,inf)');
+                'm^2','[0,inf)');
         end
         %% PlotCellLandUse Function
         % Plots the cell land use behavior in a new figure.
@@ -27,7 +27,7 @@ classdef TransportationLandUse < Behavior
         % PlotCellLandUse()
         function PlotCellLandUse(obj)
             figure
-            title('Transportation Cell Land Use')
+            title(['Transportation Cell Land Use (' obj.units ')'])
             obj.PlotCellValueMap(obj.cellLandUse)
         end
     end
@@ -39,7 +39,7 @@ classdef TransportationLandUse < Behavior
         %
         % val = obj.EvaluateImpl(city)
         %   val:    the evaluated value
-        %   obj:    the NumberResidentsCity object handle
+        %   obj:    the TransportationLandUse object handle
         function val = EvaluateImpl(obj)
             val = 0;
             clear obj.cellLandUse
@@ -54,11 +54,11 @@ classdef TransportationLandUse < Behavior
                         landUse = node.GetNodeTypeAttributeValue('Land_Use');
                         landVal = 0;
                         if ~isempty(landUse) && ~isempty(baselineArea)
-                            landVal = node.cell.GetArea()*landUse/baselineArea;
+                            landVal = node.cell.GetArea()*1e6*landUse/baselineArea;
                         elseif ~isempty(landUse) && ~isempty(baselineLength)
-                            landVal = node.cell.GetArea()*landUse/baselineLength.^2;
+                            landVal = node.cell.GetArea()*1e6*landUse/baselineLength.^2;
                         elseif ~isempty(landUse)
-                            landVal = landUse/(1000^2); % convert m^2 to km^2
+                            landVal = landUse;
                         end
                         if obj.cellLandUse.isKey(node.cell.id)
                             obj.cellLandUse(node.cell.id) = obj.cellLandUse(node.cell.id) + landVal;
