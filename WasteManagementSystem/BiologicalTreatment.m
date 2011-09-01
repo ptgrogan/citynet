@@ -297,6 +297,16 @@ classdef BiologicalTreatment < Behavior
                 (1-biological.GetNodeTypeAttributeValue('biogasificationPresortRecoverPercentOther'))*...
                 biological.GetNodeTypeAttributeValue('biogasificationSortingResiduestoIncineration');   % Biogasification presort residue
             
+            % Compost stream
+            % This final stream arises from the fraction of compost and
+            % biogas produced that is not marketable
+            obj.residues_to_thermal.compost = obj.compost_extracted*...
+                (1-biological.GetNodeTypeAttributeValue('compostingFractionMarketable'))*...
+                 biological.GetNodeTypeAttributeValue('compostingProcessResiduestoIncineration')+...% Composting process residues to thermal treatment
+                 obj.biogas_extracted*...
+                (1-biological.GetNodeTypeAttributeValue('biogasificationFractionMarketable'))*...
+                 biological.GetNodeTypeAttributeValue('biogasificationProcessResiduestoIncineration');  % Biogasification process residues to thermal treatment         
+            
             %% Determine amount of residues from the presorting and biological 
             % treatment processes sent to landfill
             % (for both composting and biogasification)
