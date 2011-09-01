@@ -19,16 +19,18 @@ cityNet.GenerateNodes();
 cityNet.GenerateEdges();
 
 %execute residential and commercial water demand functions
-rW=TotalResidentialWater();
-rW.Evaluate();
+resWater=TotalResidentialWater();
+resWater.Evaluate();
 
-%rW
+comWater=TotalCommercialWater();
+comWater.Evaluate();
 
-rC=TotalCommercialWater();
-rC.Evaluate();
+%execute residential and commercial wastewater estimates functions
 
-%rC
+resWasteWater = ResidentialWasteWater();
+resWasteWater.totalResidentialWaterBehavior = TotalResidentialWater();
+resWasteWater.Evaluate();
 
-b = ResidentialWasteWater();
-b.totalWaterBehavior = TotalResidentialWater();
-b.Evaluate();
+comWasteWater = CommercialWasteWater();
+comWasteWater.totalCommercialWaterBehavior = TotalCommercialWater();
+comWasteWater.Evaluate();
