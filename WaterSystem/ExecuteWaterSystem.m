@@ -34,3 +34,6 @@ resWasteWater.Evaluate();
 comWasteWater = CommercialWasteWater();
 comWasteWater.totalCommercialWaterBehavior = TotalCommercialWater();
 comWasteWater.Evaluate();
+
+SWROplant = SWROfacility();
+SWROplant.Evaluate();
