@@ -172,7 +172,7 @@ public class SpreadsheetTemplate {
 			if(row.getRowNum()==CITY_ROTATION)
 				city.setRotation(row.getCell(1).getNumericCellValue());
 			if(row.getRowNum()==CITY_IMAGE_PATH 
-					&& !row.getCell(1).getStringCellValue().isEmpty())
+					&& !row.getCell(1).getStringCellValue().equals(""))
 				city.setImageFilePath(row.getCell(1).getStringCellValue());
 			if(row.getRowNum()==CITY_IMAGE_VERTICES_X)
 				verticesX = row.getCell(1).getStringCellValue();
