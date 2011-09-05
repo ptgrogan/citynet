@@ -30,6 +30,7 @@ public class CitySystem {
 	private List<Edge> edges;
 	private List<NodeRegion> nodeRegions;
 	private List<EdgeRegion> edgeRegions;
+	private List<Region> regions;
 	
 	/**
 	 * The CitySystemType enumeration defines the possible system types.
@@ -37,9 +38,13 @@ public class CitySystem {
 	 * @author Paul Grogan, ptgrogan@mit.edu
 	 */
 	public enum CitySystemType {
-		BUILDING("Building"), ENERGY("Energy"), 
-		TRANSPORTATION("Transportation"), WASTE("Waste"), WATER("Water"), 
+		BUILDING("Building"),
+		ENERGY("Energy"),
+		TRANSPORTATION("Transportation"), 
+		WASTE("Waste"), 
+		WATER("Water"), 
 		UNDEFINED("Undefined");
+		
 		private String name;
 		
 		/**
@@ -111,6 +116,7 @@ public class CitySystem {
 		edges = new ArrayList<Edge>();
 		nodeRegions = new ArrayList<NodeRegion>();
 		edgeRegions = new ArrayList<EdgeRegion>();
+		regions = new ArrayList<Region>();
 	}
 	
 	/**
@@ -147,6 +153,15 @@ public class CitySystem {
 	 */
 	public List<EdgeRegion> getEdgeRegions() {
 		return new ArrayList<EdgeRegion>(edgeRegions);
+	}
+	
+	/**
+	 * Gets the regions.
+	 *
+	 * @return the regions
+	 */
+	public List<Region> getRegions() {
+		return new ArrayList<Region>(regions);
 	}
 
 	/**
@@ -261,6 +276,26 @@ public class CitySystem {
 	}
 	
 	/**
+	 * Removes the all regions.
+	 *
+	 * @param regions the regions
+	 * @return true, if successful
+	 */
+	public boolean removeAllRegions(Collection<Region> regions) {
+		return this.regions.removeAll(regions);
+	}
+
+	/**
+	 * Sets the regions.
+	 *
+	 * @param regions the new regions
+	 * @return true, if successful
+	 */
+	public boolean addAllRegions(Collection<Region> regions) {
+		return this.regions.addAll(regions);
+	}
+	
+	/**
 	 * Removes the all edge regions.
 	 *
 	 * @param edgeRegions the edge regions
@@ -274,6 +309,7 @@ public class CitySystem {
 	 * Sets the edges.
 	 *
 	 * @param edges the new edges
+	 * @return true, if successful
 	 */
 	public boolean addAllEdges(Collection<Edge> edges) {
 		return this.edges.addAll(edges);
@@ -472,6 +508,28 @@ public class CitySystem {
 	public boolean removeEdgeRegion(EdgeRegion region) {
 		return edgeRegions.remove(region);
 	}
+
+	/**
+	 * Adds the region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean addRegion(Region region) {
+		if(region.getId()==0)
+			region.setId(CityNet.getInstance().getNextRegionId());
+		return regions.add(region);
+	}
+	
+	/**
+	 * Removes the region.
+	 *
+	 * @param region the region
+	 * @return true, if successful
+	 */
+	public boolean removeRegion(Region region) {
+		return regions.remove(region);
+	}
 	
 	/**
 	 * Adds the node type.
@@ -557,6 +615,23 @@ public class CitySystem {
 		EdgeRegion otherRegion = edgeRegions.get(index);
 		edgeRegions.set(index, region);
 		edgeRegions.set(oldIndex, otherRegion);
+		return true;
+	}
+	
+	/**
+	 * Move region to a new index.
+	 *
+	 * @param region the region
+	 * @param index the index
+	 * @return true, if successful
+	 */
+	public boolean moveRegionTo(Region region, int index) {
+		if(!regions.contains(region) || index < 0 || index >= regions.size())
+			return false;
+		int oldIndex = regions.indexOf(region);
+		Region otherRegion = regions.get(index);
+		regions.set(index, region);
+		regions.set(oldIndex, otherRegion);
 		return true;
 	}
 	

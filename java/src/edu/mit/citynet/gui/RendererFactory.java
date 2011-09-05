@@ -17,9 +17,11 @@ import javax.swing.table.TableCellRenderer;
 
 import edu.mit.citynet.core.CellRegion;
 import edu.mit.citynet.core.EdgeDirection;
+import edu.mit.citynet.core.EdgeGenerationType;
 import edu.mit.citynet.core.EdgeRegion.EdgeRegionType;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
+import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.NodeRegion.NodeRegionType;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.io.HexColorFormat;
@@ -158,6 +160,68 @@ public abstract class RendererFactory {
 				if(value instanceof EdgeRegionType) {
 					setText(((EdgeRegionType)value).getName());
 					setIcon(((EdgeRegionType)value).getIcon());
+				}
+				return this;
+			}
+		};
+	}
+	
+	public static TableCellRenderer createNodeGenerationTypeTableCellRenderer() {
+		return new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 523244544309854408L;
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof NodeGenerationType) {
+					setText(((NodeGenerationType)value).getName());
+					setIcon(((NodeGenerationType)value).getIcon());
+				}
+				return this;
+			}
+		};
+	}
+	
+	public static ListCellRenderer createNodeGenerationTypeListCellRenderer() {
+		return new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				if(value instanceof NodeGenerationType) {
+					setText(((NodeGenerationType)value).getName());
+					setIcon(((NodeGenerationType)value).getIcon());
+				}
+				return this;
+			}
+		};
+	}
+	
+	public static TableCellRenderer createEdgeGenerationTypeTableCellRenderer() {
+		return new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 523244544309854408L;
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				if(value instanceof EdgeGenerationType) {
+					setText(((EdgeGenerationType)value).getName());
+					setIcon(((EdgeGenerationType)value).getIcon());
+				}
+				return this;
+			}
+		};
+	}
+	
+	public static ListCellRenderer createEdgeGenerationTypeListCellRenderer() {
+		return new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				if(value instanceof EdgeGenerationType) {
+					setText(((EdgeGenerationType)value).getName());
+					setIcon(((EdgeGenerationType)value).getIcon());
 				}
 				return this;
 			}

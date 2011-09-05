@@ -20,11 +20,13 @@ import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.core.Region;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeTypeTreeNode;
+import edu.mit.citynet.gui.SystemTreeModel.MutableRegionTreeNode;
 
 /**
  * The SystemTree class.
@@ -67,7 +69,10 @@ public class SystemTree extends JTree {
 				} else if(value instanceof MutableEdgeTypeTreeNode) {
 					setIcon(((MutableEdgeTypeTreeNode)value).getUserObject().getIcon());
 					setText(((MutableEdgeTypeTreeNode)value).getUserObject().getName());
-				} else {
+				} else if(value instanceof MutableRegionTreeNode) {
+					setIcon(((MutableRegionTreeNode)value).getUserObject().getNodeGenerationType().getIcon());
+					setText(((MutableRegionTreeNode)value).getUserObject().getDescription());
+				}  else {
 					setFont(getFont().deriveFont(Font.BOLD));
 				}
 				return this;
@@ -149,6 +154,20 @@ public class SystemTree extends JTree {
 				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
 				instanceof MutableEdgeRegionTreeNode) {
 			return ((MutableEdgeRegionTreeNode)
+					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
+		} else return null;
+	}
+	
+	/**
+	 * Gets the selected region.
+	 *
+	 * @return the selected region
+	 */
+	public Region getSelectedRegion() {
+		if(getSelectionModel().getSelectionPath() != null
+				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
+				instanceof MutableRegionTreeNode) {
+			return ((MutableRegionTreeNode)
 					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
 		} else return null;
 	}

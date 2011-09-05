@@ -14,6 +14,7 @@ import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
+import edu.mit.citynet.core.Region;
 
 public class SystemTreeModel extends DefaultTreeModel {
 	private static final long serialVersionUID = -3479867919367893028L;
@@ -23,7 +24,8 @@ public class SystemTreeModel extends DefaultTreeModel {
 		nodeTypesTreeNode = new DefaultMutableTreeNode("Node Types"), 
 		edgeTypesTreeNode = new DefaultMutableTreeNode("Edge Types"), 
 		nodeRegionsTreeNode = new DefaultMutableTreeNode("Node Regions"), 
-		edgeRegionsTreeNode = new DefaultMutableTreeNode("Edge Regions");
+		edgeRegionsTreeNode = new DefaultMutableTreeNode("Edge Regions"), 
+		regionsTreeNode = new DefaultMutableTreeNode("Regions");
 
 	/**
 	 * Instantiates a new system tree model.
@@ -97,6 +99,13 @@ public class SystemTreeModel extends DefaultTreeModel {
 			edgeRegionsTreeNode.insert(createTreeNode(edgeRegion), edgeRegionsIndex++);
 		}
 		root.insert(edgeRegionsTreeNode, index++);
+		
+		regionsTreeNode.removeAllChildren();
+		int regionsIndex = 0;
+		for(Region region : system.getRegions()) {
+			regionsTreeNode.insert(createTreeNode(region), regionsIndex++);
+		}
+		root.insert(regionsTreeNode, index++);
 		
 		nodeStructureChanged(root);
 	}
@@ -306,6 +315,47 @@ public class SystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
+	 * Adds the region.
+	 *
+	 * @param region the region
+	 */
+	public void addRegion(Region region) {
+		regionsTreeNode.add(createTreeNode(region));
+		nodesWereInserted(regionsTreeNode, new int[]{regionsTreeNode.getChildCount()-1});
+	}
+	
+	/**
+	 * Update region.
+	 *
+	 * @param region the region
+	 */
+	public void updateRegion(Region region) {
+		for(int i = 0; i < regionsTreeNode.getChildCount(); i++) {
+			if(regionsTreeNode.getChildAt(i) instanceof MutableRegionTreeNode
+					&& ((MutableRegionTreeNode)regionsTreeNode.getChildAt(i)).getUserObject()==region) {
+				nodeChanged(regionsTreeNode.getChildAt(i));
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Removes the region.
+	 *
+	 * @param region the region
+	 */
+	public void removeRegion(Region region) {
+		for(int i = 0; i < regionsTreeNode.getChildCount(); i++) {
+			if(regionsTreeNode.getChildAt(i) instanceof MutableRegionTreeNode
+					&& ((MutableRegionTreeNode)regionsTreeNode.getChildAt(i)).getUserObject()==region) {
+				regionsTreeNode.remove(i);
+				nodesWereRemoved(regionsTreeNode,new int[]{i},null);
+				break;
+			}
+		}
+	}
+	
+	/**
 	 * Creates the tree node.
 	 *
 	 * @param layer the layer
@@ -356,6 +406,16 @@ public class SystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
+	 * Creates the tree node.
+	 *
+	 * @param region the region
+	 * @return the default mutable tree node
+	 */
+	public static MutableRegionTreeNode createTreeNode(Region region) {
+		return new MutableRegionTreeNode(region);
+	}
+	
+	/**
 	 * The Class MutableLayerTreeNode.
 	 */
 	public static class MutableLayerTreeNode extends DefaultMutableTreeNode {
@@ -385,9 +445,9 @@ public class SystemTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 5722045815777954877L;
 		
 		/**
-		 * Instantiates a new mutable layer tree node.
+		 * Instantiates a new mutable node type tree node.
 		 *
-		 * @param layer the layer
+		 * @param nodeType the node type
 		 */
 		public MutableNodeTypeTreeNode(NodeType nodeType) {
 			super(nodeType);
@@ -408,9 +468,9 @@ public class SystemTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 5722045815777954877L;
 		
 		/**
-		 * Instantiates a new mutable layer tree edge.
+		 * Instantiates a new mutable edge type tree edge.
 		 *
-		 * @param layer the layer
+		 * @param edgeType the edge type
 		 */
 		public MutableEdgeTypeTreeNode(EdgeType edgeType) {
 			super(edgeType);
@@ -431,9 +491,9 @@ public class SystemTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 5722045815777954877L;
 		
 		/**
-		 * Instantiates a new mutable layer tree node.
+		 * Instantiates a new mutable node region tree node.
 		 *
-		 * @param layer the layer
+		 * @param nodeRegion the node region
 		 */
 		public MutableNodeRegionTreeNode(NodeRegion nodeRegion) {
 			super(nodeRegion);
@@ -454,9 +514,9 @@ public class SystemTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 5722045815777954877L;
 		
 		/**
-		 * Instantiates a new mutable layer tree edge.
+		 * Instantiates a new mutable edge region tree edge.
 		 *
-		 * @param layer the layer
+		 * @param edgeRegion the edge region
 		 */
 		public MutableEdgeRegionTreeNode(EdgeRegion edgeRegion) {
 			super(edgeRegion);
@@ -467,6 +527,29 @@ public class SystemTreeModel extends DefaultTreeModel {
 		 */
 		public EdgeRegion getUserObject() {
 			return (EdgeRegion)super.getUserObject();
+		}
+	}
+	
+	/**
+	 * The Class MutableRegionTreeEdge.
+	 */
+	public static class MutableRegionTreeNode extends DefaultMutableTreeNode {
+		private static final long serialVersionUID = 5722045815777954877L;
+		
+		/**
+		 * Instantiates a new mutable region tree edge.
+		 *
+		 * @param region the region
+		 */
+		public MutableRegionTreeNode(Region region) {
+			super(region);
+		}
+		
+		/* (non-Javadoc)
+		 * @see javax.swing.tree.DefaultMutableTreeEdge#getUserObject()
+		 */
+		public Region getUserObject() {
+			return (Region)super.getUserObject();
 		}
 	}
 }

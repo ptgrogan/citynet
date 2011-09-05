@@ -39,6 +39,7 @@ import edu.mit.citynet.core.Node;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
+import edu.mit.citynet.core.Region;
 import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.DistanceUnit;
 import edu.mit.citynet.viz.DisplayOptions;
@@ -64,9 +65,12 @@ public class CityNet {
 	private AtomicInteger nextNodeTypeId,nextNodeTypeAttributeId,
 		nextEdgeTypeId,nextEdgeTypeAttributeId,nextCellId,nextCellRegionId,
 		nextLayerId,nextSystemId,nextNodeId,nextNodeRegionId,nextEdgeId,
-		nextEdgeRegionId;
+		nextEdgeRegionId, nextRegionId;
 	private GeometryFactory geometryFactory;
 	
+	/**
+	 * Instantiates a new city net.
+	 */
 	private CityNet() { 
 		distanceUnit = DistanceUnit.KILOMETERS;
 		displayOptions = new DisplayOptions();
@@ -82,8 +86,13 @@ public class CityNet {
 		nextNodeRegionId = new AtomicInteger();
 		nextEdgeId = new AtomicInteger();
 		nextEdgeRegionId = new AtomicInteger();
+		nextRegionId = new AtomicInteger();
 		geometryFactory = new GeometryFactory();
 	}
+	
+	/**
+	 * The Class SingletonHolder.
+	 */
 	private static class SingletonHolder { 
 		public static final CityNet INSTANCE = new CityNet();
 	}
@@ -259,6 +268,15 @@ public class CityNet {
 	}
 	
 	/**
+	 * Gets the next region id.
+	 *
+	 * @return the next region id
+	 */
+	public int getNextRegionId() {
+		return nextRegionId.incrementAndGet();
+	}
+	
+	/**
 	 * Update ids, used after loading a city from a template.
 	 */
 	public void updateIds() {
@@ -274,6 +292,7 @@ public class CityNet {
 		nextEdgeId.set(1);
 		nextNodeRegionId.set(1);
 		nextEdgeRegionId.set(1);
+		nextRegionId.set(1);
 		if(city == null) return;
 		for(Cell cell : city.getCells()) {
 			nextCellId.set(Math.max(nextCellId.get(), cell.getId()+1));
@@ -309,6 +328,9 @@ public class CityNet {
 			}
 			for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
 				nextEdgeRegionId.set(Math.max(nextEdgeRegionId.get(), edgeRegion.getId()+1));
+			}
+			for(Region region : system.getRegions()) {
+				nextRegionId.set(Math.max(nextRegionId.get(), region.getId()+1));
 			}
 		}
 	}

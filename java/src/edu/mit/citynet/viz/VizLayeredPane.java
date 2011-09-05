@@ -30,6 +30,7 @@ import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
+import edu.mit.citynet.core.Region;
 import edu.mit.citynet.util.CityNetCursor;
 
 /**
@@ -50,12 +51,14 @@ public class VizLayeredPane extends JLayeredPane {
 	private NodeLayer nodeLayer;
 	private EdgeRegionLayer edgeRegionLayer;
 	private EdgeLayer edgeLayer;
+	private RegionLayer regionLayer;
 	private City city;
 	private CitySystem system;
 	private Point previousDrag;
 	private CellRegion selectedCellRegion;
 	private NodeRegion selectedNodeRegion;
 	private EdgeRegion selectedEdgeRegion;
+	private Region selectedRegion;
 	protected boolean panModeEnabled = true;
 	
 	/**
@@ -104,6 +107,8 @@ public class VizLayeredPane extends JLayeredPane {
 		add(edgeRegionLayer, new Integer(7));
 		edgeLayer = new EdgeLayer(this);
 		add(edgeLayer,new Integer(8));
+		regionLayer = new RegionLayer(this);
+		add(regionLayer, new Integer(9));
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
 				updateCursor(false);
@@ -228,6 +233,7 @@ public class VizLayeredPane extends JLayeredPane {
 		nodeLayer.setBounds(x,y,width,height);
 		edgeRegionLayer.setBounds(x,y,width,height);
 		edgeLayer.setBounds(x,y,width,height);
+		regionLayer.setBounds(x,y,width,height);
 	}
 	
 	/**
@@ -456,6 +462,25 @@ public class VizLayeredPane extends JLayeredPane {
 	 */
 	public void setSelectedEdgeRegion(EdgeRegion edgeRegion) {
 		this.selectedEdgeRegion = edgeRegion;
+		repaint();
+	}
+	
+	/**
+	 * Gets the selected region.
+	 *
+	 * @return the selected region
+	 */
+	public Region getSelectedRegion() {
+		return selectedRegion;
+	}
+	
+	/**
+	 * Sets the selected region.
+	 *
+	 * @param edgeRegion the new selected region
+	 */
+	public void setSelectedRegion(Region region) {
+		this.selectedRegion = region;
 		repaint();
 	}
 	
