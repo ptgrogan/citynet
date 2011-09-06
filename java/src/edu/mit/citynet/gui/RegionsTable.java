@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.CoordinateList;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeGenerationType;
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.Region;
 
@@ -131,7 +132,8 @@ public class RegionsTable extends JTable {
 	 */
 	private void addRegionCommand() {
 		System.out.println("Add Region Command");
-		Region region = new Region();
+		// TODO: add interlayerregion
+		IntraLayerRegion region = new IntraLayerRegion();
 		if(system.getLayers().size()>0) region.setLayer(system.getLayers().get(0));
 		region.setNodeGenerationType(NodeGenerationType.POLYGON);
 		if(system.getNodeTypes().size()>0) region.setNodeType(system.getNodeTypes().get(0));

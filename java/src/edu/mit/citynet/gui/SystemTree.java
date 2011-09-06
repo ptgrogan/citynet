@@ -70,7 +70,7 @@ public class SystemTree extends JTree {
 					setIcon(((MutableEdgeTypeTreeNode)value).getUserObject().getIcon());
 					setText(((MutableEdgeTypeTreeNode)value).getUserObject().getName());
 				} else if(value instanceof MutableRegionTreeNode) {
-					setIcon(((MutableRegionTreeNode)value).getUserObject().getNodeGenerationType().getIcon());
+					// TODO define setIcon(((MutableRegionTreeNode)value).getUserObject().getIcon());
 					setText(((MutableRegionTreeNode)value).getUserObject().getDescription());
 				}  else {
 					setFont(getFont().deriveFont(Font.BOLD));

@@ -35,10 +35,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeGenerationType;
 import edu.mit.citynet.core.EdgeType;
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.NodeType;
-import edu.mit.citynet.core.Region;
 import edu.mit.citynet.util.CityNetIcon;
 
 /**
@@ -46,11 +46,11 @@ import edu.mit.citynet.util.CityNetIcon;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class RegionPanel extends JPanel {
+public class IntraLayerRegionPanel extends JPanel {
 	private static final long serialVersionUID = -3163576993982031134L;
 	
 	private SystemPanel systemPanel;
-	private Region region;
+	private IntraLayerRegion region;
 	private JTextArea descriptionText;
 	private JComboBox nodeGenerationTypeCombo, layerCombo, nodeTypeCombo,
 		edgeGenerationTypeCombo, edgeDirectionCombo, edgeTypeCombo;
@@ -65,7 +65,7 @@ public class RegionPanel extends JPanel {
 	 *
 	 * @param systemPanel the system panel
 	 */
-	public RegionPanel(SystemPanel systemPanel) {
+	public IntraLayerRegionPanel(SystemPanel systemPanel) {
 		this.systemPanel = systemPanel;
 		coordinateSelectionPanel = new CoordinateSelectionPanel(
 				systemPanel.getCityPanel().getCity(), systemPanel.getSystem());
@@ -356,7 +356,7 @@ public class RegionPanel extends JPanel {
 	 *
 	 * @param region the region
 	 */
-	public void loadRegion(Region region) {
+	public void loadRegion(IntraLayerRegion region) {
 		this.region = region;
 		descriptionText.setText(region.getDescription());
 		layerCombo.removeAllItems();

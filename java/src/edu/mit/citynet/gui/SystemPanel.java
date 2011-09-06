@@ -32,6 +32,8 @@ import javax.swing.tree.TreePath;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
+import edu.mit.citynet.core.InterLayerRegion;
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
@@ -65,7 +67,7 @@ public class SystemPanel extends JSplitPane {
 	private EdgeTypePanel edgeTypePanel;
 	private NodeRegionPanel nodeRegionPanel;
 	private EdgeRegionPanel edgeRegionPanel;
-	private RegionPanel regionPanel;
+	private IntraLayerRegionPanel regionPanel;
 	
 	/**
 	 * Instantiates a new system viz panel.
@@ -84,7 +86,7 @@ public class SystemPanel extends JSplitPane {
 		edgeTypePanel = new EdgeTypePanel();
 		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel(this);
-		regionPanel = new RegionPanel(this);
+		regionPanel = new IntraLayerRegionPanel(this);
 		initializePanel();
 	}
 	
@@ -990,8 +992,9 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void addRegionCommand() {
 		System.out.println("Add Region Command");
-		Region region = new Region();
+		IntraLayerRegion region = new IntraLayerRegion();
 		regionPanel.loadRegion(region);
+		// TODO: add inter-layer region
 		int value = JOptionPane.showConfirmDialog(this, regionPanel,
 				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
@@ -1010,7 +1013,10 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void editRegionCommand(Region region) {
 		System.out.println("Edit Region Command");
-		regionPanel.loadRegion(region);
+		if(region instanceof IntraLayerRegion)
+			regionPanel.loadRegion((IntraLayerRegion)region);
+		else if(region instanceof InterLayerRegion)
+			;//TODO
 		int value = JOptionPane.showConfirmDialog(this, regionPanel,
 				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
@@ -1043,7 +1049,10 @@ public class SystemPanel extends JSplitPane {
 	private void copyRegionCommand(Region region) {
 		System.out.println("Copy Region Command");
 		Region newRegion = region.clone();
-		regionPanel.loadRegion(newRegion);
+		if(region instanceof IntraLayerRegion)
+			regionPanel.loadRegion((IntraLayerRegion)newRegion);
+		else if(region instanceof InterLayerRegion)
+			;//TODO: edit interlayerregion
 		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
 				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);

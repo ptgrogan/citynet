@@ -11,6 +11,8 @@ import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeGenerationType;
 import edu.mit.citynet.core.EdgeType;
+import edu.mit.citynet.core.InterLayerRegion;
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.NodeType;
@@ -55,12 +57,30 @@ public class RegionsTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int col) {
 		switch(col) {
 		case 0: return system.getRegions().get(row).getDescription();
-		case 1: return system.getRegions().get(row).getLayer();
-		case 2: return system.getRegions().get(row).getNodeGenerationType();
-		case 3: return system.getRegions().get(row).getNodeType();
-		case 4: return system.getRegions().get(row).getEdgeGenerationType();
-		case 5: return system.getRegions().get(row).getEdgeType();
-		case 6: return system.getRegions().get(row).getEdgeDirection();
+		case 1: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getLayer();
+			} else return null;
+		case 2: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getNodeGenerationType();
+			} else return null;
+		case 3: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getNodeType();
+			} else return null;
+		case 4: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeGenerationType();
+			} else return null;
+		case 5: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeType();
+			} else return null;
+		case 6: 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeDirection();
+			} else return null;
 		case 7: return CoordinateFormat.createForMatlabSyntax(system.getRegions().get(row).getCoordinateList())[0];
 		case 8: return CoordinateFormat.createForMatlabSyntax(system.getRegions().get(row).getCoordinateList())[1];
 		default: return null;
@@ -71,7 +91,15 @@ public class RegionsTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
 	 */
 	public boolean isCellEditable(int row, int col) {
-    	return true;
+		if(system.getRegions().get(row) instanceof IntraLayerRegion) {
+			return true;
+			// TODO
+		} else if(system.getRegions().get(row) instanceof InterLayerRegion) {
+			if(col <= 0 || col >= 7) return true;
+			// TODO
+			else return false;
+		}
+    	return false;
     }
 	
 	/* (non-Javadoc)
@@ -102,28 +130,34 @@ public class RegionsTableModel extends AbstractTableModel {
 				system.getRegions().get(row).setDescription((String)value); 
 			break;
 		case 1: 
-			if(value instanceof Layer) 
-				system.getRegions().get(row).setLayer((Layer)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof Layer) 
+				((IntraLayerRegion)system.getRegions().get(row)).setLayer((Layer)value); 
 			break;
 		case 2:
-			if(value instanceof NodeGenerationType) 
-				system.getRegions().get(row).setNodeGenerationType((NodeGenerationType)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof NodeGenerationType) 
+				((IntraLayerRegion)system.getRegions().get(row)).setNodeGenerationType((NodeGenerationType)value); 
 			break;
 		case 3:
-			if(value instanceof NodeType) 
-				system.getRegions().get(row).setNodeType((NodeType)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof NodeType) 
+				((IntraLayerRegion)system.getRegions().get(row)).setNodeType((NodeType)value); 
 			break;
 		case 4: 
-			if(value instanceof EdgeGenerationType) 
-				system.getRegions().get(row).setEdgeGenerationType((EdgeGenerationType)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof EdgeGenerationType) 
+				((IntraLayerRegion)system.getRegions().get(row)).setEdgeGenerationType((EdgeGenerationType)value); 
 			break;
 		case 5:
-			if(value instanceof EdgeType) 
-				system.getRegions().get(row).setEdgeType((EdgeType)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof EdgeType) 
+				((IntraLayerRegion)system.getRegions().get(row)).setEdgeType((EdgeType)value); 
 			break;
 		case 6:
-			if(value instanceof EdgeDirection) 
-				system.getRegions().get(row).setEdgeDirection((EdgeDirection)value); 
+			if(system.getRegions().get(row) instanceof IntraLayerRegion 
+					&& value instanceof EdgeDirection) 
+				((IntraLayerRegion)system.getRegions().get(row)).setEdgeDirection((EdgeDirection)value); 
 			break;
 		case 7: 
 			if(value instanceof String && CoordinateFormat.isValidMatlabSyntax((String)value)) {

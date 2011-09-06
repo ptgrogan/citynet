@@ -14,6 +14,7 @@ import java.awt.Point;
 
 import javax.swing.JPanel;
 
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.Region;
 
@@ -47,7 +48,9 @@ public class RegionLayer extends JPanel {
 		
 		for(Region region : vizPane.getSystem().getRegions()) {
 			if(vizPane.getDisplayOptions().isLayersFiltered() 
-					&& vizPane.getDisplayOptions().getDisplayHeight()!=region.getLayer().getDisplayHeight()) 
+					&& region instanceof IntraLayerRegion
+					&& vizPane.getDisplayOptions().getDisplayHeight()
+					!= ((IntraLayerRegion)region).getLayer().getDisplayHeight()) 
 				continue;
 			boolean selected = region.equals(vizPane.getSelectedRegion());
 			int[] xPoints = new int[region.getCoordinateList().size()];
@@ -58,7 +61,8 @@ public class RegionLayer extends JPanel {
 				xPoints[i] = p.x;
 				yPoints[i] = p.y;
 			}
-			if(g instanceof Graphics2D) {
+			if(g instanceof Graphics2D && region instanceof IntraLayerRegion) {
+				IntraLayerRegion intraLayerRegion = (IntraLayerRegion)region;
 				Graphics2D g2d = (Graphics2D)g;
 				g2d.setComposite(AlphaComposite.getInstance(
 						AlphaComposite.SRC_OVER, 
@@ -68,24 +72,25 @@ public class RegionLayer extends JPanel {
 					g2d.setColor(Color.WHITE);
 				} else {
 					g2d.setStroke(new BasicStroke(2f));
-					g2d.setColor(region.getNodeType().getColor());
+					g2d.setColor(intraLayerRegion.getNodeType().getColor());
 				}
 				// TODO: what if edge-only?
-				if(region.getNodeGenerationType()==NodeGenerationType.POLYGON) {
+				if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.POLYGON) {
 					// draw a semi-transparent polygon with the node type color 
 					// with a solid outline of the same color
 					g2d.drawPolygon(xPoints, yPoints, xPoints.length);
 					g2d.fillPolygon(xPoints, yPoints, xPoints.length);
-				} else if(region.getNodeGenerationType()==NodeGenerationType.POLYLINE) {
+				} else if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.POLYLINE) {
 					// draw a polyline outline with the node type color 
 					g2d.drawPolyline(xPoints, yPoints, xPoints.length);
-				} else if(region.getNodeGenerationType()==NodeGenerationType.POLYPOINT) {
+				} else if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.POLYPOINT) {
 					// draw an opaque circle with the node type color
 					for(int i=0; i<xPoints.length; i++) {
 						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
 					}
 				}
 			}
+			// TODO interlayerregion
 		}
 	}
 }

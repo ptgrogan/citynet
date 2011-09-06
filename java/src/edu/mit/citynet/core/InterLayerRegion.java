@@ -12,38 +12,19 @@ import edu.mit.citynet.CityNet;
  * 
  * @author Paul Grogan, ptgrogan@mit.edu
  */
-public class InterLayerRegion extends AbstractRegion implements Cloneable {
-	private int id;
+public class InterLayerRegion extends Region implements Cloneable {
 	private List<Layer> originLayers, destinationLayers;
 	private EdgeType edgeType;
 	private EdgeDirection edgeDirection;
 
 	/**
-	 * Instantiates a new inter layer region.
+	 * Instantiates a new inter-layer region.
 	 */
 	public InterLayerRegion() {
 		super();
 		originLayers = new ArrayList<Layer>();
 		destinationLayers = new ArrayList<Layer>();
 		setDescription("New Inter-layer Region");
-	}
-	
-	/**
-	 * Gets the id.
-	 *
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * Sets the id.
-	 *
-	 * @param id the new id
-	 */
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	/**
@@ -52,7 +33,7 @@ public class InterLayerRegion extends AbstractRegion implements Cloneable {
 	 * @return the origin layers
 	 */
 	public List<Layer> getOriginLayers() {
-		return originLayers;
+		return new ArrayList<Layer>(originLayers);
 	}
 
 	/**
@@ -70,7 +51,7 @@ public class InterLayerRegion extends AbstractRegion implements Cloneable {
 	 * @return the destination layers
 	 */
 	public List<Layer> getDestinationLayers() {
-		return destinationLayers;
+		return new ArrayList<Layer>(destinationLayers);
 	}
 
 	/**
@@ -118,10 +99,8 @@ public class InterLayerRegion extends AbstractRegion implements Cloneable {
 		this.edgeDirection = edgeDirection;
 	}
 	
-	/**
-	 * Generates the nodes and edges within a region.
-	 *
-	 * @param system the system
+	/* (non-Javadoc)
+	 * @see edu.mit.citynet.core.Region#generateRegion(edu.mit.citynet.core.CitySystem)
 	 */
 	public void generateRegion(CitySystem system) {
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
@@ -166,5 +145,20 @@ public class InterLayerRegion extends AbstractRegion implements Cloneable {
 		edge.setEdgeDirection(edgeDirection);
 		edge.setEdgeType(edgeType);
 		system.addEdge(edge);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public InterLayerRegion clone() {
+		InterLayerRegion clone = new InterLayerRegion();
+		clone.setId(0);
+		clone.setDescription(getDescription() + " (Copy)");
+		clone.setOriginLayers(getOriginLayers());
+		clone.setDestinationLayers(getDestinationLayers());
+		clone.setEdgeType(getEdgeType());
+		clone.setEdgeDirection(getEdgeDirection());
+		clone.setCoordinateList(getCoordinateList());
+		return clone;
 	}
 }
