@@ -350,6 +350,8 @@ public class InterLayerRegionPanel extends JPanel {
 			edgeTypeCombo.addItem(type);
 		if(region.getEdgeType()==null && edgeTypeCombo.getItemCount()>0)
 			edgeTypeCombo.setSelectedIndex(0);
+		else
+			edgeTypeCombo.setSelectedItem(region.getEdgeType());
 		edgeDirectionCombo.setSelectedItem(region.getEdgeDirection());
 		coordinateTableModel.setCoordinates(region.getCoordinateList());
 	}

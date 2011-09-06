@@ -14,6 +14,8 @@ import java.awt.Point;
 
 import javax.swing.JPanel;
 
+import edu.mit.citynet.core.EdgeGenerationType;
+import edu.mit.citynet.core.InterLayerRegion;
 import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.Region;
@@ -66,7 +68,7 @@ public class RegionLayer extends JPanel {
 				Graphics2D g2d = (Graphics2D)g;
 				g2d.setComposite(AlphaComposite.getInstance(
 						AlphaComposite.SRC_OVER, 
-						vizPane.getDisplayOptions().getNodeRegionOpacity()));
+						vizPane.getDisplayOptions().getRegionOpacity()));
 				if(selected) {
 					g2d.setStroke(new BasicStroke(5f));
 					g2d.setColor(Color.WHITE);
@@ -74,7 +76,6 @@ public class RegionLayer extends JPanel {
 					g2d.setStroke(new BasicStroke(2f));
 					g2d.setColor(intraLayerRegion.getNodeType().getColor());
 				}
-				// TODO: what if edge-only?
 				if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.POLYGON) {
 					// draw a semi-transparent polygon with the node type color 
 					// with a solid outline of the same color
@@ -88,9 +89,40 @@ public class RegionLayer extends JPanel {
 					for(int i=0; i<xPoints.length; i++) {
 						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
 					}
+				} else if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.NONE) {
+					g2d.setColor(intraLayerRegion.getEdgeType().getColor());
+					if(intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.ADJACENT
+							|| intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.CONNECTED
+							|| intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.ORTHOGONAL) {
+						// draw a semi-transparent polygon with the edge type color 
+						// with a solid outline of the same color
+						g2d.drawPolygon(xPoints, yPoints, xPoints.length);
+						g2d.fillPolygon(xPoints, yPoints, xPoints.length);
+					} else if(intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.SEQUENTIAL) {
+						// draw a solid polygon outline with the edge type color
+						g2d.drawPolyline(xPoints, yPoints, xPoints.length);
+					}
 				}
 			}
-			// TODO interlayerregion
+			if(g instanceof Graphics2D && region instanceof InterLayerRegion) {
+				InterLayerRegion interLayerRegion = (InterLayerRegion)region;
+				Graphics2D g2d = (Graphics2D)g;
+				g2d.setComposite(AlphaComposite.getInstance(
+						AlphaComposite.SRC_OVER, 
+						vizPane.getDisplayOptions().getRegionOpacity()));
+				if(selected) {
+					g2d.setStroke(new BasicStroke(5f));
+					g2d.setColor(Color.WHITE);
+				} else {
+					g2d.setStroke(new BasicStroke(2f));
+					g2d.setColor(interLayerRegion.getEdgeType().getColor());
+				}
+				// draw an concentric circles with the edge type color
+				for(int i=0; i<xPoints.length; i++) {
+					g2d.drawOval(xPoints[i]-6, yPoints[i]-6, 12, 12);
+					g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
+				}
+			}
 		}
 	}
 }

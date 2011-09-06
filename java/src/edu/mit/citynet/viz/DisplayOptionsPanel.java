@@ -39,7 +39,7 @@ public class DisplayOptionsPanel extends JPanel {
 	private SpinnerNumberModel gridSpacingModel;
 	private OpacitySlider cellRegionOpacitySlider, cellOpacitySlider,
 		nodeRegionOpacitySlider, edgeRegionOpacitySlider, 
-		nodeOpacitySlider, edgeOpacitySlider;
+		nodeOpacitySlider, edgeOpacitySlider, regionOpacitySlider;
 	private DisplayHeightSlider displayHeightSlider;
 	private JLabel displayHeightLabel;
 	private final DecimalFormat format = new DecimalFormat("0.0");
@@ -118,22 +118,28 @@ public class DisplayOptionsPanel extends JPanel {
 		opacityPanel.add(cellOpacitySlider, c);
 		c.gridx = 0;
 		c.gridy++;
+		opacityPanel.add(new JLabel("Regions: ", JLabel.RIGHT), c);
+		c.gridx++;
+		regionOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(regionOpacitySlider, c);
+		c.gridx = 0;
+		c.gridy++;
 		opacityPanel.add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
 		nodeRegionOpacitySlider = new OpacitySlider(false);
 		opacityPanel.add(nodeRegionOpacitySlider, c);
 		c.gridx = 0;
 		c.gridy++;
-		opacityPanel.add(new JLabel("Nodes: ", JLabel.RIGHT), c);
-		c.gridx++;
-		nodeOpacitySlider = new OpacitySlider(false);
-		opacityPanel.add(nodeOpacitySlider, c);
-		c.gridx = 0;
-		c.gridy++;
 		opacityPanel.add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
 		c.gridx++;
 		edgeRegionOpacitySlider = new OpacitySlider(false);
 		opacityPanel.add(edgeRegionOpacitySlider, c);
+		c.gridx = 0;
+		c.gridy++;
+		opacityPanel.add(new JLabel("Nodes: ", JLabel.RIGHT), c);
+		c.gridx++;
+		nodeOpacitySlider = new OpacitySlider(false);
+		opacityPanel.add(nodeOpacitySlider, c);
 		c.gridx = 0;
 		c.gridy++;
 		opacityPanel.add(new JLabel("Edges: ", JLabel.RIGHT), c);
@@ -205,6 +211,8 @@ public class DisplayOptionsPanel extends JPanel {
 				(int)(displayOptions.getEdgeRegionOpacity()*OpacitySlider.NUM_TICKS));
 		edgeOpacitySlider.setValue(
 				(int)(displayOptions.getEdgeOpacity()*OpacitySlider.NUM_TICKS));
+		regionOpacitySlider.setValue(
+				(int)(displayOptions.getRegionOpacity()*OpacitySlider.NUM_TICKS));
 	}
 	
 	/**
@@ -228,5 +236,7 @@ public class DisplayOptionsPanel extends JPanel {
 				edgeRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setEdgeOpacity(
 				edgeOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
+		displayOptions.setRegionOpacity(
+				regionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 	}
 }

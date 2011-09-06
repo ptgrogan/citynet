@@ -19,7 +19,7 @@ public class DisplayOptions {
 	private boolean gridDisplayed, mapDisplayed, layersFiltered;
 	private double gridSpacing, displayHeight;
 	private float cellRegionOpacity, cellOpacity, nodeRegionOpacity, 
-		nodeOpacity, edgeRegionOpacity, edgeOpacity;
+		nodeOpacity, edgeRegionOpacity, edgeOpacity, regionOpacity;
 	
 	/**
 	 * Instantiates a new display options.
@@ -36,6 +36,7 @@ public class DisplayOptions {
 		nodeOpacity = 0.5f;
 		edgeRegionOpacity = 0.5f;
 		edgeOpacity = 0.5f;
+		regionOpacity = 0.5f;
 		viewScale = 100d;	// default: 100 px/km
 		viewOrigin = new Coordinate();
 	}
@@ -102,6 +103,14 @@ public class DisplayOptions {
 
 	public void setEdgeRegionOpacity(float edgeRegionOpacity) {
 		this.edgeRegionOpacity = edgeRegionOpacity;
+	}
+
+	public float getRegionOpacity() {
+		return regionOpacity;
+	}
+
+	public void setRegionOpacity(float regionOpacity) {
+		this.regionOpacity = regionOpacity;
 	}
 
 	public float getEdgeOpacity() {
