@@ -1,8 +1,5 @@
 package edu.mit.citynet.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import edu.mit.citynet.CityNet;
@@ -13,90 +10,50 @@ import edu.mit.citynet.CityNet;
  * @author Paul Grogan, ptgrogan@mit.edu
  */
 public class InterLayerRegion extends Region implements Cloneable {
-	private List<Layer> originLayers, destinationLayers;
-	private EdgeType edgeType;
-	private EdgeDirection edgeDirection;
+	private Layer originLayer, destinationLayer;
 
 	/**
 	 * Instantiates a new inter-layer region.
 	 */
 	public InterLayerRegion() {
 		super();
-		originLayers = new ArrayList<Layer>();
-		destinationLayers = new ArrayList<Layer>();
 		setDescription("New Inter-layer Region");
 	}
 
 	/**
-	 * Gets the origin layers.
+	 * Gets the origin layer.
 	 *
-	 * @return the origin layers
+	 * @return the origin layer
 	 */
-	public List<Layer> getOriginLayers() {
-		return new ArrayList<Layer>(originLayers);
+	public Layer getOriginLayer() {
+		return originLayer;
 	}
 
 	/**
-	 * Sets the origin layers.
+	 * Sets the origin layer.
 	 *
-	 * @param originLayers the new origin layers
+	 * @param originLayer the new origin layer
 	 */
-	public void setOriginLayers(List<Layer> originLayers) {
-		this.originLayers = originLayers;
+	public void setOriginLayer(Layer originLayer) {
+		this.originLayer = originLayer;
 	}
 
 	/**
-	 * Gets the destination layers.
+	 * Gets the destination layer.
 	 *
-	 * @return the destination layers
+	 * @return the destination layer
 	 */
-	public List<Layer> getDestinationLayers() {
-		return new ArrayList<Layer>(destinationLayers);
+	public Layer getDestinationLayer() {
+		return destinationLayer;
 	}
 
 	/**
-	 * Sets the destination layers.
+	 * Sets the destination layer.
 	 *
-	 * @param destinationLayers the new destination layers
+	 * @param destinationLayer the new destination layer
 	 */
-	public void setDestinationLayers(List<Layer> destinationLayers) {
-		this.destinationLayers = destinationLayers;
-	}
-
-	/**
-	 * Gets the edge type.
-	 *
-	 * @return the edge type
-	 */
-	public EdgeType getEdgeType() {
-		return edgeType;
-	}
-
-	/**
-	 * Sets the edge type.
-	 *
-	 * @param edgeType the new edge type
-	 */
-	public void setEdgeType(EdgeType edgeType) {
-		this.edgeType = edgeType;
-	}
-
-	/**
-	 * Gets the edge direction.
-	 *
-	 * @return the edge direction
-	 */
-	public EdgeDirection getEdgeDirection() {
-		return edgeDirection;
-	}
-
-	/**
-	 * Sets the edge direction.
-	 *
-	 * @param edgeDirection the new edge direction
-	 */
-	public void setEdgeDirection(EdgeDirection edgeDirection) {
-		this.edgeDirection = edgeDirection;
+	public void setDestinationLayer(Layer destinationLayer) {
+		this.destinationLayer = destinationLayer;
 	}
 	
 	/* (non-Javadoc)
@@ -109,11 +66,11 @@ public class InterLayerRegion extends Region implements Cloneable {
 		Node[] destinationNodes = new Node[getCoordinateList().size()];
 		for(int i=0;i<getCoordinateList().size();i++) {
 			for(Node node : system.getNodes()) {
-				if(node.getLayer().equals(originLayers.get(i))
+				if(node.getLayer().equals(originLayer)
 						&& node.getCell().containsPoint(gf.createPoint(
 								getCoordinateList().getCoordinate(i)))) {
 					originNodes[i] = node;
-				} else if(node.getLayer().equals(destinationLayers.get(i))
+				} else if(node.getLayer().equals(destinationLayer)
 						&& node.getCell().containsPoint(gf.createPoint(
 								getCoordinateList().getCoordinate(i)))) {
 					destinationNodes[i] = node;
@@ -142,8 +99,8 @@ public class InterLayerRegion extends Region implements Cloneable {
 		edge.setId(CityNet.getInstance().getNextEdgeId());
 		edge.setOrigin(origin);
 		edge.setDestination(destination);
-		edge.setEdgeDirection(edgeDirection);
-		edge.setEdgeType(edgeType);
+		edge.setEdgeDirection(getEdgeDirection());
+		edge.setEdgeType(getEdgeType());
 		system.addEdge(edge);
 	}
 	
@@ -154,8 +111,8 @@ public class InterLayerRegion extends Region implements Cloneable {
 		InterLayerRegion clone = new InterLayerRegion();
 		clone.setId(0);
 		clone.setDescription(getDescription() + " (Copy)");
-		clone.setOriginLayers(getOriginLayers());
-		clone.setDestinationLayers(getDestinationLayers());
+		clone.setOriginLayer(getOriginLayer());
+		clone.setDestinationLayer(getDestinationLayer());
 		clone.setEdgeType(getEdgeType());
 		clone.setEdgeDirection(getEdgeDirection());
 		clone.setCoordinateList(getCoordinateList());

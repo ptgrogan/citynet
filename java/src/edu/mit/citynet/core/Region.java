@@ -10,6 +10,8 @@ package edu.mit.citynet.core;
  */
 public abstract class Region extends AbstractRegion implements Cloneable {
 	private int id;
+	private EdgeType edgeType;
+	private EdgeDirection edgeDirection;
 	
 	/**
 	 * Instantiates a new region.
@@ -35,6 +37,42 @@ public abstract class Region extends AbstractRegion implements Cloneable {
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	/**
+	 * Gets the edge type.
+	 *
+	 * @return the edge type
+	 */
+	public EdgeType getEdgeType() {
+		return edgeType;
+	}
+
+	/**
+	 * Sets the edge type.
+	 *
+	 * @param edgeType the new edge type
+	 */
+	public void setEdgeType(EdgeType edgeType) {
+		this.edgeType = edgeType;
+	}
+
+	/**
+	 * Gets the edge direction.
+	 *
+	 * @return the edge direction
+	 */
+	public EdgeDirection getEdgeDirection() {
+		return edgeDirection;
+	}
+
+	/**
+	 * Sets the edge direction.
+	 *
+	 * @param edgeDirection the new edge direction
+	 */
+	public void setEdgeDirection(EdgeDirection edgeDirection) {
+		this.edgeDirection = edgeDirection;
 	}
 	
 	/* (non-Javadoc)

@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.CoordinateList;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeDirection;
 import edu.mit.citynet.core.EdgeGenerationType;
+import edu.mit.citynet.core.InterLayerRegion;
 import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.Region;
@@ -92,6 +93,16 @@ public class RegionsTable extends JTable {
 		getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(edgeDirectionCombo));
 		getColumnModel().getColumn(7).setHeaderValue("X-Coordinates");
 		getColumnModel().getColumn(8).setHeaderValue("Y-Coordinates");
+		getColumnModel().getColumn(9).setHeaderValue("Origin Layer");
+		getColumnModel().getColumn(9).setCellRenderer(RendererFactory.createLayerTableCellRenderer());
+		JComboBox originLayerCombo = new JComboBox(system.getLayers().toArray());
+		originLayerCombo.setRenderer(RendererFactory.createLayerListCellRenderer());
+		getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(originLayerCombo));
+		getColumnModel().getColumn(10).setHeaderValue("Destination Layer");
+		getColumnModel().getColumn(10).setCellRenderer(RendererFactory.createLayerTableCellRenderer());
+		JComboBox destinationLayerCombo = new JComboBox(system.getLayers().toArray());
+		destinationLayerCombo.setRenderer(RendererFactory.createLayerListCellRenderer());
+		getColumnModel().getColumn(10).setCellEditor(new DefaultCellEditor(destinationLayerCombo));
 		setPreferredScrollableViewportSize(new Dimension(800,400));
 		mouseAdapter = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -99,7 +110,7 @@ public class RegionsTable extends JTable {
 					getSelectionModel().clearSelection();
 				}
 				if(e.getClickCount()==2 && ! (e.getSource() instanceof RegionsTable)) {
-					addRegionCommand();
+					addIntraLayerRegionCommand();
 				}
 			}
 			public void mousePressed(MouseEvent e) {
@@ -130,14 +141,31 @@ public class RegionsTable extends JTable {
 	/**
 	 * Adds the region command.
 	 */
-	private void addRegionCommand() {
-		System.out.println("Add Region Command");
-		// TODO: add interlayerregion
+	private void addIntraLayerRegionCommand() {
+		System.out.println("Add Intra-layer Region Command");
 		IntraLayerRegion region = new IntraLayerRegion();
 		if(system.getLayers().size()>0) region.setLayer(system.getLayers().get(0));
 		region.setNodeGenerationType(NodeGenerationType.POLYGON);
 		if(system.getNodeTypes().size()>0) region.setNodeType(system.getNodeTypes().get(0));
 		region.setEdgeGenerationType(EdgeGenerationType.NONE);
+		if(system.getEdgeTypes().size()>0) region.setEdgeType(system.getEdgeTypes().get(0));
+		region.setEdgeDirection(EdgeDirection.UNDIRECTED);
+		region.setCoordinateList(new CoordinateList(new Coordinate[]{new Coordinate(0,0)}));
+		system.addRegion(region);
+		getModel().fireTableRowsInserted(system.getRegions().indexOf(region), 
+				system.getRegions().indexOf(region));
+	}
+	
+	/**
+	 * Adds the region command.
+	 */
+	private void addInterLayerRegionCommand() {
+		System.out.println("Add Inter-layer Region Command");
+		InterLayerRegion region = new InterLayerRegion();
+		if(system.getLayers().size()>0) {
+			region.setOriginLayer(system.getLayers().get(0));
+			region.setDestinationLayer(system.getLayers().get(0));
+		}
 		if(system.getEdgeTypes().size()>0) region.setEdgeType(system.getEdgeTypes().get(0));
 		region.setEdgeDirection(EdgeDirection.UNDIRECTED);
 		region.setCoordinateList(new CoordinateList(new Coordinate[]{new Coordinate(0,0)}));
@@ -185,13 +213,19 @@ public class RegionsTable extends JTable {
 	 */
 	private JPopupMenu createRegionPopupMenu(final List<Region> regions) {
 		JPopupMenu regionPopupMenu = new JPopupMenu();
-		JMenuItem addRegionMenuItem = new JMenuItem("Add Region");
-		addRegionMenuItem.addActionListener(new ActionListener() {
+		JMenuItem addRegion1MenuItem = new JMenuItem("Add Intra-layer Region");
+		addRegion1MenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addRegionCommand();
+				addIntraLayerRegionCommand();
 			}
 		});
-		regionPopupMenu.add(addRegionMenuItem);
+		JMenuItem addRegion2MenuItem = new JMenuItem("Add Inter-layer Region");
+		addRegion2MenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addInterLayerRegionCommand();
+			}
+		});
+		regionPopupMenu.add(addRegion2MenuItem);
 		regionPopupMenu.add(new JSeparator());
 		JMenuItem copyRegionMenuItem = new JMenuItem("Copy Region");
 		copyRegionMenuItem.addActionListener(new ActionListener() {

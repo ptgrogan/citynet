@@ -67,7 +67,8 @@ public class SystemPanel extends JSplitPane {
 	private EdgeTypePanel edgeTypePanel;
 	private NodeRegionPanel nodeRegionPanel;
 	private EdgeRegionPanel edgeRegionPanel;
-	private IntraLayerRegionPanel regionPanel;
+	private IntraLayerRegionPanel intraLayerRegionPanel;
+	private InterLayerRegionPanel interLayerRegionPanel;
 	
 	/**
 	 * Instantiates a new system viz panel.
@@ -86,7 +87,8 @@ public class SystemPanel extends JSplitPane {
 		edgeTypePanel = new EdgeTypePanel();
 		nodeRegionPanel = new NodeRegionPanel(this);
 		edgeRegionPanel = new EdgeRegionPanel(this);
-		regionPanel = new IntraLayerRegionPanel(this);
+		intraLayerRegionPanel = new IntraLayerRegionPanel(this);
+		interLayerRegionPanel = new InterLayerRegionPanel(this);
 		initializePanel();
 	}
 	
@@ -530,13 +532,20 @@ public class SystemPanel extends JSplitPane {
 			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().regionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableRegionTreeNode) {
-			JMenuItem addMenuItem = new JMenuItem("Add Region");
-			addMenuItem.addActionListener(new ActionListener() {
+			JMenuItem add1MenuItem = new JMenuItem("Add Intra-layer Region");
+			add1MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					addRegionCommand();
+					addIntraLayerRegionCommand();
 				}
 			});
-			systemTreePopupMenu.add(addMenuItem);
+			systemTreePopupMenu.add(add1MenuItem);
+			JMenuItem add2MenuItem = new JMenuItem("Add Inter-layer Region");
+			add2MenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addInterLayerRegionCommand();
+				}
+			});
+			systemTreePopupMenu.add(add2MenuItem);
 			systemTreePopupMenu.add(new JSeparator());
 			JMenuItem editMenuItem = new JMenuItem("Edit Region");
 			editMenuItem.addActionListener(new ActionListener() {
@@ -990,16 +999,33 @@ public class SystemPanel extends JSplitPane {
 	/**
 	 * Adds the edge region command.
 	 */
-	private void addRegionCommand() {
-		System.out.println("Add Region Command");
+	private void addIntraLayerRegionCommand() {
+		System.out.println("Add Intra-layer Region Command");
 		IntraLayerRegion region = new IntraLayerRegion();
-		regionPanel.loadRegion(region);
-		// TODO: add inter-layer region
-		int value = JOptionPane.showConfirmDialog(this, regionPanel,
+		intraLayerRegionPanel.loadRegion(region);
+		int value = JOptionPane.showConfirmDialog(this, intraLayerRegionPanel,
 				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			regionPanel.saveRegionCommand();
+			intraLayerRegionPanel.saveRegionCommand();
+			system.addRegion(region);
+			systemTree.getModel().addRegion(region);
+			layeredPane.repaint();
+		}
+	}
+	
+	/**
+	 * Adds the edge region command.
+	 */
+	private void addInterLayerRegionCommand() {
+		System.out.println("Add Inter-layer Region Command");
+		InterLayerRegion region = new InterLayerRegion();
+		interLayerRegionPanel.loadRegion(region);
+		int value = JOptionPane.showConfirmDialog(this, interLayerRegionPanel,
+				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
+				JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			interLayerRegionPanel.saveRegionCommand();
 			system.addRegion(region);
 			systemTree.getModel().addRegion(region);
 			layeredPane.repaint();
@@ -1013,17 +1039,26 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void editRegionCommand(Region region) {
 		System.out.println("Edit Region Command");
-		if(region instanceof IntraLayerRegion)
-			regionPanel.loadRegion((IntraLayerRegion)region);
-		else if(region instanceof InterLayerRegion)
-			;//TODO
-		int value = JOptionPane.showConfirmDialog(this, regionPanel,
-				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			regionPanel.saveRegionCommand();
-			systemTree.getModel().updateRegion(region);
-			layeredPane.repaint();
+		if(region instanceof IntraLayerRegion) {
+			intraLayerRegionPanel.loadRegion((IntraLayerRegion)region);
+			int value = JOptionPane.showConfirmDialog(this, intraLayerRegionPanel,
+					"City.Net | Intra-layer Region", JOptionPane.OK_CANCEL_OPTION, 
+					JOptionPane.PLAIN_MESSAGE);
+			if(value == JOptionPane.OK_OPTION) {
+				intraLayerRegionPanel.saveRegionCommand();
+				systemTree.getModel().updateRegion(region);
+				layeredPane.repaint();
+			}
+		} else if(region instanceof InterLayerRegion) {
+			interLayerRegionPanel.loadRegion((InterLayerRegion)region);
+			int value = JOptionPane.showConfirmDialog(this, interLayerRegionPanel,
+					"City.Net | Inter-layer Region", JOptionPane.OK_CANCEL_OPTION, 
+					JOptionPane.PLAIN_MESSAGE);
+			if(value == JOptionPane.OK_OPTION) {
+				interLayerRegionPanel.saveRegionCommand();
+				systemTree.getModel().updateRegion(region);
+				layeredPane.repaint();
+			}
 		}
 	}
 	
@@ -1049,17 +1084,26 @@ public class SystemPanel extends JSplitPane {
 	private void copyRegionCommand(Region region) {
 		System.out.println("Copy Region Command");
 		Region newRegion = region.clone();
-		if(region instanceof IntraLayerRegion)
-			regionPanel.loadRegion((IntraLayerRegion)newRegion);
-		else if(region instanceof InterLayerRegion)
-			;//TODO: edit interlayerregion
-		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
-				"City.Net | Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			regionPanel.saveRegionCommand();
-			system.addRegion(newRegion);
-			systemTree.getModel().addRegion(newRegion);
+		if(region instanceof IntraLayerRegion) {
+			intraLayerRegionPanel.loadRegion((IntraLayerRegion)newRegion);
+			int value = JOptionPane.showConfirmDialog(this, intraLayerRegionPanel,
+					"City.Net | Intra-layer Region", JOptionPane.OK_CANCEL_OPTION, 
+					JOptionPane.PLAIN_MESSAGE);
+			if(value == JOptionPane.OK_OPTION) {
+				intraLayerRegionPanel.saveRegionCommand();
+				system.addRegion(newRegion);
+				systemTree.getModel().addRegion(newRegion);
+			}
+		} else if(region instanceof InterLayerRegion) {
+			interLayerRegionPanel.loadRegion((InterLayerRegion)newRegion);
+			int value = JOptionPane.showConfirmDialog(this, interLayerRegionPanel,
+					"City.Net | Inter-layer Region", JOptionPane.OK_CANCEL_OPTION, 
+					JOptionPane.PLAIN_MESSAGE);
+			if(value == JOptionPane.OK_OPTION) {
+				interLayerRegionPanel.saveRegionCommand();
+				system.addRegion(newRegion);
+				systemTree.getModel().addRegion(newRegion);
+			}
 		}
 	}
 	

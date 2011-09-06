@@ -48,7 +48,7 @@ public class RegionsTableModel extends AbstractTableModel {
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
 	public int getColumnCount() {
-		return 9;
+		return 11;
 	}
 
 	/* (non-Javadoc)
@@ -73,16 +73,18 @@ public class RegionsTableModel extends AbstractTableModel {
 			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
 				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeGenerationType();
 			} else return null;
-		case 5: 
-			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
-				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeType();
-			} else return null;
-		case 6: 
-			if(system.getRegions().get(row) instanceof IntraLayerRegion) {
-				return ((IntraLayerRegion)system.getRegions().get(row)).getEdgeDirection();
-			} else return null;
+		case 5: return system.getRegions().get(row).getEdgeType();
+		case 6: return system.getRegions().get(row).getEdgeDirection();
 		case 7: return CoordinateFormat.createForMatlabSyntax(system.getRegions().get(row).getCoordinateList())[0];
 		case 8: return CoordinateFormat.createForMatlabSyntax(system.getRegions().get(row).getCoordinateList())[1];
+		case 9:
+			if(system.getRegions().get(row) instanceof InterLayerRegion) {
+				return ((InterLayerRegion)system.getRegions().get(row)).getOriginLayer();
+			} else return null;
+		case 10:
+			if(system.getRegions().get(row) instanceof InterLayerRegion) {
+				return ((InterLayerRegion)system.getRegions().get(row)).getDestinationLayer();
+			} else return null;
 		default: return null;
 		}
 	}
@@ -92,11 +94,10 @@ public class RegionsTableModel extends AbstractTableModel {
 	 */
 	public boolean isCellEditable(int row, int col) {
 		if(system.getRegions().get(row) instanceof IntraLayerRegion) {
-			return true;
-			// TODO
+			if(col <= 7) return true;
+			else return false;
 		} else if(system.getRegions().get(row) instanceof InterLayerRegion) {
-			if(col <= 0 || col >= 7) return true;
-			// TODO
+			if(col <= 0 || col >= 5) return true;
 			else return false;
 		}
     	return false;
@@ -116,6 +117,8 @@ public class RegionsTableModel extends AbstractTableModel {
 		case 6: return EdgeDirection.class;
 		case 7: return String.class;
 		case 8: return String.class;
+		case 9: return Layer.class;
+		case 10: return Layer.class;
 		default: return Object.class;
 		}
     }
@@ -161,7 +164,7 @@ public class RegionsTableModel extends AbstractTableModel {
 			break;
 		case 7: 
 			if(value instanceof String && CoordinateFormat.isValidMatlabSyntax((String)value)) {
-				String yCoords = (String)getValueAt(row,5);
+				String yCoords = (String)getValueAt(row,8);
 				while(CoordinateFormat.getDoubleCoordinates((String)value).length 
 						> CoordinateFormat.getDoubleCoordinates(yCoords).length) {
 					// add extra y-coordinate... default to 0.0
@@ -178,7 +181,7 @@ public class RegionsTableModel extends AbstractTableModel {
 			break;
 		case 8: 
 			if(value instanceof String && CoordinateFormat.isValidMatlabSyntax((String)value)) {
-				String xCoords = (String)getValueAt(row,4);
+				String xCoords = (String)getValueAt(row,7);
 				while(CoordinateFormat.getDoubleCoordinates((String)value).length 
 						> CoordinateFormat.getDoubleCoordinates(xCoords).length) {
 					// add extra x-coordinate... default to 0.0
@@ -192,6 +195,16 @@ public class RegionsTableModel extends AbstractTableModel {
 				system.getRegions().get(row).setCoordinateList(
 						CoordinateFormat.createFromMatlabSyntax(xCoords, (String)value));
 			}
+			break;
+		case 9: 
+			if(system.getRegions().get(row) instanceof InterLayerRegion 
+					&& value instanceof Layer) 
+				((InterLayerRegion)system.getRegions().get(row)).setOriginLayer((Layer)value); 
+			break;
+		case 10: 
+			if(system.getRegions().get(row) instanceof InterLayerRegion 
+					&& value instanceof Layer) 
+				((InterLayerRegion)system.getRegions().get(row)).setDestinationLayer((Layer)value); 
 			break;
 		}
     	fireTableRowsUpdated(row, row);

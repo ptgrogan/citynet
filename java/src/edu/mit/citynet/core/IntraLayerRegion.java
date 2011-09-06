@@ -21,10 +21,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	private Layer layer;
 	private NodeType nodeType;
 	private NodeGenerationType nodeGenerationType;
-	
-	private EdgeType edgeType;
 	private EdgeGenerationType edgeGenerationType;
-	private EdgeDirection edgeDirection;
 	
 	/**
 	 * Instantiates a new intra-layer region.
@@ -107,24 +104,6 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	}
 	
 	/**
-	 * Gets the edge type.
-	 *
-	 * @return the edge type
-	 */
-	public EdgeType getEdgeType() {
-		return edgeType;
-	}
-	
-	/**
-	 * Sets the edge type.
-	 *
-	 * @param edgeType the new edge type
-	 */
-	public void setEdgeType(EdgeType edgeType) {
-		this.edgeType = edgeType;
-	}
-	
-	/**
 	 * Gets the edge generation type.
 	 *
 	 * @return the edge generation type
@@ -140,24 +119,6 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	 */
 	public void setEdgeGenerationType(EdgeGenerationType edgeGenerationType) {
 		this.edgeGenerationType = edgeGenerationType;
-	}
-	
-	/**
-	 * Gets the edge direction.
-	 *
-	 * @return the edge direction
-	 */
-	public EdgeDirection getEdgeDirection() {
-		return edgeDirection;
-	}
-	
-	/**
-	 * Sets the edge direction.
-	 *
-	 * @param edgeDirection the new edge direction
-	 */
-	public void setEdgeDirection(EdgeDirection edgeDirection) {
-		this.edgeDirection = edgeDirection;
 	}
 	
 	/* (non-Javadoc)
@@ -329,8 +290,8 @@ public class IntraLayerRegion extends Region implements Cloneable {
 		edge.setId(CityNet.getInstance().getNextEdgeId());
 		edge.setOrigin(origin);
 		edge.setDestination(destination);
-		edge.setEdgeDirection(edgeDirection);
-		edge.setEdgeType(edgeType);
+		edge.setEdgeDirection(getEdgeDirection());
+		edge.setEdgeType(getEdgeType());
 		system.addEdge(edge);
 	}
 }
