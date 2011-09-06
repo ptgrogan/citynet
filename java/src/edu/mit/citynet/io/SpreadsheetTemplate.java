@@ -34,14 +34,19 @@ import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.CitySystem.CitySystemType;
 import edu.mit.citynet.core.Edge;
 import edu.mit.citynet.core.EdgeDirection;
+import edu.mit.citynet.core.EdgeGenerationType;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.EdgeTypeAttribute;
+import edu.mit.citynet.core.InterLayerRegion;
+import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.Layer;
 import edu.mit.citynet.core.Node;
+import edu.mit.citynet.core.NodeGenerationType;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.NodeTypeAttribute;
+import edu.mit.citynet.core.Region;
 
 /**
  * The SpreadsheetTemplate provides file input/operation methods for
@@ -101,6 +106,14 @@ public class SpreadsheetTemplate {
 	public static final int CELL_REGION_ID = 0, CELL_REGION_VERTICES_X = 1, 
 		CELL_REGION_VERTICES_Y = 2, CELL_REGION_NUM_ROWS = 3, 
 		CELL_REGION_NUM_COLS = 4, CELL_REGION_DESCRIPTION = 5;
+	public static final String REGIONS = "regions";
+	public static final int REGION_ID = 0, REGION_SYSTEM_ID = 1,
+		REGION_TYPE = 2, REGION_LAYER_ID = 3, REGION_NODE_GENERATION_TYPE = 4, 
+		REGION_NODE_TYPE_ID = 5, REGION_EDGE_GENERATION_TYPE = 6, 
+		REGION_EDGE_TYPE_ID = 7, REGION_EDGE_DIRECTION = 8,
+		REGION_VERTICES_X = 9, REGION_VERTICES_Y = 10, 
+		REGION_ORIGIN_LAYER_ID = 11, REGION_DESTINATION_LAYER_ID = 12, 
+		REGION_DESCRIPTION = 13;
 	
 	private String filePath;
 	private transient Map<Integer,Layer> layerMap;
@@ -207,6 +220,7 @@ public class SpreadsheetTemplate {
 			system.addAllEdgeTypes(readEdgeTypes(wb,system.getId()));
 			system.addAllNodeRegions(readNodeRegions(wb,system.getId()));
 			system.addAllEdgeRegions(readEdgeRegions(wb,system.getId()));
+			system.addAllRegions(readRegions(wb,system.getId()));
 			system.addAllNodes(readNodes(wb,system.getId()));
 			system.addAllEdges(readEdges(wb,system.getId()));
 			systems.add(system);
@@ -218,7 +232,7 @@ public class SpreadsheetTemplate {
 	 * Reads the cells from a spreadsheet template.
 	 *
 	 * @param wb the workbook
-	 * @return the set of cells
+	 * @return the list of cells
 	 */
 	private List<Cell> readCells(Workbook wb) {
 		List<Cell> cells = new ArrayList<Cell>();
@@ -247,7 +261,7 @@ public class SpreadsheetTemplate {
 	 * Reads the cell regions from the spreadsheet template.
 	 *
 	 * @param wb the workbook
-	 * @return the set of cell regions
+	 * @return the list of cell regions
 	 */
 	private List<CellRegion> readCellRegions(Workbook wb) {
 		List<CellRegion> cellRegions = new ArrayList<CellRegion>();
@@ -271,7 +285,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load layers
-	 * @return the set of layers
+	 * @return the list of layers
 	 */
 	private List<Layer> readLayers(Workbook wb, int systemId) {
 		List<Layer> layers = new ArrayList<Layer>();
@@ -295,7 +309,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load node types
-	 * @return the set of node types
+	 * @return the list of node types
 	 */
 	private List<NodeType> readNodeTypes(Workbook wb, int systemId) {
 		List<NodeType> nodeTypes = new ArrayList<NodeType>();
@@ -322,7 +336,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param nodeTypeId the node type id from which to load the attributes
-	 * @return the set of node type attributes
+	 * @return the list of node type attributes
 	 */
 	private List<NodeTypeAttribute> readNodeTypeAttributes(Workbook wb, int nodeTypeId) {
 		List<NodeTypeAttribute> nodeTypeAttributes = new ArrayList<NodeTypeAttribute>();
@@ -347,7 +361,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to read the edge types
-	 * @return the set of edge types
+	 * @return the list of edge types
 	 */
 	private List<EdgeType> readEdgeTypes(Workbook wb, int systemId) {
 		List<EdgeType> edgeTypes = new ArrayList<EdgeType>();
@@ -374,7 +388,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param edgeTypeId the edge type id from which to load the attributes
-	 * @return the set of edge type attributes
+	 * @return the list of edge type attributes
 	 */
 	private List<EdgeTypeAttribute> readEdgeTypeAttributes(Workbook wb, int edgeTypeId) {
 		List<EdgeTypeAttribute> edgeTypeAttributes = new ArrayList<EdgeTypeAttribute>();
@@ -399,7 +413,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load nodes
-	 * @return the set of nodes
+	 * @return the list of nodes
 	 */
 	private List<Node> readNodes(Workbook wb, int systemId) {
 		List<Node> nodes = new ArrayList<Node>();
@@ -423,7 +437,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load edges
-	 * @return the set of edges
+	 * @return the list of edges
 	 */
 	private List<Edge> readEdges(Workbook wb, int systemId) {
 		List<Edge> edges = new ArrayList<Edge>();
@@ -447,7 +461,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load node regions
-	 * @return the set of node regions
+	 * @return the list of node regions
 	 */
 	private List<NodeRegion> readNodeRegions(Workbook wb, int systemId) {
 		List<NodeRegion> nodeRegions = new ArrayList<NodeRegion>();
@@ -474,7 +488,7 @@ public class SpreadsheetTemplate {
 	 *
 	 * @param wb the workbook
 	 * @param systemId the system id from which to load edge regions
-	 * @return the set of edge regions
+	 * @return the list of edge regions
 	 */
 	private List<EdgeRegion> readEdgeRegions(Workbook wb, int systemId) {
 		List<EdgeRegion> edgeRegions = new ArrayList<EdgeRegion>();
@@ -500,6 +514,114 @@ public class SpreadsheetTemplate {
 			edgeRegions.add(edgeRegion);
 		}
 		return edgeRegions;
+	}
+	
+	/**
+	 * Read the regions for a system from the spreadsheet template.
+	 *
+	 * @param wb the wb
+	 * @param systemId the system id
+	 * @return the list of regions
+	 */
+	private List<Region> readRegions(Workbook wb, int systemId) {
+		List<Region> regions = new ArrayList<Region>();
+		if(wb.getSheet(NODE_REGIONS)!=null) {
+			for(Row row : wb.getSheet(NODE_REGIONS)) {
+				if(row.getRowNum()==0 || 
+						(int)row.getCell(NODE_REGION_SYSTEM_ID).getNumericCellValue()!=systemId) 
+					continue; // skip header row and layers in other systems
+				IntraLayerRegion region = new IntraLayerRegion();
+				region.setId(CityNet.getInstance().getNextRegionId());
+				region.setLayer(layerMap.get((int)row.getCell(NODE_REGION_LAYER_ID).getNumericCellValue()));
+				region.setNodeType(nodeTypeMap.get((int)row.getCell(NODE_REGION_NODE_TYPE_ID).getNumericCellValue()));
+				String verticesX = row.getCell(NODE_REGION_VERTICES_X).getStringCellValue();
+				String verticesY = row.getCell(NODE_REGION_VERTICES_Y).getStringCellValue();
+				region.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
+				region.setNodeGenerationType(NodeGenerationType.getNodeGenerationType(row.getCell(NODE_REGION_TYPE).getStringCellValue()));
+				region.setEdgeGenerationType(EdgeGenerationType.NONE);
+				region.setDescription(row.getCell(NODE_REGION_DESCRIPTION).getStringCellValue());
+				regions.add(region);
+			}
+		}
+		if(wb.getSheet(EDGE_REGIONS)!=null) {
+			for(Row row : wb.getSheet(EDGE_REGIONS)) {
+				if(row.getRowNum()==0 || 
+						(int)row.getCell(EDGE_REGION_SYSTEM_ID).getNumericCellValue()!=systemId) 
+					continue; // skip header row and layers in other systems
+				String layersText = row.getCell(EDGE_REGION_LAYER_ID).getStringCellValue();
+				Vector<Layer> layers = new Vector<Layer>();
+				for(String s : layersText.substring(1,layersText.length()-1).split(" ")) {
+					layers.add(layerMap.get(Integer.parseInt(s)));
+				}
+				boolean intraLayer = true;
+				for(Layer l : layers) if(!layers.get(0).equals(l)) intraLayer = false;
+				if(intraLayer) {
+					IntraLayerRegion region = new IntraLayerRegion();
+					region.setId(CityNet.getInstance().getNextRegionId());
+					region.setLayer(layers.get(0));
+					region.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_REGION_EDGE_TYPE_ID).getNumericCellValue()));
+					String verticesX = row.getCell(EDGE_REGION_VERTICES_X).getStringCellValue();
+					String verticesY = row.getCell(EDGE_REGION_VERTICES_Y).getStringCellValue();
+					region.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
+					region.setNodeGenerationType(NodeGenerationType.NONE);
+					region.setEdgeGenerationType(EdgeGenerationType.getEdgeGenerationType(row.getCell(EDGE_REGION_TYPE).getStringCellValue()));
+					region.setEdgeDirection(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
+					region.setDescription(row.getCell(EDGE_REGION_DESCRIPTION).getStringCellValue());
+					regions.add(region);
+				} else {
+					String verticesX = row.getCell(EDGE_REGION_VERTICES_X).getStringCellValue();
+					String verticesY = row.getCell(EDGE_REGION_VERTICES_Y).getStringCellValue();
+					CoordinateList coords = CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY);
+					for(int i = 0; i < layers.size()-1; i+=2) {
+						InterLayerRegion region = new InterLayerRegion();
+						region.setId(CityNet.getInstance().getNextRegionId());
+						region.setOriginLayer(layers.get(i));
+						region.setDestinationLayer(layers.get(i+1));
+						region.setEdgeType(edgeTypeMap.get((int)row.getCell(EDGE_REGION_EDGE_TYPE_ID).getNumericCellValue()));
+						region.setCoordinateList(new CoordinateList(new Coordinate[]{coords.getCoordinate(i)}));
+						region.setEdgeDirection(row.getCell(EDGE_REGION_DIRECTED).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
+						region.setDescription(row.getCell(EDGE_REGION_DESCRIPTION).getStringCellValue());
+						regions.add(region);
+					}
+				}
+			}
+		}
+		if(wb.getSheet(REGIONS)!=null) {
+			for(Row row : wb.getSheet(REGIONS)) {
+				if(row.getRowNum()==0 || 
+						(int)row.getCell(REGION_SYSTEM_ID).getNumericCellValue()!=systemId) 
+					continue; // skip header row and layers in other systems
+				String regionType = row.getCell(REGION_TYPE).getStringCellValue();
+				if(regionType.toLowerCase().contains("inter")) {
+					InterLayerRegion region = new InterLayerRegion();
+					region.setId((int)row.getCell(REGION_ID).getNumericCellValue());
+					String verticesX = row.getCell(REGION_VERTICES_X).getStringCellValue();
+					String verticesY = row.getCell(REGION_VERTICES_Y).getStringCellValue();
+					region.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
+					region.setEdgeType(edgeTypeMap.get((int)row.getCell(REGION_EDGE_TYPE_ID).getNumericCellValue()));
+					region.setEdgeDirection(row.getCell(REGION_EDGE_DIRECTION).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
+					region.setOriginLayer(layerMap.get((int)row.getCell(REGION_ORIGIN_LAYER_ID).getNumericCellValue()));
+					region.setDestinationLayer(layerMap.get((int)row.getCell(REGION_DESTINATION_LAYER_ID).getNumericCellValue()));
+					region.setDescription(row.getCell(REGION_DESCRIPTION).getStringCellValue());
+					regions.add(region);
+				} else if(regionType.toLowerCase().contains("intra")) {
+					IntraLayerRegion region = new IntraLayerRegion();
+					region.setId((int)row.getCell(REGION_ID).getNumericCellValue());
+					region.setLayer(layerMap.get((int)row.getCell(REGION_LAYER_ID).getNumericCellValue()));
+					region.setNodeType(nodeTypeMap.get((int)row.getCell(REGION_NODE_TYPE_ID).getNumericCellValue()));
+					region.setEdgeType(edgeTypeMap.get((int)row.getCell(REGION_EDGE_TYPE_ID).getNumericCellValue()));
+					String verticesX = row.getCell(REGION_VERTICES_X).getStringCellValue();
+					String verticesY = row.getCell(REGION_VERTICES_Y).getStringCellValue();
+					region.setCoordinateList(CoordinateFormat.createFromMatlabSyntax(verticesX, verticesY));
+					region.setNodeGenerationType(NodeGenerationType.getNodeGenerationType(row.getCell(REGION_NODE_GENERATION_TYPE).getStringCellValue()));
+					region.setEdgeGenerationType(EdgeGenerationType.getEdgeGenerationType(row.getCell(REGION_EDGE_GENERATION_TYPE).getStringCellValue()));
+					region.setEdgeDirection(row.getCell(REGION_EDGE_DIRECTION).getNumericCellValue()==1?EdgeDirection.DIRECTED:EdgeDirection.UNDIRECTED);
+					region.setDescription(row.getCell(REGION_DESCRIPTION).getStringCellValue());
+					regions.add(region);
+				}
+			}
+		}
+		return regions;
 	}
 	
 	/**
@@ -662,6 +784,24 @@ public class SpreadsheetTemplate {
 			s.getRow(0).getCell(EDGE_DESTINATION_ID).setCellValue("Destination Node ID");
 			s.getRow(0).getCell(EDGE_DIRECTED).setCellValue("Directed");
 		}
+		if(wb.getSheet(REGIONS)==null) {
+			Sheet s = wb.createSheet(REGIONS);
+			s.createRow(0);
+			s.getRow(0).getCell(REGION_ID).setCellValue("ID");
+			s.getRow(0).getCell(REGION_SYSTEM_ID).setCellValue("System ID");
+			s.getRow(0).getCell(REGION_TYPE).setCellValue("Region Type");
+			s.getRow(0).getCell(REGION_LAYER_ID).setCellValue("Layer ID");
+			s.getRow(0).getCell(REGION_NODE_GENERATION_TYPE).setCellValue("Node Generation");
+			s.getRow(0).getCell(REGION_NODE_TYPE_ID).setCellValue("Node Type");
+			s.getRow(0).getCell(REGION_EDGE_GENERATION_TYPE).setCellValue("Edge Generation");
+			s.getRow(0).getCell(REGION_EDGE_TYPE_ID).setCellValue("Edge Type");
+			s.getRow(0).getCell(REGION_EDGE_DIRECTION).setCellValue("Edge Direction");
+			s.getRow(0).getCell(REGION_VERTICES_X).setCellValue("X-Vertices");
+			s.getRow(0).getCell(REGION_VERTICES_Y).setCellValue("Y-Vertices");
+			s.getRow(0).getCell(REGION_ORIGIN_LAYER_ID).setCellValue("Origin Layer ID");
+			s.getRow(0).getCell(REGION_DESTINATION_LAYER_ID).setCellValue("Destination Layer ID");
+			s.getRow(0).getCell(REGION_DESCRIPTION).setCellValue("Description");
+		}
 	}
 	
 	/**
@@ -682,6 +822,7 @@ public class SpreadsheetTemplate {
 		clearSheet(wb,EDGE_REGIONS);
 		clearSheet(wb,NODES);
 		clearSheet(wb,EDGES);
+		clearSheet(wb,REGIONS);
 	}
 	
 	/**
@@ -824,10 +965,13 @@ public class SpreadsheetTemplate {
 			writeEdgeType(edgeType, system.getId(), wb);
 		}
 		for(NodeRegion nodeRegion : system.getNodeRegions()) {
-			writeNodeRegion(nodeRegion, system.getId(), wb);
+			// TODO remove writeNodeRegion(nodeRegion, system.getId(), wb);
 		}
 		for(EdgeRegion edgeRegion: system.getEdgeRegions()) {
-			writeEdgeRegion(edgeRegion, system.getId(), wb);
+			// TODO remove writeEdgeRegion(edgeRegion, system.getId(), wb);
+		}
+		for(Region region : system.getRegions()) {
+			writeRegion(region, system.getId(), wb);
 		}
 		for(Node node : system.getNodes()) {
 			writeNode(node, system.getId(), wb);
@@ -1008,5 +1152,38 @@ public class SpreadsheetTemplate {
 		row.getCell(EDGE_ORIGIN_ID).setCellValue(edge.getOrigin().getId());
 		row.getCell(EDGE_DESTINATION_ID).setCellValue(edge.getDestination().getId());
 		row.getCell(EDGE_DIRECTED).setCellValue(edge.getEdgeDirection()==EdgeDirection.DIRECTED?1:0);
+	}
+	
+	/**
+	 * Write a region to the spreadsheet template.
+	 *
+	 * @param region the region
+	 * @param systemId the system id
+	 * @param wb the workbook
+	 */
+	private void writeRegion(Region region, int systemId, Workbook wb) {
+		Row row = getRowForObject(wb, REGIONS, REGION_ID, region.getId());
+		row.getCell(REGION_ID).setCellValue(region.getId());
+		row.getCell(REGION_SYSTEM_ID).setCellValue(systemId);
+		row.getCell(REGION_TYPE).setCellValue((region instanceof IntraLayerRegion)?"intra":"inter");
+		Layer layer = (region instanceof IntraLayerRegion)?((IntraLayerRegion)region).getLayer():null;
+		row.getCell(REGION_LAYER_ID).setCellValue(layer==null?0:layer.getId());
+		row.getCell(REGION_NODE_GENERATION_TYPE).setCellValue(
+				(region instanceof IntraLayerRegion)?((IntraLayerRegion)region).getNodeGenerationType().getName():"None");
+		NodeType nodeType = (region instanceof IntraLayerRegion)?((IntraLayerRegion)region).getNodeType():null;
+		row.getCell(REGION_NODE_TYPE_ID).setCellValue(nodeType==null?0:nodeType.getId());
+		row.getCell(REGION_EDGE_GENERATION_TYPE).setCellValue(
+				(region instanceof IntraLayerRegion)?((IntraLayerRegion)region).getEdgeGenerationType().getName():"None");
+		EdgeType edgeType = (region instanceof IntraLayerRegion)?((IntraLayerRegion)region).getEdgeType():null;
+		row.getCell(REGION_EDGE_TYPE_ID).setCellValue(edgeType==null?0:edgeType.getId());
+		row.getCell(REGION_EDGE_DIRECTION).setCellValue(region.getEdgeDirection()==EdgeDirection.DIRECTED?1:0);
+		String[] vertices = CoordinateFormat.createForMatlabSyntax(region.getCoordinateList());
+		row.getCell(REGION_VERTICES_X).setCellValue(vertices[0]);
+		row.getCell(REGION_VERTICES_Y).setCellValue(vertices[1]);
+		Layer originLayer = (region instanceof InterLayerRegion)?((InterLayerRegion)region).getOriginLayer():null;
+		row.getCell(REGION_ORIGIN_LAYER_ID).setCellValue(originLayer==null?0:originLayer.getId());
+		Layer destinationLayer = (region instanceof InterLayerRegion)?((InterLayerRegion)region).getDestinationLayer():null;
+		row.getCell(REGION_DESTINATION_LAYER_ID).setCellValue(destinationLayer==null?0:destinationLayer.getId());
+		row.getCell(REGION_DESCRIPTION).setCellValue(region.getDescription());
 	}
 }

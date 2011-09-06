@@ -83,8 +83,9 @@ public enum EdgeGenerationType {
 	 */
 	public static EdgeGenerationType getEdgeGenerationType(String name) {
 		for(EdgeGenerationType t : EdgeGenerationType.values()) {
-			if(t.getName().toLowerCase().equals(name.toLowerCase())) return t;
+			if(t.getName().toLowerCase().contains(name.toLowerCase())) return t;
 		}
+		if(name.toLowerCase().equals("polypoint")) return SEQUENTIAL; // legacy
 		return NONE;
 	}
 }

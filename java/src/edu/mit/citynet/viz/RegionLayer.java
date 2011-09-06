@@ -74,7 +74,14 @@ public class RegionLayer extends JPanel {
 					g2d.setColor(Color.WHITE);
 				} else {
 					g2d.setStroke(new BasicStroke(2f));
-					g2d.setColor(intraLayerRegion.getNodeType().getColor());
+					if(intraLayerRegion.getNodeType()!=null
+							&& intraLayerRegion.getNodeGenerationType()!=NodeGenerationType.NONE)
+						g2d.setColor(intraLayerRegion.getNodeType().getColor());
+					else if(intraLayerRegion.getEdgeType()!=null
+							&& intraLayerRegion.getEdgeGenerationType()!=EdgeGenerationType.NONE)
+						g2d.setColor(intraLayerRegion.getEdgeType().getColor());
+					else
+						g2d.setColor(Color.WHITE);
 				}
 				if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.POLYGON) {
 					// draw a semi-transparent polygon with the node type color 
@@ -90,7 +97,6 @@ public class RegionLayer extends JPanel {
 						g2d.fillOval(xPoints[i]-3, yPoints[i]-3, 6, 6);
 					}
 				} else if(intraLayerRegion.getNodeGenerationType()==NodeGenerationType.NONE) {
-					g2d.setColor(intraLayerRegion.getEdgeType().getColor());
 					if(intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.ADJACENT
 							|| intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.CONNECTED
 							|| intraLayerRegion.getEdgeGenerationType()==EdgeGenerationType.ORTHOGONAL) {
@@ -115,7 +121,8 @@ public class RegionLayer extends JPanel {
 					g2d.setColor(Color.WHITE);
 				} else {
 					g2d.setStroke(new BasicStroke(2f));
-					g2d.setColor(interLayerRegion.getEdgeType().getColor());
+					if(interLayerRegion.getEdgeType()!=null)
+						g2d.setColor(interLayerRegion.getEdgeType().getColor());
 				}
 				// draw an concentric circles with the edge type color
 				for(int i=0; i<xPoints.length; i++) {
