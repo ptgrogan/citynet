@@ -70,7 +70,7 @@ public enum EdgeGenerationType {
 		case ORTHOGONAL: return CityNetIcon.POLYGON_REGION.getIcon();
 		case ADJACENT: return CityNetIcon.POLYGON_REGION.getIcon();
 		case CONNECTED: return CityNetIcon.POLYGON_REGION.getIcon();
-		case SEQUENTIAL: return CityNetIcon.POLYPOINT_REGION.getIcon();
+		case SEQUENTIAL: return CityNetIcon.POLYLINE_REGION.getIcon();
 		default: return CityNetIcon.UNDEFINED_REGION.getIcon();
 		}
 	}
