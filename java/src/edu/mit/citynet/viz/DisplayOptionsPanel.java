@@ -38,7 +38,6 @@ public class DisplayOptionsPanel extends JPanel {
 	private JSpinner gridSpacingSpinner;
 	private SpinnerNumberModel gridSpacingModel;
 	private OpacitySlider cellRegionOpacitySlider, cellOpacitySlider,
-		nodeRegionOpacitySlider, edgeRegionOpacitySlider, 
 		nodeOpacitySlider, edgeOpacitySlider, regionOpacitySlider;
 	private DisplayHeightSlider displayHeightSlider;
 	private JLabel displayHeightLabel;
@@ -124,18 +123,6 @@ public class DisplayOptionsPanel extends JPanel {
 		opacityPanel.add(regionOpacitySlider, c);
 		c.gridx = 0;
 		c.gridy++;
-		opacityPanel.add(new JLabel("Node Regions: ", JLabel.RIGHT), c);
-		c.gridx++;
-		nodeRegionOpacitySlider = new OpacitySlider(false);
-		opacityPanel.add(nodeRegionOpacitySlider, c);
-		c.gridx = 0;
-		c.gridy++;
-		opacityPanel.add(new JLabel("Edge Regions: ", JLabel.RIGHT), c);
-		c.gridx++;
-		edgeRegionOpacitySlider = new OpacitySlider(false);
-		opacityPanel.add(edgeRegionOpacitySlider, c);
-		c.gridx = 0;
-		c.gridy++;
 		opacityPanel.add(new JLabel("Nodes: ", JLabel.RIGHT), c);
 		c.gridx++;
 		nodeOpacitySlider = new OpacitySlider(false);
@@ -203,12 +190,8 @@ public class DisplayOptionsPanel extends JPanel {
 				(int)(displayOptions.getCellRegionOpacity()*OpacitySlider.NUM_TICKS));
 		cellOpacitySlider.setValue(
 				(int)(displayOptions.getCellOpacity()*OpacitySlider.NUM_TICKS));
-		nodeRegionOpacitySlider.setValue(
-				(int)(displayOptions.getNodeRegionOpacity()*OpacitySlider.NUM_TICKS));
 		nodeOpacitySlider.setValue(
 				(int)(displayOptions.getNodeOpacity()*OpacitySlider.NUM_TICKS));
-		edgeRegionOpacitySlider.setValue(
-				(int)(displayOptions.getEdgeRegionOpacity()*OpacitySlider.NUM_TICKS));
 		edgeOpacitySlider.setValue(
 				(int)(displayOptions.getEdgeOpacity()*OpacitySlider.NUM_TICKS));
 		regionOpacitySlider.setValue(
@@ -228,12 +211,8 @@ public class DisplayOptionsPanel extends JPanel {
 				cellRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setCellOpacity(
 				cellOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
-		displayOptions.setNodeRegionOpacity(
-				nodeRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setNodeOpacity(
 				nodeOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
-		displayOptions.setEdgeRegionOpacity(
-				edgeRegionOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setEdgeOpacity(
 				edgeOpacitySlider.getValue()*OpacitySlider.TICK_SIZE);
 		displayOptions.setRegionOpacity(

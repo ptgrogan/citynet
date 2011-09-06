@@ -9,10 +9,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
-import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.Region;
 
@@ -22,9 +20,7 @@ public class SystemTreeModel extends DefaultTreeModel {
 	public final DefaultMutableTreeNode 
 		layersTreeNode = new DefaultMutableTreeNode("Layers"), 
 		nodeTypesTreeNode = new DefaultMutableTreeNode("Node Types"), 
-		edgeTypesTreeNode = new DefaultMutableTreeNode("Edge Types"), 
-		nodeRegionsTreeNode = new DefaultMutableTreeNode("Node Regions"), 
-		edgeRegionsTreeNode = new DefaultMutableTreeNode("Edge Regions"), 
+		edgeTypesTreeNode = new DefaultMutableTreeNode("Edge Types"),
 		regionsTreeNode = new DefaultMutableTreeNode("Regions");
 
 	/**
@@ -85,20 +81,6 @@ public class SystemTreeModel extends DefaultTreeModel {
 			edgeTypesTreeNode.insert(createTreeNode(edgeType), edgeTypesIndex++);
 		}
 		root.insert(edgeTypesTreeNode, index++);
-		
-		nodeRegionsTreeNode.removeAllChildren();
-		int nodeRegionsIndex = 0;
-		for(NodeRegion nodeRegion : system.getNodeRegions()) {
-			nodeRegionsTreeNode.insert(createTreeNode(nodeRegion), nodeRegionsIndex++);
-		}
-		root.insert(nodeRegionsTreeNode, index++);
-		
-		edgeRegionsTreeNode.removeAllChildren();
-		int edgeRegionsIndex = 0;
-		for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
-			edgeRegionsTreeNode.insert(createTreeNode(edgeRegion), edgeRegionsIndex++);
-		}
-		root.insert(edgeRegionsTreeNode, index++);
 		
 		regionsTreeNode.removeAllChildren();
 		int regionsIndex = 0;
@@ -233,88 +215,6 @@ public class SystemTreeModel extends DefaultTreeModel {
 	}
 	
 	/**
-	 * Adds the node region.
-	 *
-	 * @param nodeRegion the node region
-	 */
-	public void addNodeRegion(NodeRegion nodeRegion) {
-		nodeRegionsTreeNode.add(createTreeNode(nodeRegion));
-		nodesWereInserted(nodeRegionsTreeNode, new int[]{nodeRegionsTreeNode.getChildCount()-1});
-	}
-	
-	/**
-	 * Update node region.
-	 *
-	 * @param nodeRegion the node region
-	 */
-	public void updateNodeRegion(NodeRegion nodeRegion) {
-		for(int i = 0; i < nodeRegionsTreeNode.getChildCount(); i++) {
-			if(nodeRegionsTreeNode.getChildAt(i) instanceof MutableNodeRegionTreeNode
-					&& ((MutableNodeRegionTreeNode)nodeRegionsTreeNode.getChildAt(i)).getUserObject()==nodeRegion) {
-				nodeChanged(nodeRegionsTreeNode.getChildAt(i));
-				break;
-			}
-		}
-	}
-	
-	/**
-	 * Removes the node region.
-	 *
-	 * @param nodeRegion the node region
-	 */
-	public void removeNodeRegion(NodeRegion nodeRegion) {
-		for(int i = 0; i < nodeRegionsTreeNode.getChildCount(); i++) {
-			if(nodeRegionsTreeNode.getChildAt(i) instanceof MutableNodeRegionTreeNode
-					&& ((MutableNodeRegionTreeNode)nodeRegionsTreeNode.getChildAt(i)).getUserObject()==nodeRegion) {
-				nodeRegionsTreeNode.remove(i);
-				nodesWereRemoved(nodeRegionsTreeNode,new int[]{i},null);
-				break;
-			}
-		}
-	}
-	
-	/**
-	 * Adds the edge region.
-	 *
-	 * @param edgeRegion the edge region
-	 */
-	public void addEdgeRegion(EdgeRegion edgeRegion) {
-		edgeRegionsTreeNode.add(createTreeNode(edgeRegion));
-		nodesWereInserted(edgeRegionsTreeNode, new int[]{edgeRegionsTreeNode.getChildCount()-1});
-	}
-	
-	/**
-	 * Update edge region.
-	 *
-	 * @param edgeRegion the edge region
-	 */
-	public void updateEdgeRegion(EdgeRegion edgeRegion) {
-		for(int i = 0; i < edgeRegionsTreeNode.getChildCount(); i++) {
-			if(edgeRegionsTreeNode.getChildAt(i) instanceof MutableEdgeRegionTreeNode
-					&& ((MutableEdgeRegionTreeNode)edgeRegionsTreeNode.getChildAt(i)).getUserObject()==edgeRegion) {
-				nodeChanged(edgeRegionsTreeNode.getChildAt(i));
-				break;
-			}
-		}
-	}
-	
-	/**
-	 * Removes the edge region.
-	 *
-	 * @param edgeRegion the edge region
-	 */
-	public void removeEdgeRegion(EdgeRegion edgeRegion) {
-		for(int i = 0; i < edgeRegionsTreeNode.getChildCount(); i++) {
-			if(edgeRegionsTreeNode.getChildAt(i) instanceof MutableEdgeRegionTreeNode
-					&& ((MutableEdgeRegionTreeNode)edgeRegionsTreeNode.getChildAt(i)).getUserObject()==edgeRegion) {
-				edgeRegionsTreeNode.remove(i);
-				nodesWereRemoved(edgeRegionsTreeNode,new int[]{i},null);
-				break;
-			}
-		}
-	}
-	
-	/**
 	 * Adds the region.
 	 *
 	 * @param region the region
@@ -383,26 +283,6 @@ public class SystemTreeModel extends DefaultTreeModel {
 	 */
 	private static MutableEdgeTypeTreeNode createTreeNode(EdgeType edgeType) {
 		return new MutableEdgeTypeTreeNode(edgeType);
-	}
-	
-	/**
-	 * Creates the tree node.
-	 *
-	 * @param nodeRegion the node region
-	 * @return the default mutable tree node
-	 */
-	private static MutableNodeRegionTreeNode createTreeNode(NodeRegion nodeRegion) {
-		return new MutableNodeRegionTreeNode(nodeRegion);
-	}
-	
-	/**
-	 * Creates the tree node.
-	 *
-	 * @param edgeRegion the edge region
-	 * @return the default mutable tree node
-	 */
-	public static MutableEdgeRegionTreeNode createTreeNode(EdgeRegion edgeRegion) {
-		return new MutableEdgeRegionTreeNode(edgeRegion);
 	}
 	
 	/**
@@ -481,52 +361,6 @@ public class SystemTreeModel extends DefaultTreeModel {
 		 */
 		public EdgeType getUserObject() {
 			return (EdgeType)super.getUserObject();
-		}
-	}
-	
-	/**
-	 * The Class MutableNodeRegionTreeNode.
-	 */
-	public static class MutableNodeRegionTreeNode extends DefaultMutableTreeNode {
-		private static final long serialVersionUID = 5722045815777954877L;
-		
-		/**
-		 * Instantiates a new mutable node region tree node.
-		 *
-		 * @param nodeRegion the node region
-		 */
-		public MutableNodeRegionTreeNode(NodeRegion nodeRegion) {
-			super(nodeRegion);
-		}
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.tree.DefaultMutableTreeNode#getUserObject()
-		 */
-		public NodeRegion getUserObject() {
-			return (NodeRegion)super.getUserObject();
-		}
-	}
-	
-	/**
-	 * The Class MutableEdgeRegionTreeEdge.
-	 */
-	public static class MutableEdgeRegionTreeNode extends DefaultMutableTreeNode {
-		private static final long serialVersionUID = 5722045815777954877L;
-		
-		/**
-		 * Instantiates a new mutable edge region tree edge.
-		 *
-		 * @param edgeRegion the edge region
-		 */
-		public MutableEdgeRegionTreeNode(EdgeRegion edgeRegion) {
-			super(edgeRegion);
-		}
-		
-		/* (non-Javadoc)
-		 * @see javax.swing.tree.DefaultMutableTreeEdge#getUserObject()
-		 */
-		public EdgeRegion getUserObject() {
-			return (EdgeRegion)super.getUserObject();
 		}
 	}
 	

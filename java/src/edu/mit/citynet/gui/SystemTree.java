@@ -15,16 +15,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.Layer;
-import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.Region;
-import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
-import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableRegionTreeNode;
 
@@ -57,12 +53,6 @@ public class SystemTree extends JTree {
 				if(value instanceof MutableLayerTreeNode) {
 					// TODO define setIcon(((MutableLayerTreeNode)value).getUserObject().getIcon());
 					setText(((MutableLayerTreeNode)value).getUserObject().getName());
-				} else if(value instanceof MutableNodeRegionTreeNode) {
-					setIcon(((MutableNodeRegionTreeNode)value).getUserObject().getNodeType().getIcon());
-					setText(((MutableNodeRegionTreeNode)value).getUserObject().getDescription());
-				} else if(value instanceof MutableEdgeRegionTreeNode) {
-					setIcon(((MutableEdgeRegionTreeNode)value).getUserObject().getEdgeType().getIcon());
-					setText(((MutableEdgeRegionTreeNode)value).getUserObject().getDescription());
 				} else if(value instanceof MutableNodeTypeTreeNode) {
 					setIcon(((MutableNodeTypeTreeNode)value).getUserObject().getIcon());
 					setText(((MutableNodeTypeTreeNode)value).getUserObject().getName());
@@ -126,34 +116,6 @@ public class SystemTree extends JTree {
 				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
 				instanceof MutableEdgeTypeTreeNode) {
 			return ((MutableEdgeTypeTreeNode)
-					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
-		} else return null;
-	}
-	
-	/**
-	 * Gets the selected node region.
-	 *
-	 * @return the selected node region
-	 */
-	public NodeRegion getSelectedNodeRegion() {
-		if(getSelectionModel().getSelectionPath() != null
-				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
-				instanceof MutableNodeRegionTreeNode) {
-			return ((MutableNodeRegionTreeNode)
-					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
-		} else return null;
-	}
-	
-	/**
-	 * Gets the selected edge region.
-	 *
-	 * @return the selected edge region
-	 */
-	public EdgeRegion getSelectedEdgeRegion() {
-		if(getSelectionModel().getSelectionPath() != null
-				&& getSelectionModel().getSelectionPath().getLastPathComponent() 
-				instanceof MutableEdgeRegionTreeNode) {
-			return ((MutableEdgeRegionTreeNode)
 					getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject();
 		} else return null;
 	}

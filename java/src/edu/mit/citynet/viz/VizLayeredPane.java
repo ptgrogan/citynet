@@ -47,9 +47,7 @@ public class VizLayeredPane extends JLayeredPane {
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
 	private CellLayer cellLayer;
-	private NodeRegionLayer nodeRegionLayer;
 	private NodeLayer nodeLayer;
-	private EdgeRegionLayer edgeRegionLayer;
 	private EdgeLayer edgeLayer;
 	private RegionLayer regionLayer;
 	private City city;
@@ -99,16 +97,12 @@ public class VizLayeredPane extends JLayeredPane {
 		add(cellRegionLayer, new Integer(3));
 		cellLayer = new CellLayer(this);
 		add(cellLayer, new Integer(4));
-		nodeRegionLayer = new NodeRegionLayer(this);
-		add(nodeRegionLayer, new Integer(5));
 		nodeLayer = new NodeLayer(this);
-		add(nodeLayer, new Integer(6));
-		edgeRegionLayer = new EdgeRegionLayer(this);
-		add(edgeRegionLayer, new Integer(7));
+		add(nodeLayer, new Integer(5));
 		edgeLayer = new EdgeLayer(this);
-		add(edgeLayer,new Integer(8));
+		add(edgeLayer,new Integer(6));
 		regionLayer = new RegionLayer(this);
-		add(regionLayer, new Integer(9));
+		add(regionLayer, new Integer(7));
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
 				updateCursor(false);
@@ -229,9 +223,7 @@ public class VizLayeredPane extends JLayeredPane {
 		mapLayer.setBounds(x,y,width,height);
 		cellRegionLayer.setBounds(x,y,width,height);
 		cellLayer.setBounds(x,y,width,height);
-		nodeRegionLayer.setBounds(x,y,width,height);
 		nodeLayer.setBounds(x,y,width,height);
-		edgeRegionLayer.setBounds(x,y,width,height);
 		edgeLayer.setBounds(x,y,width,height);
 		regionLayer.setBounds(x,y,width,height);
 	}

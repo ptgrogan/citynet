@@ -30,18 +30,14 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import edu.mit.citynet.core.CitySystem;
-import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.EdgeType;
 import edu.mit.citynet.core.InterLayerRegion;
 import edu.mit.citynet.core.IntraLayerRegion;
 import edu.mit.citynet.core.Layer;
-import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.NodeType;
 import edu.mit.citynet.core.Region;
-import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableEdgeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableLayerTreeNode;
-import edu.mit.citynet.gui.SystemTreeModel.MutableNodeRegionTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableNodeTypeTreeNode;
 import edu.mit.citynet.gui.SystemTreeModel.MutableRegionTreeNode;
 import edu.mit.citynet.util.CityNetIcon;
@@ -65,8 +61,6 @@ public class SystemPanel extends JSplitPane {
 	private LayerPanel layerPanel;
 	private NodeTypePanel nodeTypePanel;
 	private EdgeTypePanel edgeTypePanel;
-	private NodeRegionPanel nodeRegionPanel;
-	private EdgeRegionPanel edgeRegionPanel;
 	private IntraLayerRegionPanel intraLayerRegionPanel;
 	private InterLayerRegionPanel interLayerRegionPanel;
 	
@@ -85,8 +79,6 @@ public class SystemPanel extends JSplitPane {
 		layerPanel = new LayerPanel(this);
 		nodeTypePanel = new NodeTypePanel();
 		edgeTypePanel = new EdgeTypePanel();
-		nodeRegionPanel = new NodeRegionPanel(this);
-		edgeRegionPanel = new EdgeRegionPanel(this);
 		intraLayerRegionPanel = new IntraLayerRegionPanel(this);
 		interLayerRegionPanel = new InterLayerRegionPanel(this);
 		initializePanel();
@@ -112,8 +104,6 @@ public class SystemPanel extends JSplitPane {
 		systemTree = new SystemTree(systemTreeModel);
 		systemTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
-				layeredPane.setSelectedNodeRegion(systemTree.getSelectedNodeRegion());
-				layeredPane.setSelectedEdgeRegion(systemTree.getSelectedEdgeRegion());
 				layeredPane.setSelectedRegion(systemTree.getSelectedRegion());
 			}
 		});
@@ -121,16 +111,6 @@ public class SystemPanel extends JSplitPane {
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2 && systemTree.getSelectionCount() > 0) {
 					if(systemTree.getSelectionPath().getLastPathComponent() 
-							== systemTree.getModel().nodeRegionsTreeNode)
-						editNodeRegionTableCommand();
-					else if(systemTree.getSelectedNodeRegion()!=null)
-						editNodeRegionCommand(systemTree.getSelectedNodeRegion());
-					else if(systemTree.getSelectionPath().getLastPathComponent() 
-							== systemTree.getModel().edgeRegionsTreeNode)
-						editEdgeRegionTableCommand();
-					else if(systemTree.getSelectedEdgeRegion()!=null)
-						editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-					else if(systemTree.getSelectionPath().getLastPathComponent() 
 							== systemTree.getModel().regionsTreeNode)
 						editRegionTableCommand();
 					else if(systemTree.getSelectedRegion()!=null)
@@ -392,144 +372,6 @@ public class SystemPanel extends JSplitPane {
 			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeTypeTreeNode &&
 					system.getEdgeTypes().indexOf(systemTree.getSelectedEdgeType())<system.getEdgeTypes().size()-1);
 			systemTreePopupMenu.add(moveDownMenuItem);
-		} else if(path.getLastPathComponent()==systemTree.getModel().nodeRegionsTreeNode
-				|| path.getLastPathComponent() instanceof MutableNodeRegionTreeNode) {
-			JMenuItem addMenuItem = new JMenuItem("Add Node Region");
-			addMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					addNodeRegionCommand();
-				}
-			});
-			systemTreePopupMenu.add(addMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editMenuItem = new JMenuItem("Edit Node Region");
-			editMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editNodeRegionCommand(systemTree.getSelectedNodeRegion());
-				}
-			});
-			editMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(editMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem copyMenuItem = new JMenuItem("Copy Node Region");
-			copyMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					copyNodeRegionCommand(systemTree.getSelectedNodeRegion());
-				}
-			});
-			copyMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(copyMenuItem);
-			JMenuItem deleteMenuItem = new JMenuItem("Delete Node Region");
-			deleteMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					deleteNodeRegionCommand(systemTree.getSelectedNodeRegion());
-				}
-			});
-			deleteMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableNodeRegionTreeNode);
-			systemTreePopupMenu.add(deleteMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editNodeRegionsMenuItem = new JMenuItem("Edit Node Regions Table");
-			editNodeRegionsMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editNodeRegionTableCommand();
-				}
-			});
-			systemTreePopupMenu.add(editNodeRegionsMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem moveUpMenuItem = new JMenuItem("Move Node Region Up");
-			moveUpMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					NodeRegion type = systemTree.getSelectedNodeRegion();
-					if(system.moveNodeRegionTo(type, system.getNodeRegions().indexOf(type)-1))
-						systemTree.setSystem(system); // hack-y update
-				}
-			});
-			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeRegionTreeNode &&
-					system.getNodeRegions().indexOf(systemTree.getSelectedNodeRegion())>0);
-			systemTreePopupMenu.add(moveUpMenuItem);
-			JMenuItem moveDownMenuItem = new JMenuItem("Move Node Region Down");
-			moveDownMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					NodeRegion type = systemTree.getSelectedNodeRegion();
-					if(system.moveNodeRegionTo(type, system.getNodeRegions().indexOf(type)+1))
-						systemTree.setSystem(system); // hack-y update
-				}
-			});
-			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableNodeRegionTreeNode &&
-					system.getNodeRegions().indexOf(systemTree.getSelectedNodeRegion())<system.getNodeRegions().size()-1);
-			systemTreePopupMenu.add(moveDownMenuItem);
-		} else if(path.getLastPathComponent()==systemTree.getModel().edgeRegionsTreeNode
-				|| path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode) {
-			JMenuItem addMenuItem = new JMenuItem("Add Edge Region");
-			addMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					addEdgeRegionCommand();
-				}
-			});
-			systemTreePopupMenu.add(addMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editMenuItem = new JMenuItem("Edit Edge Region");
-			editMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-				}
-			});
-			editMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(editMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem copyMenuItem = new JMenuItem("Copy Edge Region");
-			copyMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					copyEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-				}
-			});
-			copyMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(copyMenuItem);
-			JMenuItem deleteMenuItem = new JMenuItem("Delete Edge Region");
-			deleteMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					deleteEdgeRegionCommand(systemTree.getSelectedEdgeRegion());
-				}
-			});
-			deleteMenuItem.setEnabled(path.getLastPathComponent() 
-					instanceof MutableEdgeRegionTreeNode);
-			systemTreePopupMenu.add(deleteMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem editEdgeRegionsMenuItem = new JMenuItem("Edit Edge Regions Table");
-			editEdgeRegionsMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					editEdgeRegionTableCommand();
-				}
-			});
-			systemTreePopupMenu.add(editEdgeRegionsMenuItem);
-			systemTreePopupMenu.add(new JSeparator());
-			JMenuItem moveUpMenuItem = new JMenuItem("Move Edge Region Up");
-			moveUpMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					EdgeRegion type = systemTree.getSelectedEdgeRegion();
-					if(system.moveEdgeRegionTo(type, system.getEdgeRegions().indexOf(type)-1))
-						systemTree.setSystem(system); // hack-y update
-				}
-			});
-			moveUpMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode &&
-					system.getEdgeRegions().indexOf(systemTree.getSelectedEdgeRegion())>0);
-			systemTreePopupMenu.add(moveUpMenuItem);
-			JMenuItem moveDownMenuItem = new JMenuItem("Move Edge Region Down");
-			moveDownMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					EdgeRegion type = systemTree.getSelectedEdgeRegion();
-					if(system.moveEdgeRegionTo(type, system.getEdgeRegions().indexOf(type)+1))
-						systemTree.setSystem(system); // hack-y update
-				}
-			});
-			moveDownMenuItem.setEnabled(path.getLastPathComponent() instanceof MutableEdgeRegionTreeNode &&
-					system.getEdgeRegions().indexOf(systemTree.getSelectedEdgeRegion())<system.getEdgeRegions().size()-1);
-			systemTreePopupMenu.add(moveDownMenuItem);
 		} else if(path.getLastPathComponent()==systemTree.getModel().regionsTreeNode
 				|| path.getLastPathComponent() instanceof MutableRegionTreeNode) {
 			JMenuItem add1MenuItem = new JMenuItem("Add Intra-layer Region");
@@ -652,34 +494,28 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteLayerCommand(Layer layer) {
 		System.out.println("Delete Layer Command");
-		Set<NodeRegion> dependentNodeRegions = new HashSet<NodeRegion>();
-		for(NodeRegion nodeRegion : system.getNodeRegions()) {
-			if(nodeRegion.getLayer().equals(layer))
-				dependentNodeRegions.add(nodeRegion);
-		}
-		Set<EdgeRegion> dependentEdgeRegions = new HashSet<EdgeRegion>();
-		for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
-			if(edgeRegion.getLayers().contains(layer))
-				dependentEdgeRegions.add(edgeRegion);
+		Set<Region> dependentRegions = new HashSet<Region>();
+		for(Region region : system.getRegions()) {
+			if(region instanceof IntraLayerRegion
+					&& ((IntraLayerRegion)region).getLayer().equals(layer))
+				dependentRegions.add(region);
+			else if (region instanceof InterLayerRegion
+					&& (((InterLayerRegion)region).getOriginLayer().equals(layer) 
+							|| ((InterLayerRegion)region).getDestinationLayer().equals(layer)))
+				dependentRegions.add(region);
 		}
 		String message = "Do you want to delete the " + layer.getName() + " layer?";
-		if(dependentNodeRegions.size()>0 || dependentEdgeRegions.size()>0) {
+		if(dependentRegions.size()>0) {
 			message += "\nThe following dependent regions will also be deleted:\n";
-			for(NodeRegion nodeRegion : dependentNodeRegions)
+			for(Region nodeRegion : dependentRegions)
 				message += nodeRegion.getDescription() + "\n";
-			for(EdgeRegion edgeRegion : dependentEdgeRegions)
-				message += edgeRegion.getDescription() + "\n";
 		}
 		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			for(NodeRegion nodeRegion : dependentNodeRegions) {
-				system.removeNodeRegion(nodeRegion);
-				systemTree.getModel().removeNodeRegion(nodeRegion);
-			}
-			for(EdgeRegion edgeRegion : dependentEdgeRegions) {
-				system.removeEdgeRegion(edgeRegion);
-				systemTree.getModel().removeEdgeRegion(edgeRegion);
+			for(Region region : dependentRegions) {
+				system.removeRegion(region);
+				systemTree.getModel().removeRegion(region);
 			}
 			system.removeLayer(layer);
 			systemTree.getModel().removeLayer(layer);
@@ -729,23 +565,24 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteNodeTypeCommand(NodeType nodeType) {
 		System.out.println("Delete Node Type Command");
-		Set<NodeRegion> dependentNodeRegions = new HashSet<NodeRegion>();
-		for(NodeRegion nodeRegion : system.getNodeRegions()) {
-			if(nodeRegion.getNodeType().equals(nodeType))
-				dependentNodeRegions.add(nodeRegion);
+		Set<Region> dependentRegions = new HashSet<Region>();
+		for(Region region : system.getRegions()) {
+			if(region instanceof IntraLayerRegion
+					&& ((IntraLayerRegion)region).getNodeType().equals(nodeType))
+				dependentRegions.add(region);
 		}
 		String message = "Do you want to delete the " + nodeType.getName() + " node type?";
-		if(dependentNodeRegions.size()>0) {
-			message += "\nThe following dependent node regions will also be deleted:\n";
-			for(NodeRegion nodeRegion : dependentNodeRegions)
+		if(dependentRegions.size()>0) {
+			message += "\nThe following dependent regions will also be deleted:\n";
+			for(Region nodeRegion : dependentRegions)
 				message += nodeRegion.getDescription() + "\n";
 		}
 		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			for(NodeRegion nodeRegion : dependentNodeRegions) {
-				system.removeNodeRegion(nodeRegion);
-				systemTree.getModel().removeNodeRegion(nodeRegion);
+			for(Region region : dependentRegions) {
+				system.removeRegion(region);
+				systemTree.getModel().removeRegion(region);
 			}
 			system.removeNodeType(nodeType);
 			systemTree.getModel().removeNodeType(nodeType);
@@ -815,23 +652,23 @@ public class SystemPanel extends JSplitPane {
 	 */
 	private void deleteEdgeTypeCommand(EdgeType edgeType) {
 		System.out.println("Delete Edge Type Command");
-		Set<EdgeRegion> dependentEdgeRegions = new HashSet<EdgeRegion>();
-		for(EdgeRegion edgeRegion : system.getEdgeRegions()) {
-			if(edgeRegion.getEdgeType().equals(edgeType))
-				dependentEdgeRegions.add(edgeRegion);
+		Set<Region> dependentRegions = new HashSet<Region>();
+		for(Region region : system.getRegions()) {
+			if(region.getEdgeType().equals(edgeType))
+				dependentRegions.add(region);
 		}
 		String message = "Do you want to delete the " + edgeType.getName() + " edge type?";
-		if(dependentEdgeRegions.size()>0) {
-			message += "\nThe following dependent edge regions will also be deleted:\n";
-			for(EdgeRegion edgeRegion : dependentEdgeRegions)
-				message += edgeRegion.getDescription() + "\n";
+		if(dependentRegions.size()>0) {
+			message += "\nThe following dependent regions will also be deleted:\n";
+			for(Region region : dependentRegions)
+				message += region.getDescription() + "\n";
 		}
 		int value = JOptionPane.showConfirmDialog(this, message, "City.Net | Warning", 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
-			for(EdgeRegion edgeRegion : dependentEdgeRegions) {
-				system.removeEdgeRegion(edgeRegion);
-				systemTree.getModel().removeEdgeRegion(edgeRegion);
+			for(Region region : dependentRegions) {
+				system.removeRegion(region);
+				systemTree.getModel().removeRegion(region);
 			}
 			system.removeEdgeType(edgeType);
 			systemTree.getModel().removeEdgeType(edgeType);
@@ -855,144 +692,6 @@ public class SystemPanel extends JSplitPane {
 			edgeTypePanel.saveEdgeTypeCommand();
 			system.addEdgeType(edgeType);
 			systemTree.getModel().addEdgeType(edgeType);
-		}
-	}
-	
-	/**
-	 * Adds the node region command.
-	 */
-	private void addNodeRegionCommand() {
-		System.out.println("Add Node Region Command");
-		NodeRegion nodeRegion = new NodeRegion();
-		nodeRegionPanel.loadNodeRegion(nodeRegion);
-		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
-				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			nodeRegionPanel.saveNodeRegionCommand();
-			system.addNodeRegion(nodeRegion);
-			systemTree.getModel().addNodeRegion(nodeRegion);
-			layeredPane.repaint();
-		}
-	}
-	
-	/**
-	 * Edits the node region command.
-	 *
-	 * @param nodeRegion the node region
-	 */
-	private void editNodeRegionCommand(NodeRegion nodeRegion) {
-		System.out.println("Edit Node Region Command");
-		nodeRegionPanel.loadNodeRegion(nodeRegion);
-		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel, 
-				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			nodeRegionPanel.saveNodeRegionCommand();
-			systemTree.getModel().updateNodeRegion(nodeRegion);
-			layeredPane.repaint();
-		}
-	}
-	
-	/**
-	 * Command to copy a node region.
-	 */
-	private void copyNodeRegionCommand(NodeRegion region) {
-		System.out.println("Copy Node Region Command");
-		NodeRegion nodeRegion = region.clone();
-		nodeRegionPanel.loadNodeRegion(nodeRegion);
-		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
-				"City.Net | Node Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			nodeRegionPanel.saveNodeRegionCommand();
-			system.addNodeRegion(nodeRegion);
-			systemTree.getModel().addNodeRegion(nodeRegion);
-		}
-	}
-	
-	/**
-	 * Command to copy an edge region.
-	 */
-	private void copyEdgeRegionCommand(EdgeRegion region) {
-		System.out.println("Copy Edge Region Command");
-		EdgeRegion edgeRegion = region.clone();
-		edgeRegionPanel.loadEdgeRegion(edgeRegion);
-		int value = JOptionPane.showConfirmDialog(this, nodeRegionPanel,
-				"City.Net | Edge Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			edgeRegionPanel.saveEdgeRegionCommand();
-			system.addEdgeRegion(edgeRegion);
-			systemTree.getModel().addEdgeRegion(edgeRegion);
-		}
-	}
-	
-	/**
-	 * Delete node regions command.
-	 *
-	 * @param nodeRegions the node regions
-	 */
-	private void deleteNodeRegionCommand(NodeRegion nodeRegion) {
-		System.out.println("Delete Node Region Command");
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the " 
-				+ nodeRegion.getDescription() + " node region?", "City.Net | Warning", 
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			system.removeNodeRegion(nodeRegion);
-			systemTree.getModel().removeNodeRegion(nodeRegion);
-			layeredPane.repaint();
-		}
-	}
-	
-	/**
-	 * Adds the edge region command.
-	 */
-	private void addEdgeRegionCommand() {
-		System.out.println("Add Edge Region Command");
-		EdgeRegion edgeRegion = new EdgeRegion();
-		edgeRegionPanel.loadEdgeRegion(edgeRegion);
-		int value = JOptionPane.showConfirmDialog(this, edgeRegionPanel,
-				"City.Net | Edge Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			edgeRegionPanel.saveEdgeRegionCommand();
-			system.addEdgeRegion(edgeRegion);
-			systemTree.getModel().addEdgeRegion(edgeRegion);
-			layeredPane.repaint();
-		}
-	}
-	
-	/**
-	 * Edits the edge region command.
-	 *
-	 * @param edgeRegion the edge region
-	 */
-	private void editEdgeRegionCommand(EdgeRegion edgeRegion) {
-		System.out.println("Edit Edge Region Command");
-		edgeRegionPanel.loadEdgeRegion(edgeRegion);
-		int value = JOptionPane.showConfirmDialog(this, edgeRegionPanel,
-				"City.Net | Edge Region", JOptionPane.OK_CANCEL_OPTION, 
-				JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			edgeRegionPanel.saveEdgeRegionCommand();
-			systemTree.getModel().updateEdgeRegion(edgeRegion);
-			layeredPane.repaint();
-		}
-	}
-	
-	/**
-	 * Delete edge regions command.
-	 */
-	private void deleteEdgeRegionCommand(EdgeRegion edgeRegion) {
-		System.out.println("Delete Edge Region Command");
-		int value = JOptionPane.showConfirmDialog(this, "Do you want to delete the "
-				+ edgeRegion.getDescription() + " edge region?", "City.Net | Warning", 
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			system.removeEdgeRegion(edgeRegion);
-			systemTree.getModel().removeEdgeRegion(edgeRegion);
-			layeredPane.repaint();
 		}
 	}
 	
@@ -1149,41 +848,11 @@ public class SystemPanel extends JSplitPane {
 	}
 	
 	/**
-	 * Generate nodes command.
-	 *
-	 * @param nodeRegions the node regions
-	 */
-	public void generateNodesCommand(List<NodeRegion> nodeRegions) {
-		System.out.println("Generate Nodes Command");
-		if(!system.getNodes().isEmpty())
-			clearNodesCommand();
-		if(!system.getEdges().isEmpty())
-			clearEdgesCommand();
-		for(NodeRegion r : nodeRegions) {
-			r.generateNodes(system);
-		}
-	}
-	
-	/**
 	 * Clear edges command.
 	 */
 	public void clearEdgesCommand() {
 		System.out.println("Clear Edges Command");
 		system.removeAllEdges(system.getEdges());
-	}
-	
-	/**
-	 * Generate edges command.
-	 *
-	 * @param edgeRegions the edge regions
-	 */
-	public void generateEdgesCommand(List<EdgeRegion> edgeRegions) {
-		System.out.println("Generate Edges Command");
-		if(!system.getEdges().isEmpty())
-			clearEdgesCommand();
-		for(EdgeRegion r : edgeRegions) {
-			r.generateEdges(system);
-		}
 	}
 	
 	/**
@@ -1202,36 +871,6 @@ public class SystemPanel extends JSplitPane {
 	 */
 	public CityTabbedPane getCityPanel() {
 		return cityPanel;
-	}
-	
-	/**
-	 * Edits the node region table command.
-	 */
-	private void editNodeRegionTableCommand() {
-		System.out.println("Edit Node Region Table Command");
-		NodeRegionsTable table = new NodeRegionsTable(system);
-		JScrollPane tableScroll = new JScrollPane(table);
-		tableScroll.addMouseListener(table.getMouseAdapter());
-		JOptionPane.showMessageDialog(this, tableScroll, 
-				"City.Net | Node Regions", JOptionPane.PLAIN_MESSAGE);
-		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.setSystem(system); // hacked update... bleh
-		layeredPane.repaint();
-	}
-	
-	/**
-	 * Edits the node region table command.
-	 */
-	private void editEdgeRegionTableCommand() {
-		System.out.println("Edit Edge Region Table Command");
-		EdgeRegionsTable table = new EdgeRegionsTable(system);
-		JScrollPane tableScroll = new JScrollPane(table);
-		tableScroll.addMouseListener(table.getMouseAdapter());
-		JOptionPane.showMessageDialog(this, tableScroll, 
-				"City.Net | Edge Regions", JOptionPane.PLAIN_MESSAGE);
-		if(table.getCellEditor()!=null) table.getCellEditor().stopCellEditing();
-		systemTree.setSystem(system); // hacked update... bleh
-		layeredPane.repaint();
 	}
 	
 	/**
