@@ -37,3 +37,6 @@ comWasteWater.Evaluate();
 
 SWROplant = SWROfacility();
 SWROplant.Evaluate();
+
+MBRplant = MBRfacility();
+MBRplant.Evaluate();
