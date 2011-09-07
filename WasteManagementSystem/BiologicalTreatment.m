@@ -24,7 +24,7 @@ classdef BiologicalTreatment < Behavior
         % Instantiates a new BiologicalTreatment object.
         % 
         % obj = BiologicalTreatment()
-        %   obj:                            the new RDFSorting object
+        %   obj:                            the new BiologicalTreatment object
         %   biowaste;                       the biowaste input from the waste sorting process
         %   restwaste_to_biological;        the additional restwaste added from the sorting process
         %   fines_to_biological;            the input arising from fines generated during the RDF sorting process
