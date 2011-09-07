@@ -76,8 +76,8 @@ classdef MBRfacility < Behavior
                             
                             capexPerUnitVol = city.systems(i).nodes(j).GetNodeTypeAttributeValue('MBRspecificCapex');
                             
-                            %opexPerUnitVol = city.systems(i).nodes(j).GetNodeTypeAttributeValue('MBRspecificOpex');
-                            opexPerUnitVol = 475;
+                            opexPerUnitVol = city.systems(i).nodes(j).GetNodeTypeAttributeValue('MBRspecificOpex');
+                            %opexPerUnitVol = 475;
                             
                             discountRate = city.systems(i).nodes(j).GetNodeTypeAttributeValue('MBRcapexDiscountRate');
                             
