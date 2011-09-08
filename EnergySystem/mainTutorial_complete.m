@@ -22,30 +22,32 @@ cityNet.GenerateEdges();
 figure(1)
 cityNet.RenderCity();
 
+clear b1
+b1 = PVStation();
+b1.Evaluate()
+
 clear b2
-b2 = BiomassEnergy();
+b2 = CSPStation();
 b2.Evaluate()
-% b2.PlotCellBiomassEnergy();
-% 
-% figure(2)
-% subplot(2,2,1)
-% cityNet.RenderLayer(1);
-% cityNet.RenderNodeRegion2d(1);
-% cityNet.RenderNodeRegion2d(2);
-% cityNet.RenderNodeRegion2d(3);
-% cityNet.RenderNodeRegion2d(4);
-% subplot(2,2,2)
-% cityNet.RenderLayer(2);
-% cityNet.RenderNodeRegion2d(5);
-% cityNet.RenderNodeRegion2d(6);
-% subplot(2,2,3)
-% cityNet.RenderLayer(3);
-% cityNet.RenderNodeRegion2d(7);
-% cityNet.RenderNodeRegion2d(8);
-% cityNet.RenderNodeRegion2d(9);
-% cityNet.RenderNodeRegion2d(10);
-% subplot(2,2,4)
-% cityNet.RenderLayer(4);
-% cityNet.RenderNodeRegion2d(11);
-% cityNet.RenderNodeRegion2d(12);
-% cityNet.RenderNodeRegion2d(13);
+
+clear b3
+b3 = WindFarm();
+b3.Evaluate()
+
+clear b4
+b4 = HydropowerStation();
+b4.Evaluate()
+
+clear b5
+b5 = BiomassEnergy();
+b5.Evaluate()
+
+clear b6
+b6 = NaturalGas();
+b6.Evaluate()
+
+clear B
+B= {b1,b2,b3,b4,b5,b6};
+PlotGraphs(B);
+
+
