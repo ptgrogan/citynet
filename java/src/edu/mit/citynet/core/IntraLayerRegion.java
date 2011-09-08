@@ -143,11 +143,12 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	 */
 	public void generateRegion(CitySystem system) {
 		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+		Vector<Node> newNodes = new Vector<Node>();
 		switch(nodeGenerationType) {
 		case POLYGON:
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				if(containsPolygon(cell.getPolygon(), 0.5)) {
-					createNode(system,cell);
+					newNodes.add(createNode(system,cell));
 				}
 			}
 			break;
@@ -155,7 +156,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 			LineString line = gf.createLineString(getCoordinateList().toCoordinateArray());
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				if(cell.intersectsLine(line)) {
-					createNode(system,cell);
+					newNodes.add(createNode(system,cell));
 				}
 			}
 			break;
@@ -163,7 +164,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 			for(Cell cell : CityNet.getInstance().getCity().getCells()) {
 				for(Coordinate coord : getCoordinateList().toCoordinateArray()) {
 					if(cell.containsPoint(gf.createPoint(coord))) {
-						createNode(system,cell);
+						newNodes.add(createNode(system,cell));
 						break;
 					}
 				}
@@ -172,8 +173,8 @@ public class IntraLayerRegion extends Region implements Cloneable {
 		case NONE:
 			// do nothing
 		}
-		
-		Vector<Node> nodes = null;
+
+		Vector<Node> nodes;
 		switch(edgeGenerationType) {
 		case SEQUENTIAL:
 			nodes = new Vector<Node>();
@@ -193,13 +194,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 			}
 			break;
 		case ORTHOGONAL:
-			nodes = new Vector<Node>();
-			for(Node node : system.getNodes()) {
-				if(node.getLayer().equals(layer)
-						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
-					nodes.add(node);
-				}
-			}
+			nodes = getNodesForEdgeGeneration(nodeGenerationType,system);
 			for(int i=0;i<nodes.size();i++) {
 				for(int j=i+1;j<nodes.size();j++) {
 					Node origin = nodes.get(i);
@@ -213,13 +208,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 			}
 			break;
 		case ADJACENT:
-			nodes = new Vector<Node>();
-			for(Node node : system.getNodes()) {
-				if(node.getLayer().equals(layer)
-						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
-					nodes.add(node);
-				}
-			}
+			nodes = getNodesForEdgeGeneration(nodeGenerationType,system);
 			for(int i=0;i<nodes.size();i++) {
 				for(int j=i+1;j<nodes.size();j++) {
 					Node origin = nodes.get(i);
@@ -236,13 +225,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 			}
 			break;
 		case CONNECTED:
-			nodes = new Vector<Node>();
-			for(Node node : system.getNodes()) {
-				if(node.getLayer().equals(layer)
-						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
-					nodes.add(node);
-				}
-			}
+			nodes = getNodesForEdgeGeneration(nodeGenerationType,system);
 			for(int i=0;i<nodes.size();i++) {
 				for(int j=i+1;j<nodes.size();j++) {
 					Node origin = nodes.get(i);
@@ -259,15 +242,60 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	}
 	
 	/**
+	 * Gets the nodes for edge generation.
+	 *
+	 * @param nodeGenerationType the node generation type
+	 * @param system the system
+	 * @return the nodes for edge generation
+	 */
+	private Vector<Node> getNodesForEdgeGeneration(NodeGenerationType nodeGenerationType, CitySystem system) {
+		GeometryFactory gf = CityNet.getInstance().getGeometryFactory();
+		Vector<Node> nodes = new Vector<Node>();
+		if(nodeGenerationType==NodeGenerationType.POLYGON 
+				|| nodeGenerationType==NodeGenerationType.NONE) {
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layer)
+						&& this.containsPolygon(node.getCell().getPolygon(), 0.5)) {
+					nodes.add(node);
+				}
+			}
+		} else if(nodeGenerationType==NodeGenerationType.POLYLINE) {
+			// TODO: special case if not polygon node generation but wants
+			// orthogonal edge generation...
+			LineString line = gf.createLineString(getCoordinateList().toCoordinateArray());
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layer)
+						&& node.getCell().intersectsLine(line)) {
+					nodes.add(node);
+				}
+			}
+		} else if(nodeGenerationType==NodeGenerationType.POLYPOINT) {
+			// TODO: special case if not polygon node generation but wants
+			// orthogonal edge generation...
+			for(Node node : system.getNodes()) {
+				if(node.getLayer().equals(layer)) {
+					for(Coordinate coord : getCoordinateList().toCoordinateArray()) {
+						if(node.getCell().containsPoint(gf.createPoint(coord))) {
+							nodes.add(node);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return nodes;
+	}
+	
+	/**
 	 * Creates the node.
 	 *
 	 * @param system the system
 	 * @param cell the cell
 	 */
-	private void createNode(CitySystem system, Cell cell) {
+	private Node createNode(CitySystem system, Cell cell) {
 		for(Node n : system.getNodes()) {
 			if(n.getCell().equals(cell) && n.getLayer().equals(layer)) {
-				return; // node exists at same location
+				return null; // node exists at same location
 			}
 		}
 		Node node = new Node();
@@ -276,6 +304,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 		node.setLayer(layer);
 		node.setNodeType(nodeType);
 		system.addNode(node);
+		return node;
 	}
 	
 	/**
@@ -285,7 +314,7 @@ public class IntraLayerRegion extends Region implements Cloneable {
 	 * @param origin the origin
 	 * @param destination the destination
 	 */
-	private void createEdge(CitySystem system, Node origin, Node destination) {
+	private Edge createEdge(CitySystem system, Node origin, Node destination) {
 		Edge edge = new Edge();
 		edge.setId(CityNet.getInstance().getNextEdgeId());
 		edge.setOrigin(origin);
@@ -293,5 +322,6 @@ public class IntraLayerRegion extends Region implements Cloneable {
 		edge.setEdgeDirection(getEdgeDirection());
 		edge.setEdgeType(getEdgeType());
 		system.addEdge(edge);
+		return edge;
 	}
 }
