@@ -30,7 +30,7 @@ public class CityNetMenuBar extends JMenuBar {
 	private JMenuItem newCityItem, openCityItem, closeCityItem, 
 		saveCityAsItem, saveCityItem, importSystemsItem, exitItem;
 	private JMenu editMenu;
-	private JMenuItem cityDetails;
+	private JMenuItem cityDetails, displayOptions;
 	
 	/**
 	 * Instantiates a new city net menu bar.
@@ -118,6 +118,13 @@ public class CityNetMenuBar extends JMenuBar {
         	}
         });
 	    editMenu.add(cityDetails);
+	    displayOptions = new JMenuItem("Display Options", KeyEvent.VK_O);
+	    displayOptions.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+    			frame.editDisplayOptionsCommand();
+        	}
+        });
+	    editMenu.add(displayOptions);
 	    add(editMenu);
 	}
 	

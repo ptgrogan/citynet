@@ -24,6 +24,7 @@ import edu.mit.citynet.CityNet;
 import edu.mit.citynet.core.City;
 import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.io.SpreadsheetTemplate;
+import edu.mit.citynet.viz.DisplayOptionsPanel;
 
 /**
  * CityNetFrame class.
@@ -39,6 +40,7 @@ public class CityNetFrame extends JFrame {
 	private CityTabbedPane cityPanel;
 	private JFileChooser fileChooser;
 	private CityDetailsPanel cityDetailsPanel;
+	private DisplayOptionsPanel displayOptionsPanel;
 	private SystemImportPanel systemImportPanel;
 	private SpreadsheetTemplate template;
 	
@@ -93,6 +95,7 @@ public class CityNetFrame extends JFrame {
 			}
 		});
 		cityDetailsPanel = new CityDetailsPanel();
+		displayOptionsPanel = new DisplayOptionsPanel();
 		systemImportPanel = new SystemImportPanel();
 		initializeFrame();
 	}
@@ -275,6 +278,20 @@ public class CityNetFrame extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if(value == JOptionPane.OK_OPTION) {
 			cityDetailsPanel.saveCityDetailsCommand();
+			repaint();
+		}
+	}
+
+	/**
+	 * Edits the display options command.
+	 */
+	public void editDisplayOptionsCommand() {
+		System.out.println("Edit Display Options Command");
+		displayOptionsPanel.loadDisplayOptions(CityNet.getInstance().getDisplayOptions());
+		int value = JOptionPane.showConfirmDialog(this,displayOptionsPanel,"City.Net | Display Options", 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if(value == JOptionPane.OK_OPTION) {
+			displayOptionsPanel.saveDisplayOptionsCommand();
 			repaint();
 		}
 	}

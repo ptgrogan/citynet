@@ -19,7 +19,6 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -31,6 +30,7 @@ import edu.mit.citynet.core.CitySystem;
 import edu.mit.citynet.core.EdgeRegion;
 import edu.mit.citynet.core.NodeRegion;
 import edu.mit.citynet.core.Region;
+import edu.mit.citynet.gui.CityNetFrame;
 import edu.mit.citynet.util.CityNetCursor;
 
 /**
@@ -42,7 +42,6 @@ import edu.mit.citynet.util.CityNetCursor;
  */
 public class VizLayeredPane extends JLayeredPane {
 	private static final long serialVersionUID = -7010621460240642200L;
-	private DisplayOptionsPanel displayOptionsPanel;
 	private GridLayer gridLayer;
 	private MapLayer mapLayer;
 	private CellRegionLayer cellRegionLayer;
@@ -72,7 +71,6 @@ public class VizLayeredPane extends JLayeredPane {
 		}
 		this.city = city;
 		this.system = system;
-		displayOptionsPanel = new DisplayOptionsPanel();
 		initializePanel();
 	}
 	
@@ -206,7 +204,8 @@ public class VizLayeredPane extends JLayeredPane {
 		JMenuItem displayOptionsItem = new JMenuItem("Display Options");
 		displayOptionsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				editDisplayOptionsCommand();
+				// TODO unsafe cast
+				((CityNetFrame)getTopLevelAncestor()).editDisplayOptionsCommand();
 			}
 		});
 		visualizationPopupMenu.add(displayOptionsItem);
@@ -474,19 +473,5 @@ public class VizLayeredPane extends JLayeredPane {
 	public void setSelectedRegion(Region region) {
 		this.selectedRegion = region;
 		repaint();
-	}
-	
-	/**
-	 * Edits the display options command.
-	 */
-	public void editDisplayOptionsCommand() {
-		System.out.println("Edit Display Options Command");
-		displayOptionsPanel.loadDisplayOptions(getDisplayOptions());
-		int value = JOptionPane.showConfirmDialog(this,displayOptionsPanel,"City.Net | Display Options", 
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-		if(value == JOptionPane.OK_OPTION) {
-			displayOptionsPanel.saveDisplayOptionsCommand();
-			repaint();
-		}
 	}
 }
