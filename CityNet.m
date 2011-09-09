@@ -394,7 +394,7 @@ classdef CityNet < Singleton
             for i=1:size(filled,1)
                 for j=1:size(filled,2)
                     if sum(filled(:,j))>0 && filled(i,j)==0
-                        cell = obj.city.cells([obj.city.cells.id]==i);
+                        cell = obj.city.cells(i);
                         x = cell.location(1);
                         w = cell.dimensions(1);
                         y = cell.location(2);

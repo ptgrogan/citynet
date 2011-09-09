@@ -73,7 +73,8 @@ classdef Edge < handle
         %   obj:            the edge object handle
         %   attributeName:  the name of the attribute, string
         function val = GetEdgeTypeAttributeValue(obj,attributeName)
-            if sum(strcmpi({obj.type.attributes.name},attributeName))==1
+            if ~isempty(obj.type.attributes) ...
+                && sum(strcmpi({obj.type.attributes.name},attributeName))==1
                 val = obj.type.attributes( ...
                     strcmpi({obj.type.attributes.name},attributeName)).value;
             else
