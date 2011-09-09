@@ -47,7 +47,7 @@ classdef TransportationEmissionsProduction < Behavior
             obj.cellEmissionsProduction = containers.Map('KeyType','int32','ValueType','double');
             city = CityNet.instance().city;
             for s=1:length(city.systems)
-                if strcmpi(city.systems.name,'Transportation')
+                if strcmpi(city.systems(s).name,'Transportation')
                     for i=1:length(city.systems(s).nodes)
                         node = city.systems(s).nodes(i);
                         baselineArea = node.GetNodeTypeAttributeValue('Baseline_Area');

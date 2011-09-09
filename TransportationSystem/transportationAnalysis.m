@@ -48,3 +48,10 @@ clear b6
 b6 = TransportationRecurringExpense();
 b6.Evaluate()
 b6.PlotCellRecurringExpense();
+
+clear b7
+b7 = QuickestPath([0.25 0.0 4],[1.3 2.1 4]);
+b7.Evaluate()
+figure
+cityNet.RenderSystem(1);
+cityNet.RenderSystemPath(1,b7.path);
