@@ -15,6 +15,7 @@ classdef PVStation < Behavior
         annual_emissions_CO2;
         resource_use;
         finance;
+        lifetime;
         
         
     end
@@ -62,6 +63,7 @@ classdef PVStation < Behavior
             obj.annual_dni = pv_station.GetNodeTypeAttributeValue('Annual DNI');
             obj.number_of_panels = pv_station.GetNodeTypeAttributeValue('Number of panels');
             obj.panel_capacity = pv_station.GetNodeTypeAttributeValue('PV Panel Capacity');
+            obj.lifetime = pv_station.GetNodeTypeAttributeValue('Plant Lifetime');
             obj.plant_capacity = obj.number_of_panels*obj.panel_capacity/(10^6);
             obj.annual_energy_generated = obj.annual_efficiency*obj.annual_dni*obj.panel_width*obj.panel_length*obj.number_of_panels/1000;
             

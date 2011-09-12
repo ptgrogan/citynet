@@ -11,10 +11,14 @@ function PlotGraphs(A)
         values(6,i)=A{i}.annual_emissions_CO2;
     end
     
-    label = {A{1}.name, A{2}.name, A{3}.name, A{4}.name, A{5}.name, A{6}.name};
-    label2 = ['     PV       ','CSP      ', 'Wind     ', 'Hydro     ' ,'Biomass   ', 'Natural Gas'];
-    explode = [0 0 0 0 0 1];
-    explode2 = [0 0 0 0 1 1];
+%     label = {A{1}.name, A{2}.name, A{3}.name, A{4}.name, A{5}.name, A{6}.name};
+    label = {A{1}.name, A{2}.name, A{3}.name};
+    label2 = ['     PV       ','CSP      ', 'Wind     '];
+%     label2 = ['     PV       ','CSP      ', 'Wind     ', 'Hydro     ' ,'Biomass   ', 'Natural Gas'];
+%     explode = [0 0 0 0 0 1];
+%     explode2 = [0 0 0 0 1 1];
+    explode = [0 0 0 ];
+    explode2 = [0 0 0 ];
     
     figure(2)
     bar(values(2,:));
@@ -22,10 +26,10 @@ function PlotGraphs(A)
     ylabel('Energy (MWH/yr)')
     xlabel(label2)
     colormap cool
-    colorbar
+    
     
     figure(3)
-    pie(values(2,:),explode,label2);
+    pie(values(2,:),explode,label);
     title('Annual Energy Generated','FontSize',14)
     
     figure(4)
@@ -34,7 +38,7 @@ function PlotGraphs(A)
     ylabel('Plant Capacity (MW)')
     xlabel(label2)
     colormap cool
-    colorbar
+    
     
     figure(5)
     bar(values(4,:));
@@ -42,7 +46,7 @@ function PlotGraphs(A)
     ylabel('Land Area (m2)')
     xlabel(label2)
     colormap cool
-    colorbar
+    
     
     figure(6)
     bar(values(5,:));
@@ -50,7 +54,7 @@ function PlotGraphs(A)
     ylabel('Water Use (Tonnes/year)')
     xlabel(label2)
     colormap cool
-    colorbar
+    
     
     figure(7)
     bar(values(6,:),'k','EdgeColor',[1 0.5 0.5]);
@@ -58,7 +62,7 @@ function PlotGraphs(A)
     ylabel('CO2 emissions (Tonnes/year)')
     xlabel(label2)
 %     colormap hot
-%     colorbar
+%     
     
     figure(8)
     pie(values(6,:),explode2,label);

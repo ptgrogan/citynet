@@ -13,7 +13,7 @@ addpath('..')
 
 %% define synthesis properties
 cityNet = CityNet.instance();
-SpreadsheetReader.ReadTemplate('masdar_energy.xls');
+SpreadsheetReader.ReadTemplate('masdar_energy_1.xls');
 
 cityNet.GenerateCells();
 cityNet.GenerateNodes();
@@ -34,20 +34,20 @@ clear b3
 b3 = WindFarm();
 b3.Evaluate()
 
-clear b4
-b4 = HydropowerStation();
-b4.Evaluate()
-
-clear b5
-b5 = BiomassEnergy();
-b5.Evaluate()
-
-clear b6
-b6 = NaturalGas();
-b6.Evaluate()
+% clear b4
+% b4 = HydropowerStation();
+% b4.Evaluate()
+% 
+% clear b5
+% b5 = BiomassEnergy();
+% b5.Evaluate()
+% 
+% clear b6
+% b6 = NaturalGas();
+% b6.Evaluate()
 
 clear B
-B= {b1,b2,b3,b4,b5,b6};
+B= {b1,b2,b3};
 PlotGraphs(B);
-
+KPI(B);
 

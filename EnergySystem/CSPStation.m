@@ -8,18 +8,19 @@ classdef CSPStation < Behavior
         mirror_length;
         mirror_width;
         mirror_capacity;
-        solar_field_capacity;
-        storage_capacity;
+%         solar_field_capacity;
+%         storage_capacity;
         plant_capacity;
-        solar_multiple;
+%         solar_multiple;
         number_of_mirrors;
         annual_efficiency;
         annual_dni;
-        csp_station_capacity;
+%         csp_station_capacity;
         annual_energy_generated;
         annual_emissions_CO2;
         resource_use;
         finance;
+        lifetime;
         
         
     end
@@ -71,18 +72,18 @@ classdef CSPStation < Behavior
             obj.annual_dni = csp_station.GetNodeTypeAttributeValue('Annual DNI');
             obj.number_of_mirrors = csp_station.GetNodeTypeAttributeValue('Number of mirrors');
             obj.mirror_capacity = csp_station.GetNodeTypeAttributeValue('Mirror Capacity');
-           
-            obj.csp_station_capacity = obj.number_of_mirrors*obj.mirror_capacity/(10^6);
+            obj.lifetime = csp_station.GetNodeTypeAttributeValue('Plant Lifetime');
+            obj.plant_capacity = obj.mirror_capacity*obj.number_of_mirrors/10^6;
             obj.annual_energy_generated = obj.annual_efficiency*obj.annual_dni*obj.mirror_width*obj.mirror_length*obj.number_of_mirrors/1000;
             
             obj.annual_emissions_CO2 = obj.annual_energy_generated/1000*csp_station.GetNodeTypeAttributeValue('Specific CO2 Emissions'); %Tonnes/year
             obj.finance.capex = csp_station.GetNodeTypeAttributeValue('Specific CAPEX') * obj.plant_capacity *1000; %$
             obj.finance.om = csp_station.GetNodeTypeAttributeValue('Specific O&M') * obj.plant_capacity *1000; %$
             obj.resource_use.land = obj.mirror_width*obj.mirror_length*obj.number_of_mirrors*2; %m2, assuming two times the size of the mirrors is required for the field
-            obj.resource_use.water = 0;
+            obj.resource_use.water = csp_station.GetNodeTypeAttributeValue('Specific Water Use') * obj.annual_energy_generated;
             obj.resource_use.waste = 0;
             obj.resource_use.transport = 0;
-            obj.plant_capacity = obj.mirror_capacity*obj.number_of_mirrors/10^6;
+            
             
             val = obj.annual_energy_generated;
             

@@ -19,6 +19,7 @@ classdef WindFarm < Behavior
         annual_emissions_CO2;
         resource_use;
         finance;
+        lifetime;
 
        
     end
@@ -73,7 +74,7 @@ classdef WindFarm < Behavior
             obj.rated_speed = windfarm.GetNodeTypeAttributeValue('Rated speed');
             obj.coefficient_of_performance = windfarm.GetNodeTypeAttributeValue('Coefficient of performance');
             obj.turbine_blade_length = windfarm.GetNodeTypeAttributeValue('Turbine blade length');
-            
+            obj.lifetime = windfarm.GetNodeTypeAttributeValue('Plant Lifetime');
             obj.number_of_turbines = windfarm.GetNodeTypeAttributeValue('Number of turbines');
             
             obj.energy_per_turbine = zeros(1,25);
