@@ -64,10 +64,15 @@ classdef Behavior < handle
             for i=1:length(city.cells)
                 [cVx cVy] = city.cells(i).GetVertices();
                 cind = 1;
-                if max(cell2mat(cellValueMap.values)) > 0
+                if max(cell2mat(cellValueMap.values)) > 0 ...
+                        && cellValueMap.isKey(city.cells(i).id)
                     cind = round(length(cmap)*cellValueMap(city.cells(i).id)/max(cell2mat(cellValueMap.values)));
                 end
-                patch(cVx, cVy, [1 1 1], 'FaceColor', cmap(cind,:));
+                if cind>0
+                    patch(cVx, cVy, [1 1 1], 'FaceColor', cmap(cind,:));
+                else
+                    patch(cVx, cVy, [1 1 1], 'FaceColor', cmap(1,:));
+                end
             end
             if max(cell2mat(cellValueMap.values)) > 0
                 caxis([0 max(cell2mat(cellValueMap.values))])
