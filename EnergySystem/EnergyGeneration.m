@@ -81,6 +81,61 @@ classdef EnergyGeneration < Behavior
                         energyVal = biomass_energy + energyVal;
                         end
                         
+                        
+                        %%Check if there's a CSP station in the cell
+                        if strcmp(node.type.name,'CSP Station')
+                            
+                            csp_energy = node.GetNodeTypeAttributeValue('Solar-to-Electric Efficiency')...
+                            *node.GetNodeTypeAttributeValue('Annual DNI')*node.GetNodeTypeAttributeValue('Mirror Length')...
+                            *node.GetNodeTypeAttributeValue('Mirror Width')*node.GetNodeTypeAttributeValue('Number of mirrors')/1000;
+                            energyVal = csp_energy + energyVal;
+                            
+                        end
+                        
+                        %%Check if there's a PV station in the cell
+                        if strcmp(node.type.name,'PV Station')
+                            
+                            pv_energy = node.GetNodeTypeAttributeValue('PV Panel Efficiency')*node.GetNodeTypeAttributeValue('Annual DNI')*...
+                                node.GetNodeTypeAttributeValue('Panel Length')*node.GetNodeTypeAttributeValue('Panel Width')*...
+                                node.GetNodeTypeAttributeValue('Number of panels')/1000;
+                            energyVal = pv_energy + energyVal;
+                            
+                        end
+                        
+                        %%Check if there's a wind farm in the cell
+                        if strcmp(node.type.name,'Wind Farm')
+                           
+                            wind_speed_hours = zeros(1,25);
+            
+                            for k=1:25
+                                wind_speed_hours(k) = node.GetNodeTypeAttributeValue(['Hours of wind speed at ', num2str(k-0.5)]); 
+                            end
+
+                            cut_in_speed = node.GetNodeTypeAttributeValue('Cut-in speed');
+                            cut_out_speed = node.GetNodeTypeAttributeValue('Cut-out speed');
+                            rated_speed = node.GetNodeTypeAttributeValue('Rated speed');
+                            coefficient_of_performance = node.GetNodeTypeAttributeValue('Coefficient of performance');
+                            turbine_blade_length = node.GetNodeTypeAttributeValue('Turbine blade length');
+                            number_of_turbines = node.GetNodeTypeAttributeValue('Number of turbines');
+
+                            energy_per_turbine = zeros(1,25);
+
+                            for k=1:25
+                               if k-0.5 < cut_in_speed
+                                    energy_per_turbine(k) = 0;
+                               elseif (k-0.5 >= cut_in_speed) && (k-0.5 <= rated_speed)
+                                    energy_per_turbine(k) = pi*1.22521*coefficient_of_performance*(turbine_blade_length)^2*(k-0.5)^3*wind_speed_hours(k)/(2*10^6);
+                               elseif (k-0.5 > rated_speed) && (k-0.5 <= cut_out_speed)
+                                    energy_per_turbine(k) = pi*1.22521*coefficient_of_performance*(turbine_blade_length)^2*rated_speed^3*wind_speed_hours(k)/(2*10^6);
+                               else
+                                    energy_per_turbine(k) = 0;
+                               end
+
+                            end
+                            wind_energy = sum(energy_per_turbine)*number_of_turbines;
+                            energyVal = wind_energy + energyVal;
+                        end
+                        
                         if obj.cellEnergyGeneration.isKey(node.cell.id)
                             obj.cellEnergyGeneration(node.cell.id) = obj.cellEnergyGeneration(node.cell.id) + energyVal;
                         else
