@@ -22,6 +22,11 @@ cityNet.GenerateEdges();
 figure(1)
 cityNet.RenderCity();
 
+figure(2)
+cityNet.RenderLayer(4);
+
+figure(3)
+cityNet.RenderLayer(5);
 
 clear b1
 b1 = PVStation();
@@ -57,3 +62,7 @@ b8 = EnergyGeneration();
 b8.Evaluate()
 b8.PlotCellEnergyGeneration()
 
+clear b9
+b8 = EnergylandUse();
+b8.Evaluate()
+b8.PlotCellLandUse()

@@ -18,15 +18,19 @@ classdef EnergyGeneration < Behavior
                 'the energy system per year.'], ...
                 'MWh','[0,inf)');
         end
+        
+        
         %% PlotCellEnergyGeneration Function
         % Plots the cell recurring expense behavior in a new figure.
         % 
-        % obj.PlotCellRecurringExpense()
+        % obj.PlotCellEnergyGeneration(obj)
         function PlotCellEnergyGeneration(obj)
             figure
             title(['Energy Generation (' obj.units ')'])
             obj.PlotCellValueMap(obj.cellEnergyGeneration)
         end
+        
+       
     end
     methods(Access=protected)
         %% EvaluateImpl Function
@@ -47,6 +51,7 @@ classdef EnergyGeneration < Behavior
                     for i=1:length(city.systems(s).nodes)
                         node = city.systems(s).nodes(i);
                         energyVal=0;
+                        
                         
                         %%Check if there's a hydropowerstation in the cell
                         if strcmp(node.type.name,'Hydropower Station')
@@ -86,8 +91,8 @@ classdef EnergyGeneration < Behavior
                         if strcmp(node.type.name,'CSP Station')
                             
                             csp_energy = node.GetNodeTypeAttributeValue('Solar-to-Electric Efficiency')...
-                            *node.GetNodeTypeAttributeValue('Annual DNI')*node.GetNodeTypeAttributeValue('Mirror Length')...
-                            *node.GetNodeTypeAttributeValue('Mirror Width')*node.GetNodeTypeAttributeValue('Number of mirrors')/1000;
+                            *node.GetNodeTypeAttributeValue('Annual DNI')*node.GetNodeTypeAttributeValue('Mirror Reflecting Area')...
+                            *node.GetNodeTypeAttributeValue('Number of mirrors')/1000;
                             energyVal = csp_energy + energyVal;
                             
                         end
@@ -99,7 +104,6 @@ classdef EnergyGeneration < Behavior
                                 node.GetNodeTypeAttributeValue('Panel Length')*node.GetNodeTypeAttributeValue('Panel Width')*...
                                 node.GetNodeTypeAttributeValue('Number of panels')/1000;
                             energyVal = pv_energy + energyVal;
-                            
                         end
                         
                         %%Check if there's a wind farm in the cell
@@ -134,6 +138,8 @@ classdef EnergyGeneration < Behavior
                             end
                             wind_energy = sum(energy_per_turbine)*number_of_turbines;
                             energyVal = wind_energy + energyVal;
+                            
+                    
                         end
                         
                         if obj.cellEnergyGeneration.isKey(node.cell.id)

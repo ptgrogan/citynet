@@ -98,7 +98,8 @@ classdef WindFarm < Behavior
             obj.annual_emissions_CO2 = obj.annual_energy_generated*windfarm.GetNodeTypeAttributeValue('Specific CO2 Emissions')/1000; %Tonnes/year
             obj.finance.capex = windfarm.GetNodeTypeAttributeValue('Specific CAPEX') * obj.plant_capacity *1000; %$
             obj.finance.om = windfarm.GetNodeTypeAttributeValue('Specific O&M') * obj.plant_capacity *1000; %$
-            obj.resource_use.land = 4*6.5*(2*obj.turbine_blade_length)^2; %m2, assuming 4 diameters width and 6.5 diameters length per turbine
+            obj.resource_use.land = obj.number_of_turbines*4*6.5*(2*obj.turbine_blade_length)^2; %m2, assuming 4 diameters width and 6.5 diameters length per turbine
+            obj.resource_use.land_per_mw = obj.resource_use.land/obj.plant_capacity; %m2 per MW
             obj.resource_use.water = 0;
             obj.resource_use.waste = 0;
             obj.resource_use.transport = 0;

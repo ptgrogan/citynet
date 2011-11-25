@@ -70,7 +70,8 @@ classdef PVStation < Behavior
             obj.annual_emissions_CO2 = obj.annual_energy_generated*pv_station.GetNodeTypeAttributeValue('Specific CO2 Emissions')/1000; %Tonnes/year
             obj.finance.capex = pv_station.GetNodeTypeAttributeValue('Specific CAPEX') * obj.plant_capacity *1000; %$
             obj.finance.om = pv_station.GetNodeTypeAttributeValue('Specific O&M') * obj.plant_capacity *1000; %$
-            obj.resource_use.land = obj.panel_width*obj.panel_length*obj.number_of_panels*2; %m2, assuming two times the size of the panels is required for the field
+            obj.resource_use.land = obj.panel_width*obj.panel_length*obj.number_of_panels*1.5; %m2, assuming 1.5 times the size of the panels is required for the field
+            obj.resource_use.land_per_mw = obj.resource_use.land/obj.plant_capacity; %m2 per MW
             obj.resource_use.water = 0;
             obj.resource_use.waste = 0;
             obj.resource_use.transport = 0;
