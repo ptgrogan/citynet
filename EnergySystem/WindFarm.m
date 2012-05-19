@@ -20,6 +20,9 @@ classdef WindFarm < Behavior
         resource_use;
         finance;
         lifetime;
+        turbine_cutout_capacity;
+        hub_height;
+        energy_generated;
 
        
     end
@@ -59,53 +62,59 @@ classdef WindFarm < Behavior
                     node_index = i;
                     break
                 end
+                
             end          
-            
-            % Set wind farm Identifier
             windfarm = city.systems(sys_index).nodes(node_index);
+            % Set wind farm Identifier
+            
             obj.wind_speed_hours = zeros(1,25);
             
             for i=1:25
                obj.wind_speed_hours(i) = windfarm.GetNodeTypeAttributeValue(['Hours of wind speed at ', num2str(i-0.5)]); 
             end
-            
-            obj.cut_in_speed = windfarm.GetNodeTypeAttributeValue('Cut-in speed');
+                        obj.cut_in_speed = windfarm.GetNodeTypeAttributeValue('Cut-in speed');
             obj.cut_out_speed = windfarm.GetNodeTypeAttributeValue('Cut-out speed');
             obj.rated_speed = windfarm.GetNodeTypeAttributeValue('Rated speed');
             obj.coefficient_of_performance = windfarm.GetNodeTypeAttributeValue('Coefficient of performance');
             obj.turbine_blade_length = windfarm.GetNodeTypeAttributeValue('Turbine blade length');
             obj.lifetime = windfarm.GetNodeTypeAttributeValue('Plant Lifetime');
             obj.number_of_turbines = windfarm.GetNodeTypeAttributeValue('Number of turbines');
+            obj.turbine_capacity = windfarm.GetNodeTypeAttributeValue('Wind Turbine Capacity');
+            obj.turbine_cutout_capacity = windfarm.GetNodeTypeAttributeValue('Wind Turbine Capacity at Cutout Speed');
             
-            obj.energy_per_turbine = zeros(1,25);
-            
-            for i=1:25
-               if i-0.5 < obj.cut_in_speed
-                    obj.energy_per_turbine(i) = 0;
-               elseif (i-0.5 >= obj.cut_in_speed) && (i-0.5 <= obj.rated_speed)
-                    obj.energy_per_turbine(i) = pi*1.22521*obj.coefficient_of_performance*(obj.turbine_blade_length)^2*(i-0.5)^3*obj.wind_speed_hours(i)/(2*10^6);
-               elseif (i-0.5 > obj.rated_speed) && (i-0.5 <= obj.cut_out_speed)
-                    obj.energy_per_turbine(i) = pi*1.22521*obj.coefficient_of_performance*(obj.turbine_blade_length)^2*obj.rated_speed^3*obj.wind_speed_hours(i)/(2*10^6);
-               else
-                    obj.energy_per_turbine(i) = 0;
-               end
-               
-            end
-            obj.turbine_capacity = pi*1.22521*obj.coefficient_of_performance*(obj.turbine_blade_length)^2*obj.rated_speed^3/(2*10^6);
-            obj.annual_energy_generated = sum(obj.energy_per_turbine)*obj.number_of_turbines;
+            obj.hub_height = windfarm.GetNodeTypeAttributeValue('Hub Height');
             obj.plant_capacity = obj.number_of_turbines*obj.turbine_capacity;
+
+          WindData =  xlsread('masdar_energy_1','Wind Data','A1:A8760');  
+            obj.energy_per_turbine = zeros(1,25);
+        for hour =1:8760    
+                    if (WindData(hour) < obj.cut_in_speed)||(WindData(hour) > obj.cut_out_speed)
+                        energy_per_turbine1 = 0;
+                    elseif (WindData(hour) >= obj.cut_in_speed) && (WindData(hour) <= obj.rated_speed)
+                        energy_per_turbine1 = obj.turbine_capacity*((WindData(hour)-obj.cut_in_speed)/(obj.rated_speed - obj.cut_in_speed))^1;
+                    elseif (WindData(hour) > obj.rated_speed) && (WindData(hour) <= obj.cut_out_speed)
+                        energy_per_turbine1 = obj.turbine_capacity + (obj.turbine_cutout_capacity - obj.turbine_capacity)...
+                            *(WindData(hour) - obj.rated_speed)/(obj.cut_out_speed - obj.rated_speed);
+                    else
+                        energy_per_turbine1 = 0;
+                    end
+                    obj.energy_generated(hour) = energy_per_turbine1 * obj.number_of_turbines; %Energy Generated in MWh
+        end        
+%             obj.turbine_capacity = pi*1.22521*obj.coefficient_of_performance*(obj.turbine_blade_length)^2*obj.rated_speed^3/(2*10^6);
+%             obj.annual_energy_generated = sum(obj.energy_per_turbine)*obj.number_of_turbines;
+%             obj.plant_capacity = obj.number_of_turbines*obj.turbine_capacity;
+%             
+%             obj.annual_emissions_CO2 = obj.annual_energy_generated*windfarm.GetNodeTypeAttributeValue('Specific CO2 Emissions')/1000; %Tonnes/year
+%             obj.finance.capex = windfarm.GetNodeTypeAttributeValue('Specific CAPEX') * obj.plant_capacity *1000; %$
+%             obj.finance.om = windfarm.GetNodeTypeAttributeValue('Specific O&M') * obj.plant_capacity *1000; %$
+%             obj.resource_use.land = obj.number_of_turbines*4*6.5*(2*obj.turbine_blade_length)^2; %m2, assuming 4 diameters width and 6.5 diameters length per turbine
+%             obj.resource_use.land_per_mw = obj.resource_use.land/obj.plant_capacity; %m2 per MW
+%             obj.resource_use.water = 0;
+%             obj.resource_use.waste = 0;
+%             obj.resource_use.transport = 0;
+%                
             
-            obj.annual_emissions_CO2 = obj.annual_energy_generated*windfarm.GetNodeTypeAttributeValue('Specific CO2 Emissions')/1000; %Tonnes/year
-            obj.finance.capex = windfarm.GetNodeTypeAttributeValue('Specific CAPEX') * obj.plant_capacity *1000; %$
-            obj.finance.om = windfarm.GetNodeTypeAttributeValue('Specific O&M') * obj.plant_capacity *1000; %$
-            obj.resource_use.land = obj.number_of_turbines*4*6.5*(2*obj.turbine_blade_length)^2; %m2, assuming 4 diameters width and 6.5 diameters length per turbine
-            obj.resource_use.land_per_mw = obj.resource_use.land/obj.plant_capacity; %m2 per MW
-            obj.resource_use.water = 0;
-            obj.resource_use.waste = 0;
-            obj.resource_use.transport = 0;
-               
-            
-            val = obj.annual_energy_generated;
+            val = sum(obj.energy_generated);
             
         end
     end

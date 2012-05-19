@@ -55,7 +55,7 @@ classdef NaturalGas < Behavior
                 end
             end          
             
-            % Set Biomass Station Identifier
+            % Set NG Station Identifier
             ngcc = city.systems(sys_index).nodes(node_index);
             
             
@@ -68,7 +68,7 @@ classdef NaturalGas < Behavior
        
             obj.net_heat_rate = 3600/obj.plant_efficiency;
             obj.feed_rate = obj.net_heat_rate*24*obj.plant_capacity/obj.heat_hhv;
-            obj.annual_natural_gas = obj.feed_rate*24*obj.capacity_factor;
+            obj.annual_natural_gas = obj.feed_rate*365*obj.capacity_factor;
             obj.annual_energy_generated = obj.capacity_factor*8760*obj.plant_capacity;
             
             obj.annual_emissions_CO2 = obj.annual_energy_generated*ngcc.GetNodeTypeAttributeValue('Specific CO2 Emissions')/1000; %Tonnes/year

@@ -16,6 +16,7 @@ classdef PVStation < Behavior
         resource_use;
         finance;
         lifetime;
+        AnnualHourlyEnergy;
         
         
     end
@@ -52,7 +53,7 @@ classdef PVStation < Behavior
                     break
                 end
             end          
-            
+            SolarData =  xlsread('masdar_energy_1','GHI','A1:A8760');
             % Set PV Station Identifier
             pv_station = city.systems(sys_index).nodes(node_index);
         
@@ -77,7 +78,14 @@ classdef PVStation < Behavior
             obj.resource_use.transport = 0;
             
             val = obj.annual_energy_generated; %in MWh/year
-            
+            annualHourlyOutput = zeros(8760,1);
+            for hour = 1:8760
+                annualHourlyOutput(hour) = pv_station.GetNodeTypeAttributeValue('PV Panel Efficiency')*SolarData(hour)*...
+                                         pv_station.GetNodeTypeAttributeValue('Panel Length')*pv_station.GetNodeTypeAttributeValue('Panel Width')*...
+                                         pv_station.GetNodeTypeAttributeValue('Number of panels');
+           
+            end
+            obj.AnnualHourlyEnergy = annualHourlyOutput;
         end
     end
 end
