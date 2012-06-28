@@ -203,7 +203,7 @@ classdef EnergySystem < Behavior
             end
             obj.grid.bus_data=IncomingBusData;
             Sbase = 100; %MVA
-            baseKV = 220; %kV
+            baseKV = 11; %kV
             Zbase = 1/Sbase*baseKV^2;
             power_factor=0.89;
             %%Declare Branch Data
@@ -222,7 +222,8 @@ classdef EnergySystem < Behavior
             
             %Declare Generator Data
             %GenData = [1, 0, 0, 300, -300, 1, 100, 1, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            obj.grid.total_branch_losses = zeros(8760,1);
+            obj.grid.total_branch_losses_P = zeros(8760,1);
+            obj.grid.total_branch_losses_Q = zeros(8760,1);
             obj.grid.voltages = zeros(8760,number_of_buses);
             obj.grid.injection = zeros(8760,2);
             for hour = 1:8760
@@ -343,7 +344,8 @@ classdef EnergySystem < Behavior
             for hour = 1:8760  
                 results=runpf(['case9_ies_', num2str(hour)]);
                 obj.grid.branch_losses(hour,1) = {[results.branch(:,1),results.branch(:,2), results.branch(:,14) + results.branch(:,16),results.branch(:,15) + results.branch(:,17)]};
-                obj.grid.total_branch_losses(hour) = sum(results.branch(:,14) + results.branch(:,16)) + i*sum(results.branch(:,15) + results.branch(:,17));
+                obj.grid.total_branch_losses_P(hour) = sum(results.branch(:,14) + results.branch(:,16));
+                 obj.grid.total_branch_losses_Q(hour)=sum(results.branch(:,15) + results.branch(:,17));
                 obj.grid.voltages(hour,:) = rot90(results.bus(:,8));
                 obj.grid.injection(hour,:) = results.gen(1,2:3);
 %                 annualHourlyOutput(hour,3) = energy_per_turbine * obj.wind.number_of_turbines;

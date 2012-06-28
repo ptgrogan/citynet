@@ -11,5 +11,5 @@ function distance = distanceBetweenNodes(node1, node2)
         width2 = 10;
     end
     
-    distance = sqrt(length^2 + (width1-width2)^2);
+    distance = 2.45/100*sqrt(length^2 + (width1-width2)^2);
 end

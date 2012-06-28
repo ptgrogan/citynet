@@ -39,7 +39,7 @@ clear b1
 b1 = EnergySystem();
 b1.Evaluate()
 
-KPI(b1)
+%KPI(b1)
 % clear b2
 % b2 = CSPStation();
 % b2.Evaluate()
